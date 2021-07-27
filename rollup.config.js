@@ -11,7 +11,7 @@ import autoprefixer from 'autoprefixer'
 const packageJson = require("./package.json");
 
 export default {
-    input: "src/index.ts",
+    input: "src/package.ts",
     output: [
         {
             file: packageJson.main,
