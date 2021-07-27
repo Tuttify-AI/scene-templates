@@ -146,6 +146,7 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
           className={styles.swiper}
           spaceBetween={0}
           slidesPerView={previewMode ? 4 : isSm ? 1 : isMd ? 2 : 4}
+          slidesPerColumn={2}
           onSwiper={setSwiper}
         >
           {tiles.map((k, index) => (
