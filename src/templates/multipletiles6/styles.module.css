@@ -9,7 +9,7 @@
 .root {
     z-index: 1;
     width: 100%;
-    min-height: 600px;
+    height: 600px;
     position: relative;
     border-radius: 16px;
     background: var(--colorWhite);

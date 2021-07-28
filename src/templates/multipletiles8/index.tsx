@@ -16,12 +16,12 @@ import 'swiper/swiper.min.css';
 import 'swiper/components/navigation/navigation.min.css';
 import styles from './styles.module.css';
 
-export type MultipleTilesSceneProps = SceneProps & {
+export type MultipleTiles8SceneProps = SceneProps & {
   values?: BaseSceneElements<SceneValue>;
   classes?: Classes;
 };
 
-const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
+const MultipleTiles8 = forwardRef<HTMLDivElement, MultipleTiles8SceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet }, ref) => {
     const [swiper, setSwiper] = useState<SwiperClass | null>(null);
     const { isMd, isSm } = useWindowSize();
@@ -204,4 +204,4 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
   }
 );
 
-export default MultipleTiles;
+export default MultipleTiles8;
