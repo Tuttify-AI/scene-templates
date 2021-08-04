@@ -1,0 +1,210 @@
+import React, { CSSProperties, forwardRef, useCallback, useMemo, useState } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+
+import { useActions, useWindowSize, useImage } from '../shared/hooks';
+import { clsx } from '../shared/utils';
+import {IMAGES, TITLES} from './constants';
+
+import { Parameters, SceneProps, SceneValue, TemplateParameterType } from '../shared/types';
+import { BaseSceneElements, Classes } from './types';
+import SwiperClass from 'swiper/types/swiper-class';
+
+import iconPlus from './assets/icon-plus.svg';
+import iconCross from './assets/icon-cross.svg';
+
+import 'swiper/swiper.min.css';
+import 'swiper/components/navigation/navigation.min.css';
+import styles from './styles.module.css';
+
+export type MultipleTiles6SceneProps = SceneProps & {
+  values?: BaseSceneElements<SceneValue>;
+  classes?: Classes;
+};
+
+const MultipleTiles6 = forwardRef<HTMLDivElement, MultipleTiles6SceneProps>(
+  ({ editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet }, ref) => {
+    const [swiper, setSwiper] = useState<SwiperClass | null>(null);
+    const { isMd, isSm } = useWindowSize();
+    const { hiddenImageList, onImageError, onImageLoad } = useImage();
+
+    const getEditClass = useCallback(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      (type: 'edit' | 'editText' | 'editRoot' = 'edit') => editMode && styles[type],
+      [editMode]
+    );
+
+    const getValue = useCallback(
+      (element: keyof BaseSceneElements, parameter: keyof Parameters) =>
+        (values?.[element]?.[parameter] as SceneValue)?.value,
+      [values]
+    );
+    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode });
+
+    const isActive = useCallback((key: keyof BaseSceneElements) => activeKey === key && styles.active, [activeKey]);
+    const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
+    const tiles = useMemo(() => Object.keys(values || {}).filter(k => k.startsWith('tile')), [values]);
+    const isImageHidden = useCallback(
+      (key: keyof BaseSceneElements) => hiddenImageList[key] && styles.hidden,
+      [hiddenImageList]
+    );
+
+    const handleAddTile = (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.stopPropagation();
+      const lastTile = Number(tiles[tiles.length - 1]?.replace('tile', ''));
+      if (lastTile && onAdd) {
+        onAdd({
+          [`tile${lastTile + 1}`]: {
+            background_hover: {
+              value: '#5468E7',
+              title: 'Background hover color',
+              type: TemplateParameterType.color,
+            },
+            sound: {
+              value: '',
+              title: 'On click sound link',
+              type: TemplateParameterType.sound,
+            },
+            title: {
+              value: `Tile No.${tiles.length + 1}`,
+              title: `Tile No.${tiles.length + 1}`,
+              type: TemplateParameterType.title,
+            },
+          },
+          [`text_tile${lastTile + 1}`]: {
+            text: {
+              value: 'Text',
+              title: 'Tile text',
+              type: TemplateParameterType.text,
+            },
+            title: {
+              value: `Tile No.${tiles.length + 1} text`,
+              title: `Tile No.${tiles.length + 1} text`,
+              type: TemplateParameterType.title,
+            },
+          },
+          [`image_tile${lastTile + 1}`]: {
+            url: {
+              value: '',
+              title: 'Image',
+              type: TemplateParameterType.image,
+            },
+            title: {
+              value: `Tile No.${tiles.length + 1} image`,
+              title: `Tile No.${tiles.length + 1} image`,
+              type: TemplateParameterType.title,
+            },
+          },
+        });
+      }
+
+      if (swiper) {
+        swiper.update();
+        setTimeout(() => swiper.slideTo(tiles.length), 0);
+      }
+    };
+
+    const handleDeleteTile = (e: React.MouseEvent<HTMLButtonElement>, k: string) => {
+      e.stopPropagation();
+      onSet &&
+        onSet(
+          Object.keys(values || {})
+            .filter(item => !item.includes(k))
+            .reduce((res, parameter) => {
+              if (values) {
+                const newIndex = tiles.filter(t => t !== k).findIndex(t => parameter.endsWith(t)) + 1;
+                if (newIndex) {
+                  const parameterStr = parameter.replace(/\d+/gi, '');
+                  res[`${parameterStr}${newIndex}`] = {
+                    ...values[parameter],
+                    title: {
+                      ...values[parameter].title,
+                      title: values[parameter].title.title.replace(/\d+/g, `${newIndex}`),
+                    },
+                  };
+                } else {
+                  res[parameter] = values[parameter];
+                }
+              }
+              return res;
+            }, {} as BaseSceneElements<SceneValue>)
+        );
+    };
+
+    return (
+      <div
+        onClick={handleClick('background')}
+        className={clsx(styles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
+        style={{
+            backgroundColor: `#e3f0fc`,
+        }}
+        ref={ref}
+      >
+        <button className={clsx(styles.btn, styles.btnAddTile, getEditClass('edit'))} onClick={handleAddTile}>
+          <img className={styles.addTileIcon} src={iconPlus} alt="" />
+        </button>
+        <span className={clsx(styles.totalTiles, getEditClass('edit'))}>Total tiles: {tiles.length}</span>
+        <Swiper
+          className={styles.swiper}
+          spaceBetween={0}
+          slidesPerView={previewMode ? 3 : isSm ? 1 : isMd ? 2 : 3}
+          slidesPerColumn={2}
+          onSwiper={setSwiper}
+        >
+          {TITLES.map((k, index) => (
+            <SwiperSlide key={k} className={styles.slideItem}>
+              <div
+                onClick={handleClick(k)}
+                className={clsx(styles.tile, isActive(k), getEditClass(), isPreview, classes?.tile)}
+                style={
+                  {
+                      '--custom_color': '#5468E7',
+                  } as CSSProperties
+                }
+              >
+                {index > IMAGES.length - 1 && (
+                  <button
+                    className={clsx(styles.btn, styles.btnDeleteTile, getEditClass('edit'))}
+                    onClick={e => handleDeleteTile(e, k)}
+                  >
+                    <img className={styles.deleteTileIcon} src={iconCross} alt="" />
+                  </button>
+                )}
+              </div>
+              <img
+                alt={`image_${k}`}
+                src={IMAGES[index] || IMAGES[0]}
+                onClick={handleClick(`image_${k}`)}
+                onLoad={() => onImageLoad(`image_${k}`)}
+                onError={() => onImageError(`image_${k}`)}
+                className={clsx(
+                  styles.tileImage,
+                  isActive(`image_${k}`),
+                  isImageHidden(`image_${k}`),
+                  getEditClass(),
+                  isPreview,
+                  classes?.tileImage
+                )}
+              />
+              <p
+                onClick={handleClick(`text_${k}`)}
+                className={clsx(
+                  styles.tileText,
+                  isActive(`text_${k}`),
+                  getEditClass('editText'),
+                  isPreview,
+                  classes?.tileText
+                )}
+              >
+                {/*{getValue(`text_${k}`, 'text')}*/}
+                  {k}
+              </p>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+    );
+  }
+);
+
+export default MultipleTiles6;
