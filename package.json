@@ -1,6 +1,6 @@
 {
   "name": "@blipiqlabs/scene-templates",
-  "version": "1.0.9",
+  "version": "1.0.15",
   "main": "build/index.js",
   "module": "build/index.es.js",
   "files": [
