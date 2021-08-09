@@ -1,4 +1,4 @@
-*{
+* {
     box-sizing: border-box;
 }
 :root {
@@ -7,6 +7,10 @@
     --colorWhite: #fff;
     --colorLightGray: #ccc;
     --colorSlateGray: #455a64;
+}
+
+.root > * {
+    box-sizing: border-box;
 }
 
 .root {
