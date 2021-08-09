@@ -24,6 +24,10 @@
     transition: all 0.25s ease-in-out;
 }
 
+.root > * {
+    box-sizing: border-box;
+}
+
 .hidden {
     visibility: hidden;
 }
