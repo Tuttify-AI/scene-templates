@@ -6,3 +6,5 @@ export { default as MultipleTiles4 } from './multipletiles4';
 export { default as MultipleTiles6 } from './multipletiles6';
 export { default as MultipleTiles8 } from './multipletiles8';
 export { default as Multipletiles4FullImg } from './multipletiles4FullImg';
+export { default as multipletiles6Fullimg } from './multipletiles6Fullimg';
+export { default as multipletiles8Fullimg } from './multipletiles8Fullimg';
