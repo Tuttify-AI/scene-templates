@@ -2,6 +2,7 @@ import {
     Atomi,
     Base,
     Base2,
+    FullImage,
     MultipleTiles,
     MultipleTiles4,
     MultipleTiles6,
@@ -21,6 +22,11 @@ const routes = [
         path: '/templates/base',
         name: 'Base',
         component: Base
+    },
+    {
+        path: '/templates/full-image',
+        name: 'FullImage',
+        component: FullImage
     },
     {
         path: '/templates/base2',
