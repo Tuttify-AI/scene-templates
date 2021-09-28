@@ -60,12 +60,14 @@ export type TemplateParameter = {
   type: TemplateParameterType;
   title: string;
   default_value: string | number;
+  length?: number;
 };
 
 export type SceneValue = {
   type: TemplateParameterType;
   title: string;
   value: string | number;
+  length?: number;
 };
 
 export type SceneProps = {
