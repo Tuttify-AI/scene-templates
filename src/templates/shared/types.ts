@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {RefObject} from 'react';
 
 export type AtomiDocument = Record<string, unknown> & {
   destroy?: () => void;
@@ -69,6 +69,10 @@ export type SceneValue = {
   value: string | number;
   length?: number;
 };
+
+export type AudioElements = {
+  [key: string]: RefObject<HTMLAudioElement>
+}
 
 export type SceneProps = {
   /**
