@@ -1,10 +1,10 @@
-import React, { useCallback, useMemo, useRef, forwardRef } from 'react';
+import React, { useCallback, useMemo, useRef, Fragment, forwardRef } from 'react';
 import { animated } from 'react-spring';
 import sceneStyles from './styles.module.css';
 import { ANIMATIONS } from './constants';
 import { BaseSceneElements, Classes } from './types';
 import { TemplateParameter, SceneProps, SceneValue, Parameters } from '../shared/types';
-import { useImage, useActions } from '../shared/hooks';
+import { useImage, useActions, useAudios } from '../shared/hooks';
 import { useAnimation } from './hooks';
 import { transition, clsx } from '../shared/utils';
 import defaultImage from './assets/defaultImage';
@@ -18,6 +18,7 @@ export type BaseSceneProps = SceneProps & {
 const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, parameters, values }, ref) => {
     const scrollRef = useRef<HTMLDivElement>(null);
+    const {audios} = useAudios({values});
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
     const {
       visibleX,
@@ -45,7 +46,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
       [values, parameters]
     );
 
-    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode });
+    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode, audios });
 
     const isActive = useCallback(
       (key: keyof BaseSceneElements) => activeKey === key && sceneStyles.active,
@@ -68,6 +69,13 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
         onMouseLeave={resetAnimatedProps}
         ref={ref}
       >
+          {audios && (
+              <Fragment>
+                  {Object.keys(audios).map(audio => (
+                      <audio key={`${audio}_sound`} id={`${audio}_sound`} ref={audios?.[audio]} src={getValue(audio, 'sound') as string}/>
+                  ))}
+              </Fragment>
+          )}
         <div ref={scrollRef} className={sceneStyles.scroll} />
         <animated.h1
           onMouseEnter={handleHover('title')}
