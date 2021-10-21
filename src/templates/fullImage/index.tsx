@@ -1,9 +1,9 @@
-import React, { useCallback, useMemo, forwardRef } from 'react';
+import React, { useCallback, useMemo, forwardRef, Fragment } from 'react';
 import { animated } from 'react-spring';
 import sceneStyles from './styles.module.css';
 import { BaseSceneElements, Classes } from './types';
 import { TemplateParameter, SceneProps, SceneValue, Parameters } from '../shared/types';
-import { useImage, useActions } from '../shared/hooks';
+import { useImage, useActions, useAudios } from '../shared/hooks';
 import { useAnimation } from './hooks';
 import { transition, clsx } from '../shared/utils';
 import defaultImage from './assets/full-image';
@@ -27,14 +27,14 @@ const FullImage = forwardRef<HTMLDivElement, FullImageSceneProps>(
       (type: 'edit' | 'editRoot' = 'edit') => editMode && sceneStyles[type],
       [editMode]
     );
-
+    const {audios} = useAudios({values});
     const getValue = useCallback(
       (element: keyof BaseSceneElements, parameter: keyof Parameters) =>
         values?.[element]?.[parameter]?.value ?? parameters?.[element]?.[parameter]?.default_value,
       [values, parameters]
     );
 
-    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode });
+    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode, audios });
 
     const isActive = useCallback(
       (key: keyof BaseSceneElements) => activeKey === key && sceneStyles.active,
@@ -57,6 +57,13 @@ const FullImage = forwardRef<HTMLDivElement, FullImageSceneProps>(
         onMouseLeave={resetAnimatedProps}
         ref={ref}
       >
+        {audios && (
+          <Fragment>
+            {Object.keys(audios).map(audio => (
+              <audio key={`${audio}_sound`} id={`${audio}_sound`} ref={audios?.[audio]} src={getValue(audio, 'sound') as string}/>
+            ))}
+          </Fragment>
+        )}
         <animated.img
           onMouseEnter={handleHover('image')}
           onMouseLeave={clearHover}

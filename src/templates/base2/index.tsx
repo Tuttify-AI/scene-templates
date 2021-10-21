@@ -1,10 +1,10 @@
-import React, { useCallback, useMemo, useRef, forwardRef } from 'react';
+import React, { useCallback, useMemo, useRef, forwardRef, Fragment } from 'react';
 import { animated } from 'react-spring';
 import sceneStyles from './styles.module.css';
 import { IMAGES, SHAPES } from './constants';
 import { BaseSceneElements, Classes } from './types';
 import { TemplateParameter, SceneProps, SceneValue, Parameters } from '../shared/types';
-import { useActions, useImage } from '../shared/hooks';
+import { useActions, useAudios, useImage } from '../shared/hooks';
 import { useAnimation } from './hooks';
 import { transition, clsx } from '../shared/utils';
 
@@ -17,6 +17,7 @@ export type Base2SceneProps = SceneProps & {
 const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, parameters, values }, ref) => {
     const scrollRef = useRef<HTMLDivElement>(null);
+    const {audios} = useAudios({values});
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
 
     const {
@@ -44,7 +45,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
       [values, parameters]
     );
 
-    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode });
+    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode, audios });
 
     const isActive = useCallback(
       (key: keyof BaseSceneElements) => activeKey === key && sceneStyles.active,
@@ -67,6 +68,13 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
         }}
         ref={ref}
       >
+        {audios && (
+          <Fragment>
+            {Object.keys(audios).map(audio => (
+              <audio key={`${audio}_sound`} id={`${audio}_sound`} ref={audios?.[audio]} src={getValue(audio, 'sound') as string}/>
+            ))}
+          </Fragment>
+        )}
         <div ref={scrollRef} className={sceneStyles.scroll} />
         <div className={sceneStyles.view}>
           {IMAGES.filter(el => el.isPreviewImage).map(({ name, defaultImage }) => (

@@ -1,7 +1,7 @@
-import React, { CSSProperties, forwardRef, useCallback, useMemo, useState } from 'react';
+import React, { CSSProperties, forwardRef, useCallback, useMemo, useState, Fragment } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { useActions, useWindowSize, useImage } from '../shared/hooks';
+import { useActions, useWindowSize, useImage, useAudios } from '../shared/hooks';
 import { clsx } from '../shared/utils';
 import { IMAGES } from './constants';
 
@@ -25,6 +25,7 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet }, ref) => {
     const [swiper, setSwiper] = useState<SwiperClass | null>(null);
     const { isSm } = useWindowSize();
+    const {audios} = useAudios({values});
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
 
     const getEditClass = useCallback(
@@ -37,7 +38,7 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
         (values?.[element]?.[parameter] as SceneValue)?.value,
       [values]
     );
-    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode });
+    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode, audios });
 
     const isActive = useCallback((key: keyof BaseSceneElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
@@ -138,6 +139,13 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
         }}
         ref={ref}
       >
+        {audios && (
+          <Fragment>
+            {Object.keys(audios).map(audio => (
+              <audio key={`${audio}_sound`} id={`${audio}_sound`} ref={audios?.[audio]} src={getValue(audio, 'sound') as string}/>
+            ))}
+          </Fragment>
+        )}
         <button className={clsx(styles.btn, styles.btnAddTile, getEditClass('edit'))} onClick={handleAddTile}>
           <img className={styles.addTileIcon} src={iconPlus} alt="" />
         </button>
