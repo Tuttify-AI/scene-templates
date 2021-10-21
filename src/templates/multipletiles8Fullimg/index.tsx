@@ -1,7 +1,7 @@
-import React, { CSSProperties, forwardRef, useCallback, useMemo, useState } from 'react';
+import React, { CSSProperties, forwardRef, useCallback, useMemo, useState, Fragment } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { useActions, useWindowSize, useImage } from '../shared/hooks';
+import { useActions, useWindowSize, useImage, useAudios } from '../shared/hooks';
 import { clsx } from '../shared/utils';
 import { IMAGES } from './constants';
 
@@ -36,13 +36,13 @@ const MultipleTiles8Fullimg = forwardRef<HTMLDivElement, MultipleTiles8FullImage
       (type: 'edit' | 'editText' | 'editRoot' = 'edit') => editMode && styles[type],
       [editMode]
     );
-
+    const {audios} = useAudios({values});
     const getValue = useCallback(
       (element: keyof BaseSceneElements, parameter: keyof Parameters) =>
         (values?.[element]?.[parameter] as SceneValue)?.value,
       [values]
     );
-    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode });
+    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode, audios });
 
     const isActive = useCallback((key: keyof BaseSceneElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
@@ -151,6 +151,13 @@ const MultipleTiles8Fullimg = forwardRef<HTMLDivElement, MultipleTiles8FullImage
         }}
         ref={ref}
       >
+        {audios && (
+          <Fragment>
+            {Object.keys(audios).map(audio => (
+              <audio key={`${audio}_sound`} id={`${audio}_sound`} ref={audios?.[audio]} src={getValue(audio, 'sound') as string}/>
+            ))}
+          </Fragment>
+        )}
         <div
           className={clsx(
             styles.activeDiv,
