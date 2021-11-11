@@ -29,7 +29,7 @@ const Atomi = forwardRef<HTMLDivElement, SceneProps>(({ previewMode }, ref) => {
 
   return (
     <div className={clsx(styles.root, isPreview)} ref={ref}>
-      <div className={styles.rootScene} ref={atomiContainerRef} />
+      <div key='atomi'  onClick={() => (atomiContainerRef.current) } className={styles.rootScene} ref={atomiContainerRef} />
     </div>
   );
 });

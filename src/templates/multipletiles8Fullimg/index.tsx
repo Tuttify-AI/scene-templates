@@ -144,6 +144,7 @@ const MultipleTiles8Fullimg = forwardRef<HTMLDivElement, MultipleTiles8FullImage
 
     return (
       <div
+        id={'background'}
         onClick={handleClick('background')}
         className={clsx(styles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
@@ -184,6 +185,7 @@ const MultipleTiles8Fullimg = forwardRef<HTMLDivElement, MultipleTiles8FullImage
           {tiles.map((k, index) => (
             <SwiperSlide key={k} className={styles.slideItem}>
               <div
+                id={k}
                 onClick={handleClick(k)}
                 className={clsx(styles.tile, isActive(k), getEditClass(), isPreview, classes?.tile)}
                 style={
@@ -202,6 +204,7 @@ const MultipleTiles8Fullimg = forwardRef<HTMLDivElement, MultipleTiles8FullImage
                 )}
               </div>
               <img
+                id={`image_${k}`}
                 alt={`image_${k}`}
                 src={(getValue(`image_${k}`, 'url') as string) || IMAGES[index] || IMAGES[0]}
                 onClick={e => {
@@ -223,6 +226,7 @@ const MultipleTiles8Fullimg = forwardRef<HTMLDivElement, MultipleTiles8FullImage
                 )}
               />
               <p
+                id={`text_${k}`}
                 onClick={handleClick(`text_${k}`)}
                 className={clsx(
                   styles.tileText,

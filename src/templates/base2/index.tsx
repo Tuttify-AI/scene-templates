@@ -59,6 +59,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
 
     return (
       <animated.div
+        id='background'
         onClick={handleClick('background')}
         onMouseMove={handleMouseMove}
         onMouseLeave={resetAnimatedProps}
@@ -79,6 +80,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
         <div className={sceneStyles.view}>
           {IMAGES.filter(el => el.isPreviewImage).map(({ name, defaultImage }) => (
             <animated.img
+              id={name}
               onMouseEnter={handleHover(name)}
               onMouseLeave={clearHover}
               onClick={handleClick(name)}
@@ -108,6 +110,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
 
         {IMAGES.filter(el => !el.isPreviewImage).map(({ name, defaultImage }) => (
           <animated.img
+            id={name}
             onMouseEnter={handleHover(name)}
             onMouseLeave={clearHover}
             onClick={handleClick(name)}
@@ -136,6 +139,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
 
         {SHAPES.map(({ name, mods }) => (
           <animated.div
+            id={name}
             onMouseEnter={handleHover(name)}
             onMouseLeave={clearHover}
             onClick={handleClick(name)}
