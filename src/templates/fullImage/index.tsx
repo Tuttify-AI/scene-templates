@@ -48,6 +48,7 @@ const FullImage = forwardRef<HTMLDivElement, FullImageSceneProps>(
 
     return (
       <animated.div
+        id='background'
         onClick={handleClick('background')}
         className={clsx(sceneStyles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
@@ -65,6 +66,7 @@ const FullImage = forwardRef<HTMLDivElement, FullImageSceneProps>(
           </Fragment>
         )}
         <animated.img
+          id='image'
           onMouseEnter={handleHover('image')}
           onMouseLeave={clearHover}
           alt="image"

@@ -60,6 +60,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
 
     return (
       <animated.div
+        id='background'
         onClick={handleClick('background')}
         className={clsx(sceneStyles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
@@ -78,6 +79,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
           )}
         <div ref={scrollRef} className={sceneStyles.scroll} />
         <animated.h1
+          id='title'
           onMouseEnter={handleHover('title')}
           onMouseLeave={clearHover}
           onClick={handleClick('title')}
@@ -92,6 +94,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
           {getValue('title', 'text')}
         </animated.h1>
         <animated.p
+          id='description'
           onMouseEnter={handleHover('description')}
           onMouseLeave={clearHover}
           onClick={handleClick('description')}
@@ -112,6 +115,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
           {getValue('description', 'text')}
         </animated.p>
         <animated.img
+          id='image'
           onMouseEnter={handleHover('image')}
           onMouseLeave={clearHover}
           alt="image"
@@ -136,6 +140,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
         />
         {ANIMATIONS.map(({ name, mods }) => (
           <animated.div
+            id={name}
             onMouseEnter={handleHover(name)}
             onMouseLeave={clearHover}
             key={name}
