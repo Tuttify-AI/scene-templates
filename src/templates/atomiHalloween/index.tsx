@@ -1,12 +1,12 @@
-import React, { forwardRef, useEffect, useMemo, useRef } from 'react';
+import React, { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import '../shared/slplayer';
 import { AtomiDocument, SceneProps } from '../shared/types';
 import { clsx } from '../shared/utils';
-import docData from './halloween';
+import docData from './halloween.js';
 import styles from './styles.module.css';
 
-const Atomi = forwardRef<HTMLDivElement, SceneProps>(({ previewMode }, ref) => {
+const Atomi = forwardRef<HTMLDivElement, SceneProps>(({ previewMode, onClick, onActiveElementClick }, ref) => {
   const atomiContainerRef = useRef<HTMLDivElement>(null);
   const atomiDocument = useRef<AtomiDocument>();
   const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
@@ -27,9 +27,18 @@ const Atomi = forwardRef<HTMLDivElement, SceneProps>(({ previewMode }, ref) => {
     };
   }, [atomiDocument, previewMode]);
 
+  const handleClick = useCallback(() => {
+    if (onClick && atomiContainerRef.current) {
+      onClick('atomi', atomiContainerRef.current);
+    }
+    if (onActiveElementClick) {
+      onActiveElementClick('atomi')
+    }
+  }, [onClick, onActiveElementClick]);
+
   return (
     <div className={clsx(styles.root, isPreview)} ref={ref}>
-      <div key='atomi'  onClick={() => (atomiContainerRef.current) } className={styles.rootScene} ref={atomiContainerRef} />
+      <div id="atomi" onClick={handleClick} className={styles.rootScene} ref={atomiContainerRef} />
     </div>
   );
 });

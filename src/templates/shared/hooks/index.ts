@@ -3,5 +3,6 @@ import useScroll from './use-scroll';
 import useActions from './use-actions';
 import useAudios from './use-audios';
 import useWindowSize from './use-window-size';
+import useTiles from './use-tiles';
 
-export { useImage, useScroll, useActions, useWindowSize, useAudios };
+export { useImage, useScroll, useActions, useWindowSize, useAudios, useTiles };

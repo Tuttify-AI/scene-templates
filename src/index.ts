@@ -1,7 +1,7 @@
 import * as Types from './templates/shared/types';
 import Base, { BaseSceneProps } from './templates/base';
 import Base2, { Base2SceneProps } from './templates/base2';
-import FullImage , { FullImageSceneProps } from './templates/fullImage';
+import FullImage, { FullImageSceneProps } from './templates/fullImage';
 import MultipleTiles, { MultipleTilesSceneProps } from './templates/multipletiles';
 import MultipleTiles4, { MultipleTiles4SceneProps } from './templates/multipletiles4';
 import MultipleTiles4FullImage, { MultipleTiles4FullImageProps } from './templates/multipletiles4FullImg';
@@ -39,26 +39,28 @@ const previews = {
 
 export {
   Base,
-  BaseSceneProps,
   Base2,
-  Base2SceneProps,
   FullImage,
-  FullImageSceneProps,
   MultipleTiles,
-  MultipleTilesSceneProps,
   MultipleTiles4,
-  MultipleTiles4SceneProps,
   MultipleTiles4FullImage,
-  MultipleTiles4FullImageProps,
   MultipleTiles6,
-  MultipleTiles6SceneProps,
   MultipleTiles6FullImage,
-  MultipleTiles6FullImageProps,
   MultipleTiles8,
-  MultipleTiles8SceneProps,
   MultipleTiles8FullImage,
-  MultipleTiles8FullImageProps,
   AtomiHalloween,
   Types,
-  previews
+  previews,
+};
+export type {
+  BaseSceneProps,
+  Base2SceneProps,
+  FullImageSceneProps,
+  MultipleTilesSceneProps,
+  MultipleTiles4SceneProps,
+  MultipleTiles4FullImageProps,
+  MultipleTiles6SceneProps,
+  MultipleTiles6FullImageProps,
+  MultipleTiles8SceneProps,
+  MultipleTiles8FullImageProps,
 };
