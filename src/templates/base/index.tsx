@@ -16,9 +16,9 @@ export type BaseSceneProps = SceneProps & {
 };
 
 const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
-  ({ editMode, previewMode, classes, activeKey, onClick, parameters, values }, ref) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, parameters, values, onActiveElementClick }, ref) => {
     const scrollRef = useRef<HTMLDivElement>(null);
-    const {audios} = useAudios({values});
+    const { audios } = useAudios({ values });
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
     const {
       visibleX,
@@ -46,7 +46,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
       [values, parameters]
     );
 
-    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode, audios });
+    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode, audios, onActiveElementClick });
 
     const isActive = useCallback(
       (key: keyof BaseSceneElements) => activeKey === key && sceneStyles.active,
@@ -60,8 +60,8 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
 
     return (
       <animated.div
-        id='background'
-        onClick={handleClick('background')}
+        id="background"
+        onClick={handleClick('background', {background: getValue('background', 'background') as string})}
         className={clsx(sceneStyles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
           backgroundColor: `${getValue('background', 'background')}`,
@@ -70,19 +70,24 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
         onMouseLeave={resetAnimatedProps}
         ref={ref}
       >
-          {audios && (
-              <Fragment>
-                  {Object.keys(audios).map(audio => (
-                      <audio key={`${audio}_sound`} id={`${audio}_sound`} ref={audios?.[audio]} src={getValue(audio, 'sound') as string}/>
-                  ))}
-              </Fragment>
-          )}
+        {audios && (
+          <Fragment>
+            {Object.keys(audios).map(audio => (
+              <audio
+                key={`${audio}_sound`}
+                id={`${audio}_sound`}
+                ref={audios?.[audio]}
+                src={getValue(audio, 'sound') as string}
+              />
+            ))}
+          </Fragment>
+        )}
         <div ref={scrollRef} className={sceneStyles.scroll} />
         <animated.h1
-          id='title'
+          id="title"
           onMouseEnter={handleHover('title')}
           onMouseLeave={clearHover}
-          onClick={handleClick('title')}
+          onClick={handleClick('title', {text: getValue('title', 'text') as string})}
           className={clsx(sceneStyles.title, isActive('title'), getEditClass('editText'), isPreview, classes?.title)}
           style={{
             x: visibleX,
@@ -94,10 +99,10 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
           {getValue('title', 'text')}
         </animated.h1>
         <animated.p
-          id='description'
+          id="description"
           onMouseEnter={handleHover('description')}
           onMouseLeave={clearHover}
-          onClick={handleClick('description')}
+          onClick={handleClick('description', {text: getValue('description', 'text') as string})}
           className={clsx(
             sceneStyles.description,
             isActive('description'),
@@ -115,7 +120,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
           {getValue('description', 'text')}
         </animated.p>
         <animated.img
-          id='image'
+          id="image"
           onMouseEnter={handleHover('image')}
           onMouseLeave={clearHover}
           alt="image"
@@ -136,16 +141,16 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
           }}
           onLoad={() => onImageLoad('image')}
           onError={() => onImageError('image')}
-          onClick={handleClick('image')}
+          onClick={handleClick('image', {imageUrl: getValue('image', 'url') as string})}
         />
         {ANIMATIONS.map(({ name, mods }) => (
           <animated.div
-            id={name}
+            id={`${name}`}
             onMouseEnter={handleHover(name)}
             onMouseLeave={clearHover}
             key={name}
             className={clsx(
-              sceneStyles[name],
+              sceneStyles[name as keyof typeof sceneStyles],
               isActive(name),
               getEditClass(),
               isPreview,
@@ -156,7 +161,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
               ...getScale(name),
               ...getAnimationsStyle(transition(mods)),
             }}
-            onClick={handleClick(name)}
+            onClick={handleClick(name, {background: getValue(name, 'background') as string})}
           />
         ))}
       </animated.div>

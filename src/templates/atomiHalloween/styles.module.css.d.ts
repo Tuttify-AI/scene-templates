@@ -1,10 +1,10 @@
-export const root: string
-export const preview: string
-export const rootScene: string
+export const root: string;
+export const preview: string;
+export const rootScene: string;
 interface Namespace {
-	"root": string,
-	"preview": string,
-	"rootScene": string,
+  root: string;
+  preview: string;
+  rootScene: string;
 }
-declare const stylesModule: Namespace
-export default stylesModule
+declare const stylesModule: Namespace;
+export default stylesModule;

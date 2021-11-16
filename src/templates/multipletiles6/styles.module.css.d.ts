@@ -1,36 +1,36 @@
-export const root: string
-export const edit: string
-export const hidden: string
-export const preview: string
-export const slideItem: string
-export const tile: string
-export const totalTiles: string
-export const btn: string
-export const btnAddTile: string
-export const addTileIcon: string
-export const btnDeleteTile: string
-export const deleteTileIcon: string
-export const active: string
-export const tileImage: string
-export const tileText: string
-export const swiper: string
+export const root: string;
+export const edit: string;
+export const hidden: string;
+export const preview: string;
+export const slideItem: string;
+export const tile: string;
+export const totalTiles: string;
+export const btn: string;
+export const btnAddTile: string;
+export const addTileIcon: string;
+export const btnDeleteTile: string;
+export const deleteTileIcon: string;
+export const active: string;
+export const tileImage: string;
+export const tileText: string;
+export const swiper: string;
 interface Namespace {
-	"root": string,
-	"edit": string,
-	"hidden": string,
-	"preview": string,
-	"slideItem": string,
-	"tile": string,
-	"totalTiles": string,
-	"btn": string,
-	"btnAddTile": string,
-	"addTileIcon": string,
-	"btnDeleteTile": string,
-	"deleteTileIcon": string,
-	"active": string,
-	"tileImage": string,
-	"tileText": string,
-	"swiper": string,
+  root: string;
+  edit: string;
+  hidden: string;
+  preview: string;
+  slideItem: string;
+  tile: string;
+  totalTiles: string;
+  btn: string;
+  btnAddTile: string;
+  addTileIcon: string;
+  btnDeleteTile: string;
+  deleteTileIcon: string;
+  active: string;
+  tileImage: string;
+  tileText: string;
+  swiper: string;
 }
-declare const stylesModule: Namespace
-export default stylesModule
+declare const stylesModule: Namespace;
+export default stylesModule;
