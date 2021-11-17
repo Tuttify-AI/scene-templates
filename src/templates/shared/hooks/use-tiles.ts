@@ -73,7 +73,7 @@ export default function useTiles({ editMode, previewMode , getValue, onActiveEle
   const handleClearFullImageSrc = useCallback(() => setFullImage(INITIAL_STATE), [setFullImage]);
 
   const handleFullImageClick = useCallback(() => {
-    onActiveElementClick && onActiveElementClick(`${fullImage.key}_full_image`, {
+    onActiveElementClick && onActiveElementClick(fullImage.key, {
       imageUrl: fullImage.src,
     })
     handleClearFullImageSrc()
@@ -82,7 +82,7 @@ export default function useTiles({ editMode, previewMode , getValue, onActiveEle
   const handleImageClick = useCallback((k: string, index: number) => (e: React.MouseEvent<HTMLElement>) => {
     handleClick(`image_${k}`, getTileData(k))(e);
     handleSetFullImageSrc({
-      key: `image_${k}`,
+      key: `full_image_${k}`,
       src: (getValue(`image_${k}`, 'fullScreenUrl') as string) || defaultImages[index] || defaultImages[0],
       background: `${getValue(k, 'background_hover')}`,
     });
