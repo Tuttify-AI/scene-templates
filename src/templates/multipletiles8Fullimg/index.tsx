@@ -147,7 +147,7 @@ const MultipleTiles8Fullimg = forwardRef<HTMLDivElement, MultipleTiles8FullImage
           onClick={handleFullImageClick}
           style={{ background: fullImage.background }}
         >
-          <img alt="" src={fullImage.src} className={clsx(styles.activeImage, isPreview, getEditClass())} />
+          <img id={fullImage.key} alt="" src={fullImage.src} className={clsx(styles.activeImage, isPreview, getEditClass())} />
         </div>
         <button className={clsx(styles.btn, styles.btnAddTile, getEditClass('edit'))} onClick={handleAddTile}>
           <img className={styles.addTileIcon} src={iconPlus} alt="" />

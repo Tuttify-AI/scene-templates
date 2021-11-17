@@ -159,7 +159,7 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
           style={{ background: fullImage.background }}
         >
           <img
-            id="full_image"
+              id={fullImage.key}
             alt=""
             src={fullImage.src}
             className={clsx(styles.activeImage, isPreview, getEditClass())}
