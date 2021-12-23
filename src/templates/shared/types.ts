@@ -54,6 +54,7 @@ export enum TemplateParameterType {
   title = 'title',
   sound = 'sound',
   image = 'image',
+  video = 'video',
 }
 
 export type TemplateParameter = {
@@ -78,6 +79,7 @@ export type ActiveElementData = {
   text?: string;
   imageUrl?: string;
   audioUrl?: string;
+  videoUrl?: string;
   background?: string;
   [key: string]: string | undefined;
 }
