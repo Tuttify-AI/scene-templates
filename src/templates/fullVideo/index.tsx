@@ -7,6 +7,7 @@ import { useActions, useAudios } from '../shared/hooks';
 import { useAnimation } from './hooks';
 import {clsx} from '../shared/utils';
 import ReactPlayer from 'react-player';
+import defaultImage from './assets/full-image';
 
 export type FullVideoSceneProps = SceneProps & {
   parameters?: BaseSceneElements<TemplateParameter>;
@@ -37,16 +38,6 @@ const FullVideo = forwardRef<HTMLDivElement, FullVideoSceneProps>(
     );
     const isPreview = useMemo(() => previewMode && sceneStyles.preview, [previewMode]);
 
-    const splitValues = useCallback((value, element) => {
-      if(typeof value !== 'string') return;
-      if (element === 'video'){
-        return value ? value?.split(',')[0] : 'https://youtu.be/ErxyunQ7joA'
-      }
-      if (element === 'image'){
-        return value ? value?.split(',')[1] : 'https://i.ytimg.com/vi/ErxyunQ7joA/hqdefault.jpg'
-      }
-      return '';
-    }, [values])
     return (
       <animated.div
         id="background"
@@ -70,7 +61,7 @@ const FullVideo = forwardRef<HTMLDivElement, FullVideoSceneProps>(
           />}
           {editMode
             ? <img
-                src={`${splitValues(values?.video?.url?.value, 'image')}`}
+                src={`${getValue('video', 'preview') || defaultImage}`}
                 className={clsx(sceneStyles.image)}
                 alt=""
               />
@@ -81,7 +72,7 @@ const FullVideo = forwardRef<HTMLDivElement, FullVideoSceneProps>(
                 width='92%'
                 height='80%'
                 id='video'
-                url={`${splitValues(values?.video?.url?.value, 'video')}`}
+                url={`${getValue('video', 'url') || ''}`}
                 className={clsx(
                   sceneStyles.image,
                   isActive('video'),
