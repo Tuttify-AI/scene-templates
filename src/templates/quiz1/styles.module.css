@@ -1,0 +1,281 @@
+:root {
+    --shape-box-shadow: 1px 1px 12px 1px rgba(100, 100, 100, 0.8);
+    --text-shadow: 0 0 12px rgba(100, 100, 100, 0.8);
+    --colorWhite: #fff;
+    --colorLightGray: #ccc;
+    --colorSlateGray: #455a64;
+}
+
+.root {
+    z-index: 1;
+    width: 100%;
+    height: 600px;
+    position: relative;
+    border-radius: 16px;
+    background: var(--colorWhite);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    font-family: 'Lato', sans-serif;
+}
+
+.questionRoot {
+    z-index: 1;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    border-radius: 16px;
+}
+
+.imageContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    width: 100%;
+    max-height: 80%;
+}
+
+.image {
+    width: 100%;
+    height: 100%;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.activeDiv {
+    position: absolute;
+    background-color: transparent;
+    z-index: 10;
+    border-radius: 16px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    transition: all 0.20s ease-in-out;
+    padding: 8px;
+}
+
+.activeDiv.showActiveDiv {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transition: all 0.20s ease-in-out;
+}
+
+.activeDiv.hideActiveDiv {
+    width: 100%;
+    height: 0;
+    top: 50%;
+    /*left: 50%;*/
+    transition: all 0.20s ease-in-out;
+}
+
+.fullScreenText {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    z-index: 6;
+    font-size: 40px;
+    text-align: center;
+}
+
+.activeDiv.edit, .activeDiv.preview {
+    display: none;
+}
+
+.questionRoot.edit {
+    cursor: pointer;
+}
+
+.activeDiv.hideActiveDiv > .activeImage, .activeDiv.hideActiveDiv > .fullScreenText {
+    display: none;
+}
+
+.activeImage {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 8px;
+}
+
+.root.editRoot {
+    transition: box-shadow 1s ease-in-out;
+}
+
+.root *.edit {
+    transition: box-shadow 0.25s ease-in-out;
+}
+
+.active,
+.edit:hover {
+    box-shadow: var(--shape-box-shadow);
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.title {
+    width: 100%;
+    padding: 8px;
+    z-index: 6;
+    font-size: 40px;
+    text-align: center;
+    word-break: break-all;
+}
+
+.preview.root {
+    width: 1200px;
+    height: 600px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    border-radius: 0;
+    opacity: 0;
+}
+.answerRoot {
+    z-index: 2;
+    position: relative;
+    width: 50%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.answer {
+    border-radius: 16px;
+    position: relative;
+    width: 50%;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+}
+
+.answerText {
+    width: 100%;
+    padding: 8px;
+    z-index: 6;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    word-break: break-all;
+}
+
+.element {
+    width: 100%;
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.25s ease-in-out;
+}
+
+.answer:not(.edit):hover > .element {
+    transform: scaleY(1.1) scaleX(1.05);
+    border-radius: 24px;
+}
+
+.answer.edit:hover .btnDeleteElement {
+    display: inline-flex;
+}
+
+.btn {
+    margin: 0;
+    padding: 0;
+    background: none;
+    font: inherit;
+    text-align: center;
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.btn:focus {
+    outline: none;
+}
+
+.btnAddElement {
+    position: absolute;
+    z-index: 12;
+    bottom: -24px;
+    width: 48px;
+    height: 48px;
+    font-size: 14px;
+    font-weight: 700;
+    background-color: #00a6a8;
+    color: var(--colorWhite);
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    transition: background-color 0.25s ease-in-out;
+}
+
+.btnAddElement:hover {
+    background-color: rgb(0, 116, 117);
+}
+
+.addElementIcon {
+    max-width: 20px;
+    margin: 0 auto;
+    vertical-align: middle;
+}
+
+.btnDeleteElement {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    right: 0;
+    width: 32px;
+    height: 32px;
+    background-color: var(--colorWhite);
+    border: 1px solid var(--colorLightGray);
+}
+
+.deleteElementIcon {
+    max-width: 14px;
+    vertical-align: middle;
+}
+
+.btnAddElement:not(.edit),
+.btnDeleteElement:not(.edit),
+.totalElements:not(.edit),
+.preview .btnAddElement,
+.preview .btnDeleteElement,
+.preview .totalElements {
+    display: none !important;
+}
+
+@media screen and (max-width: 600px) {
+    .root:not(.preview) {
+        height: 500px;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .questionRoot {
+        width: 100%;
+        height: 50%;
+    }
+    .title {
+        font-size: 24px;
+    }
+    .answerRoot {
+        width: 100%;
+        height: 50%;
+    }
+
+    .answerText {
+        font-size: 16px;
+    }
+}
