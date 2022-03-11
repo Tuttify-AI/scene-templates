@@ -1,6 +1,7 @@
 import * as Types from './templates/shared/types';
 import Base, { BaseSceneProps } from './templates/base';
 import Base2, { Base2SceneProps } from './templates/base2';
+import QuizOne, { QuizOneProps } from './templates/quiz1';
 import FullImage, { FullImageSceneProps } from './templates/fullImage';
 import FullVideo , { FullVideoSceneProps } from './templates/fullVideo';
 import MultipleTiles, { MultipleTilesSceneProps } from './templates/multipletiles';
@@ -14,6 +15,7 @@ import AtomiHalloween from './templates/atomiHalloween';
 
 import base from './templates/base/assets/preview';
 import base2 from './templates/base2/assets/preview';
+import quiz1 from './templates/quiz1/assets/preview';
 import fullImage from './templates/fullImage/assets/preview';
 import multipleTiles from './templates/multipletiles/assets/preview';
 import multipleTiles4 from './templates/multipletiles4/assets/preview';
@@ -27,6 +29,7 @@ import atomiHalloween from './templates/atomiHalloween/assets/preview';
 const previews = {
   base,
   base2,
+  quiz1,
   fullImage,
   multipleTiles,
   multipleTiles4,
@@ -41,6 +44,7 @@ const previews = {
 export {
   Base,
   Base2,
+  QuizOne,
   FullImage,
   FullVideo,
   MultipleTiles,
@@ -57,6 +61,7 @@ export {
 export type {
   BaseSceneProps,
   Base2SceneProps,
+  QuizOneProps,
   FullImageSceneProps,
   MultipleTilesSceneProps,
   MultipleTiles4SceneProps,

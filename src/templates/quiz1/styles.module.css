@@ -19,6 +19,27 @@
     justify-content: center;
     font-family: 'Lato', sans-serif;
 }
+
+.questionRoot {
+    z-index: 6;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+}
+
+.questionImageContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.questionImage{
+    width: 100%;
+    max-height: 100%;
+}
 .activeDiv {
     position: absolute;
     background-color: transparent;
@@ -26,6 +47,7 @@
     border-radius: 16px;
     display: flex;
 }
+
 .activeDiv.showActiveDiv {
     width: 100%;
     height: 100%;
@@ -49,6 +71,7 @@
 .activeDiv.hideActiveDiv > .activeImage {
     display: none;
 }
+
 .activeImage {
     width: 100%;
     height: 100%;
@@ -56,12 +79,29 @@
     padding: 8px;
 }
 
-.root > *.edit {
+.root.editRoot {
+    transition: all 1s ease-in-out;
+}
+
+.root *.edit {
     transition: all 0.25s ease-in-out;
+}
+
+.active,
+.edit:hover {
+    box-shadow: var(--shape-box-shadow);
 }
 
 .hidden {
     visibility: hidden;
+}
+
+.title {
+    width: 100%;
+    padding: 8px;
+    z-index: 6;
+    font-size: 40px;
+    text-align: center;
 }
 
 .preview.root {
@@ -74,13 +114,16 @@
     border-radius: 0;
     opacity: 0;
 }
-
-.slideItem {
-    padding: 6px 12px;
+.answerRoot {
+    width: 50%;
+    display: flex;
+}
+.answer {
+    width: 50%;
     height: 50%;
 }
 
-.tile {
+.element {
     position: relative;
     height: 100%;
     --custom_color: transparent;
@@ -88,7 +131,7 @@
     user-select: none;
 }
 
-.tile:before {
+.element:before {
     content: '';
     position: absolute;
     top: 0;
@@ -132,7 +175,7 @@
     font-weight: 700;
     background-color: #00a6a8;
     color: var(--colorWhite);
-    box-shadow: 0 3px 1px -2px rgba(0,0,0,0.2), 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
     transition: background-color 0.25s ease-in-out;
 }
 
@@ -196,11 +239,11 @@
 }
 
 .tileImage {
-    position: absolute;
+    /*position: absolute;
     top: 50%;
     left: 50%;
     margin-left: -55px;
-    margin-top: -55px;
+    margin-top: -55px;*/
     z-index: 3;
     width: 110px;
     height: auto;

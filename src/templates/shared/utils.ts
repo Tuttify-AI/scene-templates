@@ -1,4 +1,4 @@
-import { Mods } from './types';
+import { Elements, Mods } from './types';
 
 export const isInViewport = (el: HTMLElement | null) => {
   const rect = el?.getBoundingClientRect();
@@ -19,3 +19,24 @@ export const transition =
     `translate3d(${x / modX}px,${y / modY}px,0)`;
 
 export const clsx = (...args: unknown[]) => args.filter(a => typeof a === 'string').join(' ');
+
+export const deleteElement = (values: Elements, elements: string[], key: string) => Object.keys(values || {})
+  .filter(item => !item.includes(key))
+  .reduce((res, parameter) => {
+    if (values) {
+      const newIndex = elements.filter(el => el !== key).findIndex(el => parameter.endsWith(el)) + 1;
+      if (newIndex) {
+        const parameterStr = parameter.replace(/\d+/gi, '');
+        res[`${parameterStr}${newIndex}`] = {
+          ...values[parameter],
+          title: {
+            ...values[parameter].title,
+            title: values[parameter].title.title.replace(/\d+/g, `${newIndex}`),
+          },
+        };
+      } else {
+        res[parameter] = values[parameter];
+      }
+    }
+    return res;
+  }, {} as Elements);
