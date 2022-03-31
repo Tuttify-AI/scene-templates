@@ -223,6 +223,7 @@
     text-align: center;
     color: var(--colorSlateGray);
     transition: all 0.25s ease-in-out;
+    word-break: break-word;
 }
 
 .slideItem:hover > .tileText,

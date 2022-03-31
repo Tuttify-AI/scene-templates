@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, forwardRef, Fragment } from 'react';
+import React, {useCallback, useMemo, forwardRef, Fragment, CSSProperties} from 'react';
 import { animated } from 'react-spring';
 import sceneStyles from './styles.module.css';
 import { BaseSceneElements, Classes } from './types';
@@ -21,7 +21,7 @@ const FullImageWithButton = forwardRef<HTMLDivElement, FullImageWithButtonProps>
       disabled: editMode || previewMode,
     });
 
-    const getEditClass = useCallback((type: 'edit' | 'editRoot' = 'edit') => editMode && sceneStyles[type], [editMode]);
+    const getEditClass = useCallback((type: 'edit' | 'editRoot' | 'editText' = 'edit') => editMode && sceneStyles[type], [editMode]);
     const { audios } = useAudios({ values });
     const getValue = useCallback(
       (element: keyof BaseSceneElements, parameter: keyof Parameters) =>
@@ -65,6 +65,20 @@ const FullImageWithButton = forwardRef<HTMLDivElement, FullImageWithButtonProps>
             ))}
           </Fragment>
         )}
+          <animated.h1
+              id="title"
+              onMouseEnter={handleHover('title')}
+              onMouseLeave={clearHover}
+              onClick={handleClick('title', {text: getValue('title', 'text') as string})}
+              className={clsx(sceneStyles.title, isActive('title'), getEditClass('editText'), isPreview, classes?.title)}
+              style={{
+                  ...scale,
+                  ...getAnimationsStyle(transition({ modX: 15, modY: 15 })),
+                  color: getValue('title', 'text_color') as string
+              }}
+          >
+              {getValue('title', 'text')}
+          </animated.h1>
         <animated.img
           id="image"
           alt="image"
@@ -99,12 +113,14 @@ const FullImageWithButton = forwardRef<HTMLDivElement, FullImageWithButtonProps>
                   isPreview,
                   classes?.button
               )}
-              style={{
-
-
-              }}
-              onClick={handleClick('button', {imageUrl: getValue('button', 'url') as string})}
-          >Test</button>
+              style={
+                  {
+                      '--button-background-color': getValue('button', 'background'),
+                      '--button-text-color': getValue('button', 'text_color'),
+                  } as CSSProperties
+              }
+              onClick={handleClick('button', {text: getValue('button', 'text') as string})}
+          >{getValue('button', 'text')}</button>
       </animated.div>
     );
   }
