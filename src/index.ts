@@ -3,6 +3,7 @@ import Base, { BaseSceneProps } from './templates/base';
 import Base2, { Base2SceneProps } from './templates/base2';
 import QuizOne, { QuizOneProps } from './templates/quiz1';
 import FullImage, { FullImageSceneProps } from './templates/fullImage';
+import FullImageWithButton , { FullImageWithButtonProps } from './templates/scene15';
 import FullVideo , { FullVideoSceneProps } from './templates/fullVideo';
 import MultipleTiles, { MultipleTilesSceneProps } from './templates/multipletiles';
 import MultipleTiles4, { MultipleTiles4SceneProps } from './templates/multipletiles4';
@@ -17,6 +18,7 @@ import base from './templates/base/assets/preview';
 import base2 from './templates/base2/assets/preview';
 import quiz1 from './templates/quiz1/assets/preview';
 import fullImage from './templates/fullImage/assets/preview';
+import fullImageWithButton from './templates/fullImage/assets/preview';
 import multipleTiles from './templates/multipletiles/assets/preview';
 import multipleTiles4 from './templates/multipletiles4/assets/preview';
 import multipleTiles4FullImage from './templates/multipletiles4FullImg/assets/preview';
@@ -39,6 +41,7 @@ const previews = {
   multipleTiles6,
   multipleTiles8,
   atomiHalloween,
+  fullImageWithButton,
 };
 
 export {
@@ -55,6 +58,7 @@ export {
   MultipleTiles8,
   MultipleTiles8FullImage,
   AtomiHalloween,
+  FullImageWithButton,
   Types,
   previews,
 };
@@ -71,4 +75,5 @@ export type {
   MultipleTiles8SceneProps,
   MultipleTiles8FullImageProps,
   FullVideoSceneProps,
+    FullImageWithButtonProps,
 };
