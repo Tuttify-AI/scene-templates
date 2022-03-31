@@ -1,6 +1,9 @@
 :root {
     --shape-box-shadow: 1px 1px 12px 1px rgba(100, 100, 100, 0.8);
     --text-shadow: 0 0 12px rgba(100, 100, 100, 0.8);
+    --border-radius: 100px;
+    --button-background-color: green;
+    --button-text-color: white;
 }
 
 .root {
@@ -28,10 +31,10 @@
     cursor: pointer;
     z-index: 4;
     position: absolute;
-    top: 10%;
-    left: 4%;
-    width: 92%;
-    height: 80%;
+    top: 20%;
+    left: 10%;
+    width: 80%;
+    height: 60%;
     object-fit: cover;
     border-radius: 4px;
 }
@@ -39,18 +42,36 @@
 .button {
     position: absolute;
     cursor: pointer;
-    width: 20%;
-    height: 20%;
+    min-width: 220px;
+    min-height: 80px;
     z-index: 5;
     bottom: 2%;
     right: 2%;
     object-fit: cover;
-    border-radius: 100px;
-    color: #777;
-    background-color: #fff;
+    border-radius:var(--border-radius);
+    color: var(--button-text-color);
+    font-size: 1.5rem;
+    background-color: var(--button-background-color);
     animation: moveInBottom 0.5s ease-out;
     animation-fill-mode: backwards;
+    box-shadow: 1px 1px 6px 1px rgba(100, 100, 100, 0.9);
+    padding: 4px 8px;
+}
 
+.title {
+    position: absolute;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    padding: 24px;
+    z-index: 6;
+    top: 8px;
+    font-size: 70px;
+    word-break: break-word;
+}
+
+.editText:hover {
+    text-shadow: var(--text-shadow);
 }
 
 .hidden {
@@ -63,6 +84,11 @@
 
 .active {
     box-shadow: var(--shape-box-shadow);
+}
+
+.title.active {
+    box-shadow: none;
+    text-shadow: var(--text-shadow);
 }
 
 .preview.root {
@@ -82,7 +108,7 @@
     text-decoration: none;
     padding: 15px 40px;
     display: inline-block;
-    border-radius: 100px;
+    border-radius: var(--border-radius);
     transition: all .2s;
     position: absolute;
 }
@@ -92,13 +118,8 @@
 }
 
 .button:not(.edit):active {
-    transform: translateY(-2px);
-    background-color: #fff;
-}
-
-.button-white {
-    background-color: #fff;
-    color: #777;
+    transform: translateY(0);
+    background-color: var(--button-background-color);
 }
 
 .button::after {
@@ -106,23 +127,30 @@
     display: inline-block;
     height: 100%;
     width: 100%;
-    border-radius: 50%;
+    border-radius: var(--border-radius);
     position: absolute;
     top: 0;
     left: 0;
     z-index: -1;
     transition: all .4s;
-    background-color: #fff;
-}
-
-.button-white::after {
-    background-color: #fff;
+    background-color: var(--button-background-color);
 }
 
 .button:not(.edit):hover::after {
-    transform: scaleX(1.4) scaleY(1.6);
+    transform: scaleX(1.2) scaleY(1.4);
     opacity: 0;
 }
+@media screen and (max-width: 960px) {
+    .title:not(.preview) {
+        font-size: 60px;
+        padding: 16px;
+    }
+    .button:not(.preview) {
+        min-width: 176px;
+        min-height: 64px;
+    }
+}
+
 
 @media screen and (max-width: 600px) {
     .root:not(.preview) {
@@ -131,10 +159,17 @@
         min-height: auto;
         padding-top: 340px;
     }
-
-    .image:not(.preview) {
-        top: 40px;
-        right: 0;
+    .title:not(.preview) {
+        width: 100%;
+        text-align: center;
+        font-size: 32px;
+        line-height: 50px;
+        padding: 8px;
+    }
+    .button:not(.preview) {
+        min-width: 120px;
+        min-height: 60px;
+        font-size: 1rem;
     }
 }
 
