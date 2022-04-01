@@ -6,7 +6,7 @@ import { BaseSceneElements, Classes } from './types';
 import { TemplateParameter, SceneProps, SceneValue, Parameters } from '../shared/types';
 import { useActions, useAudios, useImage } from '../shared/hooks';
 import { useAnimation } from './hooks';
-import {transition, clsx, getElementId} from '../shared/utils';
+import { transition, clsx, getElementId } from '../shared/utils';
 
 export type Base2SceneProps = SceneProps & {
   parameters?: BaseSceneElements<TemplateParameter>;
@@ -45,7 +45,13 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
       [values, parameters]
     );
 
-    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode, audios, onActiveElementClick });
+    const { handleClick } = useActions({
+      onClick,
+      getValue,
+      disabled: editMode || previewMode,
+      audios,
+      onActiveElementClick,
+    });
 
     const isActive = useCallback(
       (key: keyof BaseSceneElements) => activeKey === key && sceneStyles.active,
@@ -88,7 +94,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
               id={getElementId(name, previewMode)}
               onMouseEnter={handleHover(name)}
               onMouseLeave={clearHover}
-              onClick={handleClick(name, {imageUrl: getValue(name, 'url') as string})}
+              onClick={handleClick(name, { imageUrl: getValue(name, 'url') as string })}
               onLoad={() => onImageLoad(name)}
               onError={() => onImageError(name)}
               key={name}
@@ -115,10 +121,10 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
 
         {IMAGES.filter(el => !el.isPreviewImage).map(({ name, defaultImage }) => (
           <animated.img
-              id={getElementId(name, previewMode)}
+            id={getElementId(name, previewMode)}
             onMouseEnter={handleHover(name)}
             onMouseLeave={clearHover}
-            onClick={handleClick(name, {imageUrl: getValue(name, 'url') as string})}
+            onClick={handleClick(name, { imageUrl: getValue(name, 'url') as string })}
             onLoad={() => onImageLoad(name)}
             onError={() => onImageError(name)}
             key={name}
@@ -144,10 +150,10 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
 
         {SHAPES.map(({ name, mods }) => (
           <animated.div
-              id={getElementId(`${name}`, previewMode)}
+            id={getElementId(`${name}`, previewMode)}
             onMouseEnter={handleHover(name)}
             onMouseLeave={clearHover}
-            onClick={handleClick(name, {imageUrl: getValue(name, 'background') as string})}
+            onClick={handleClick(name, { imageUrl: getValue(name, 'background') as string })}
             key={name}
             className={clsx(
               sceneStyles.shape,

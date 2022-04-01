@@ -83,7 +83,7 @@ export type ActiveElementData = {
   videoUrl?: string;
   background?: string;
   [key: string]: string | undefined;
-}
+};
 
 export type SceneProps = {
   /**

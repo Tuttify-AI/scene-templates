@@ -5,7 +5,7 @@ import { BaseSceneElements, Classes } from './types';
 import { TemplateParameter, SceneProps, SceneValue, Parameters } from '../shared/types';
 import { useImage, useActions, useAudios } from '../shared/hooks';
 import { useAnimation } from './hooks';
-import {transition, clsx, getElementId} from '../shared/utils';
+import { transition, clsx, getElementId } from '../shared/utils';
 import defaultImage from './assets/full-image';
 
 export type FullImageSceneProps = SceneProps & {
@@ -29,7 +29,13 @@ const FullImage = forwardRef<HTMLDivElement, FullImageSceneProps>(
       [values, parameters]
     );
 
-    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode, audios, onActiveElementClick });
+    const { handleClick } = useActions({
+      onClick,
+      getValue,
+      disabled: editMode || previewMode,
+      audios,
+      onActiveElementClick,
+    });
 
     const isActive = useCallback(
       (key: keyof BaseSceneElements) => activeKey === key && sceneStyles.active,
@@ -85,7 +91,7 @@ const FullImage = forwardRef<HTMLDivElement, FullImageSceneProps>(
           }}
           onLoad={() => onImageLoad('image')}
           onError={() => onImageError('image')}
-          onClick={handleClick('image', {imageUrl: getValue('image', 'url') as string})}
+          onClick={handleClick('image', { imageUrl: getValue('image', 'url') as string })}
         />
       </animated.div>
     );

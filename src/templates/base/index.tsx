@@ -6,7 +6,7 @@ import { BaseSceneElements, Classes } from './types';
 import { TemplateParameter, SceneProps, SceneValue, Parameters } from '../shared/types';
 import { useImage, useActions, useAudios } from '../shared/hooks';
 import { useAnimation } from './hooks';
-import {transition, clsx, getElementId} from '../shared/utils';
+import { transition, clsx, getElementId } from '../shared/utils';
 import defaultImage from './assets/defaultImage';
 
 export type BaseSceneProps = SceneProps & {
@@ -46,7 +46,13 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
       [values, parameters]
     );
 
-    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode, audios, onActiveElementClick });
+    const { handleClick } = useActions({
+      onClick,
+      getValue,
+      disabled: editMode || previewMode,
+      audios,
+      onActiveElementClick,
+    });
 
     const isActive = useCallback(
       (key: keyof BaseSceneElements) => activeKey === key && sceneStyles.active,
@@ -61,7 +67,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
     return (
       <animated.div
         id={getElementId('background', previewMode)}
-        onClick={handleClick('background', {background: getValue('background', 'background') as string})}
+        onClick={handleClick('background', { background: getValue('background', 'background') as string })}
         className={clsx(sceneStyles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
           backgroundColor: `${getValue('background', 'background')}`,
@@ -87,7 +93,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
           id={getElementId('title', previewMode)}
           onMouseEnter={handleHover('title')}
           onMouseLeave={clearHover}
-          onClick={handleClick('title', {text: getValue('title', 'text') as string})}
+          onClick={handleClick('title', { text: getValue('title', 'text') as string })}
           className={clsx(sceneStyles.title, isActive('title'), getEditClass('editText'), isPreview, classes?.title)}
           style={{
             x: visibleX,
@@ -102,7 +108,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
           id={getElementId('description', previewMode)}
           onMouseEnter={handleHover('description')}
           onMouseLeave={clearHover}
-          onClick={handleClick('description', {text: getValue('description', 'text') as string})}
+          onClick={handleClick('description', { text: getValue('description', 'text') as string })}
           className={clsx(
             sceneStyles.description,
             isActive('description'),
@@ -141,7 +147,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
           }}
           onLoad={() => onImageLoad('image')}
           onError={() => onImageError('image')}
-          onClick={handleClick('image', {imageUrl: getValue('image', 'url') as string})}
+          onClick={handleClick('image', { imageUrl: getValue('image', 'url') as string })}
         />
         {ANIMATIONS.map(({ name, mods }) => (
           <animated.div
@@ -161,7 +167,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
               ...getScale(name),
               ...getAnimationsStyle(transition(mods)),
             }}
-            onClick={handleClick(name, {background: getValue(name, 'background') as string})}
+            onClick={handleClick(name, { background: getValue(name, 'background') as string })}
           />
         ))}
       </animated.div>

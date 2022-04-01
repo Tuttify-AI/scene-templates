@@ -32,7 +32,7 @@ const Atomi = forwardRef<HTMLDivElement, SceneProps>(({ previewMode, onClick, on
       onClick('atomi', atomiContainerRef.current);
     }
     if (onActiveElementClick) {
-      onActiveElementClick('atomi')
+      onActiveElementClick('atomi');
     }
   }, [onClick, onActiveElementClick]);
 
