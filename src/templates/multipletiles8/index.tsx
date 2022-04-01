@@ -155,7 +155,7 @@ const MultipleTiles8 = forwardRef<HTMLDivElement, MultipleTiles8SceneProps>(
           onSwiper={setSwiper}
         >
           {tiles.map((k, index) => (
-            <SwiperSlide key={k} className={styles.slideItem}>
+            <SwiperSlide key={k} className={clsx(styles.slideItem, isPreview)}>
               <div
                 id={getElementId(k, previewMode)}
                 onClick={handleClick(k, getTileData(k))}

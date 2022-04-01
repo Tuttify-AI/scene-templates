@@ -177,7 +177,7 @@ const MultipleTiles6Fullimg = forwardRef<HTMLDivElement, MultipleTiles6FullImage
           onSwiper={setSwiper}
         >
           {tiles.map((k, index) => (
-            <SwiperSlide key={k} className={styles.slideItem}>
+            <SwiperSlide key={k} className={clsx(styles.slideItem, isPreview)}>
               <div
                 id={getElementId(k, previewMode)}
                 onClick={handleClick(k, getTileData(k))}
