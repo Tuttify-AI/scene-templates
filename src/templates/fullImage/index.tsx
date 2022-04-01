@@ -5,7 +5,7 @@ import { BaseSceneElements, Classes } from './types';
 import { TemplateParameter, SceneProps, SceneValue, Parameters } from '../shared/types';
 import { useImage, useActions, useAudios } from '../shared/hooks';
 import { useAnimation } from './hooks';
-import { transition, clsx } from '../shared/utils';
+import {transition, clsx, getElementId} from '../shared/utils';
 import defaultImage from './assets/full-image';
 
 export type FullImageSceneProps = SceneProps & {
@@ -43,7 +43,7 @@ const FullImage = forwardRef<HTMLDivElement, FullImageSceneProps>(
 
     return (
       <animated.div
-        id="background"
+        id={getElementId('background', previewMode)}
         onClick={handleClick('background')}
         className={clsx(sceneStyles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
@@ -66,7 +66,7 @@ const FullImage = forwardRef<HTMLDivElement, FullImageSceneProps>(
           </Fragment>
         )}
         <animated.img
-          id="image"
+          id={getElementId('image', previewMode)}
           onMouseEnter={handleHover('image')}
           onMouseLeave={clearHover}
           alt="image"

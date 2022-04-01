@@ -2,7 +2,7 @@ import React, { CSSProperties, forwardRef, useCallback, useMemo, useState, Fragm
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { useActions, useWindowSize, useImage, useAudios, useTiles } from '../shared/hooks';
-import { clsx } from '../shared/utils';
+import {clsx, getElementId} from '../shared/utils';
 import { IMAGES } from './constants';
 
 import { Parameters, SceneProps, SceneValue, TemplateParameterType } from '../shared/types';
@@ -128,7 +128,7 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
 
     return (
       <div
-        id="background"
+          id={getElementId('background', previewMode)}
         onClick={handleClick('background')}
         className={clsx(styles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
@@ -159,7 +159,7 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
           style={{ background: fullImage.background }}
         >
           <img
-            id={fullImage.key}
+              id={getElementId(fullImage.key, previewMode)}
             alt=""
             src={fullImage.src}
             className={clsx(styles.activeImage, isPreview, getEditClass())}
@@ -179,7 +179,7 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
           {tiles.map((k, index) => (
             <SwiperSlide key={k} className={clsx(styles.slideItem)}>
               <div
-                id={k}
+                  id={getElementId(k, previewMode)}
                 onClick={handleClick(k, getTileData(k))}
                 className={clsx(styles.tile, isActive(k), getEditClass(), isPreview, classes?.tile)}
                 style={
@@ -198,7 +198,7 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
                 )}
               </div>
               <img
-                id={`image_${k}`}
+                  id={getElementId(`image_${k}`, previewMode)}
                 alt={`image_${k}`}
                 src={(getValue(`image_${k}`, 'url') as string) || IMAGES[index] || IMAGES[0]}
                 onClick={handleImageClick(k, index)}
@@ -214,7 +214,7 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
                 )}
               />
               <p
-                id={`text_${k}`}
+                  id={getElementId(`text_${k}`, previewMode)}
                 onClick={handleClick(`text_${k}`, getTileData(k))}
                 className={clsx(
                   styles.tileText,

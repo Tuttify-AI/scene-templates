@@ -2,7 +2,7 @@ import React, { forwardRef, Fragment, useCallback, useMemo } from 'react';
 import { useActions, useAudios, useImage, useQuizAnswers } from '../shared/hooks';
 
 import { Parameters, SceneProps, SceneValue, TemplateParameterType } from '../shared/types';
-import { clsx } from '../shared/utils';
+import {clsx, getElementId} from '../shared/utils';
 
 import answerImage from "./assets/answer";
 import iconCross from './assets/icon-cross.svg';
@@ -125,8 +125,9 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
 
     return (
       <div
-        id="background"
-        onClick={handleClick('background')}
+          id={getElementId(`background`, previewMode)}
+
+          onClick={handleClick('background')}
         className={clsx(styles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
           backgroundColor: `${getValue('background', 'background')}`,
@@ -156,8 +157,9 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
           style={{background: fullImage.background}}
         >
           <h2
-            id="question"
-            className={clsx(styles.fullScreenText, isPreview, classes?.fullScreenText)}
+              id={getElementId(`fullscreenText`, previewMode)}
+
+              className={clsx(styles.fullScreenText, isPreview, classes?.fullScreenText)}
           >
             {fullImage.text}
           </h2>
@@ -176,15 +178,17 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
           onClick={handleClick('question')}
         >
           <h1
-            id="question"
-            className={clsx(styles.title, isPreview, classes?.questionText)}
+              id={getElementId(`question`, previewMode)}
+
+              className={clsx(styles.title, isPreview, classes?.questionText)}
           >
             {getValue('question', 'text')}
           </h1>
           <div className={clsx(styles.imageContainer, isPreview, classes?.questionImageContainer)}>
             <div
-              id="question_image"
-              style={{backgroundImage: `url(${`${getValue('question', 'url')}` || questionImage})`}}
+                id={getElementId(`question_image`, previewMode)}
+
+                style={{backgroundImage: `url(${`${getValue('question', 'url')}` || questionImage})`}}
               className={clsx(
                 styles.image,
                 isPreview,
@@ -199,8 +203,9 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
           {answers.map((k, index) => (
             <div key={k} className={clsx(styles.answer, isActive(k), isPreview, getEditClass(), classes?.answerRoot)} onClick={handleImageClick(k, index)} style={answerStyles}>
               <div
-                id={k}
-                className={clsx(styles.element, isPreview, classes?.answer)}
+                  id={getElementId(k, previewMode)}
+
+                  className={clsx(styles.element, isPreview, classes?.answer)}
               >
                 {answers.length > MIN_ANSWERS && (
                   <button
@@ -211,7 +216,8 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
                   </button>
                 )}
                 <p
-                  id={`text_${k}`}
+                    id={getElementId(`text_${k}`, previewMode)}
+
                   className={clsx(
                     styles.answerText,
                     isPreview,
@@ -222,8 +228,8 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
                 </p>
                 <div className={clsx(styles.imageContainer, isPreview, classes?.answerImageContainer)}>
                   <div
-                    id={`image_${k}`}
-                    style={{backgroundImage: `url(${`${getValue(k, 'url')}` || answerImage})`}}
+                      id={getElementId(`image_${k}`, previewMode)}
+                      style={{backgroundImage: `url(${`${getValue(k, 'url')}` || answerImage})`}}
                     onLoad={() => onImageLoad(`image_${k}`)}
                     onError={() => onImageError(`image_${k}`)}
                     className={clsx(

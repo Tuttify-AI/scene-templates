@@ -5,7 +5,7 @@ import { BaseSceneElements, Classes } from './types';
 import { TemplateParameter, SceneProps, SceneValue, Parameters } from '../shared/types';
 import { useImage, useActions, useAudios } from '../shared/hooks';
 import { useAnimation } from './hooks';
-import { transition, clsx } from '../shared/utils';
+import {transition, clsx, getElementId} from '../shared/utils';
 import defaultImage from './assets/full-image';
 
 export type FullImageWithButtonProps = SceneProps & {
@@ -43,8 +43,9 @@ const FullImageWithButton = forwardRef<HTMLDivElement, FullImageWithButtonProps>
 
     return (
       <animated.div
-        id="background"
-        onClick={handleClick('background')}
+          id={getElementId(`background`, previewMode)}
+
+          onClick={handleClick('background')}
         className={clsx(sceneStyles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
           backgroundColor: `${getValue('background', 'background')}`,
@@ -66,7 +67,8 @@ const FullImageWithButton = forwardRef<HTMLDivElement, FullImageWithButtonProps>
           </Fragment>
         )}
           <animated.h1
-              id="title"
+              id={getElementId(`title`, previewMode)}
+
               onMouseEnter={handleHover('title')}
               onMouseLeave={clearHover}
               onClick={handleClick('title', {text: getValue('title', 'text') as string})}
@@ -80,8 +82,8 @@ const FullImageWithButton = forwardRef<HTMLDivElement, FullImageWithButtonProps>
               {getValue('title', 'text')}
           </animated.h1>
         <animated.img
-          id="image"
-          alt="image"
+            id={getElementId(`image`, previewMode)}
+            alt="image"
           onMouseEnter={handleHover('image')}
           onMouseLeave={clearHover}
           src={`${getValue('image', 'url') || defaultImage}`}
@@ -102,7 +104,8 @@ const FullImageWithButton = forwardRef<HTMLDivElement, FullImageWithButtonProps>
           onClick={handleClick('image', {imageUrl: getValue('image', 'url') as string})}
         />
           <button
-              id="button"
+              id={getElementId(`button`, previewMode)}
+
               onMouseEnter={handleHover('button')}
               onMouseLeave={clearHover}
               className={clsx(

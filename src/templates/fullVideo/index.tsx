@@ -5,7 +5,7 @@ import { BaseSceneElements, Classes } from './types';
 import { TemplateParameter, SceneProps, SceneValue, Parameters } from '../shared/types';
 import { useActions, useAudios } from '../shared/hooks';
 import { useAnimation } from './hooks';
-import {clsx} from '../shared/utils';
+import {clsx, getElementId} from '../shared/utils';
 import ReactPlayer from 'react-player';
 import defaultImage from './assets/full-image';
 
@@ -40,7 +40,7 @@ const FullVideo = forwardRef<HTMLDivElement, FullVideoSceneProps>(
 
     return (
       <animated.div
-        id="background"
+          id={getElementId('background', previewMode)}
         onClick={handleClick('background')}
         className={clsx(sceneStyles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
