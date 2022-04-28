@@ -1,12 +1,12 @@
-import React, { useCallback, useMemo, useRef, forwardRef, Fragment } from 'react';
+import React, { useCallback, useMemo, useRef, forwardRef } from 'react';
 import { animated } from 'react-spring';
 import sceneStyles from './styles.module.css';
 import { IMAGES, SHAPES } from './constants';
 import { BaseSceneElements, Classes } from './types';
-import { TemplateParameter, SceneProps, SceneValue, Parameters } from '../shared/types';
+import { TemplateParameter, SceneProps, SceneValue } from '../shared/types';
 import { useActions, useAudios, useImage } from '../shared/hooks';
 import { useAnimation } from './hooks';
-import { transition, clsx, getElementId } from '../shared/utils';
+import { transition, clsx, getElementId, getElementValue } from '../shared/utils';
 
 export type Base2SceneProps = SceneProps & {
   parameters?: BaseSceneElements<TemplateParameter>;
@@ -17,7 +17,7 @@ export type Base2SceneProps = SceneProps & {
 const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, parameters, values, onActiveElementClick }, ref) => {
     const scrollRef = useRef<HTMLDivElement>(null);
-    const { audios } = useAudios({ values });
+    const { handlePauseAll, renderAudios } = useAudios({ values });
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
 
     const {
@@ -39,18 +39,13 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
       [editMode]
     );
 
-    const getValue = useCallback(
-      (element: keyof BaseSceneElements, parameter: keyof Parameters) =>
-        values?.[element]?.[parameter]?.value ?? parameters?.[element]?.[parameter]?.default_value,
-      [values, parameters]
-    );
+    const getValue = useMemo(() => getElementValue(values, parameters), [values, parameters]);
 
     const { handleClick } = useActions({
       onClick,
-      getValue,
       disabled: editMode || previewMode,
-      audios,
       onActiveElementClick,
+      handlePauseAll,
     });
 
     const isActive = useCallback(
@@ -61,6 +56,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
       (key: keyof BaseSceneElements) => hiddenImageList[key] && sceneStyles.hidden,
       [hiddenImageList]
     );
+
     const isPreview = useMemo(() => previewMode && sceneStyles.preview, [previewMode]);
 
     return (
@@ -75,18 +71,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
         }}
         ref={ref}
       >
-        {audios && (
-          <Fragment>
-            {Object.keys(audios).map(audio => (
-              <audio
-                key={`${audio}_sound`}
-                id={`${audio}_sound`}
-                ref={audios?.[audio]}
-                src={getValue(audio, 'sound') as string}
-              />
-            ))}
-          </Fragment>
-        )}
+        {renderAudios()}
         <div ref={scrollRef} className={sceneStyles.scroll} />
         <div className={sceneStyles.view}>
           {IMAGES.filter(el => el.isPreviewImage).map(({ name, defaultImage }) => (
@@ -94,7 +79,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
               id={getElementId(name, previewMode)}
               onMouseEnter={handleHover(name)}
               onMouseLeave={clearHover}
-              onClick={handleClick(name, { imageUrl: getValue(name, 'url') as string })}
+              onClick={handleClick(name, { data: { imageUrl: getValue(name, 'url') as string } })}
               onLoad={() => onImageLoad(name)}
               onError={() => onImageError(name)}
               key={name}
@@ -124,7 +109,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
             id={getElementId(name, previewMode)}
             onMouseEnter={handleHover(name)}
             onMouseLeave={clearHover}
-            onClick={handleClick(name, { imageUrl: getValue(name, 'url') as string })}
+            onClick={handleClick(name, { data: { imageUrl: getValue(name, 'url') as string } })}
             onLoad={() => onImageLoad(name)}
             onError={() => onImageError(name)}
             key={name}
@@ -153,7 +138,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
             id={getElementId(`${name}`, previewMode)}
             onMouseEnter={handleHover(name)}
             onMouseLeave={clearHover}
-            onClick={handleClick(name, { imageUrl: getValue(name, 'background') as string })}
+            onClick={handleClick(name, { data: { imageUrl: getValue(name, 'background') as string } })}
             key={name}
             className={clsx(
               sceneStyles.shape,

@@ -1,11 +1,11 @@
-import React, { useCallback, useMemo, forwardRef, Fragment } from 'react';
+import React, { useCallback, useMemo, forwardRef } from 'react';
 import { animated } from 'react-spring';
 import sceneStyles from './styles.module.css';
 import { BaseSceneElements, Classes } from './types';
-import { TemplateParameter, SceneProps, SceneValue, Parameters } from '../shared/types';
+import { TemplateParameter, SceneProps, SceneValue } from '../shared/types';
 import { useImage, useActions, useAudios } from '../shared/hooks';
 import { useAnimation } from './hooks';
-import { transition, clsx, getElementId } from '../shared/utils';
+import { transition, clsx, getElementId, getElementValue } from '../shared/utils';
 import defaultImage from './assets/full-image';
 
 export type FullImageSceneProps = SceneProps & {
@@ -22,18 +22,13 @@ const FullImage = forwardRef<HTMLDivElement, FullImageSceneProps>(
     });
 
     const getEditClass = useCallback((type: 'edit' | 'editRoot' = 'edit') => editMode && sceneStyles[type], [editMode]);
-    const { audios } = useAudios({ values });
-    const getValue = useCallback(
-      (element: keyof BaseSceneElements, parameter: keyof Parameters) =>
-        values?.[element]?.[parameter]?.value ?? parameters?.[element]?.[parameter]?.default_value,
-      [values, parameters]
-    );
+    const { handlePauseAll, renderAudios } = useAudios({ values });
+    const getValue = useMemo(() => getElementValue(values, parameters), [values, parameters]);
 
     const { handleClick } = useActions({
       onClick,
-      getValue,
       disabled: editMode || previewMode,
-      audios,
+      handlePauseAll,
       onActiveElementClick,
     });
 
@@ -59,18 +54,7 @@ const FullImage = forwardRef<HTMLDivElement, FullImageSceneProps>(
         onMouseLeave={resetAnimatedProps}
         ref={ref}
       >
-        {audios && (
-          <Fragment>
-            {Object.keys(audios).map(audio => (
-              <audio
-                key={`${audio}_sound`}
-                id={`${audio}_sound`}
-                ref={audios?.[audio]}
-                src={getValue(audio, 'sound') as string}
-              />
-            ))}
-          </Fragment>
-        )}
+        {renderAudios()}
         <animated.img
           id={getElementId('image', previewMode)}
           onMouseEnter={handleHover('image')}
@@ -91,7 +75,7 @@ const FullImage = forwardRef<HTMLDivElement, FullImageSceneProps>(
           }}
           onLoad={() => onImageLoad('image')}
           onError={() => onImageError('image')}
-          onClick={handleClick('image', { imageUrl: getValue('image', 'url') as string })}
+          onClick={handleClick('image', { data: { imageUrl: getValue('image', 'url') as string } })}
         />
       </animated.div>
     );

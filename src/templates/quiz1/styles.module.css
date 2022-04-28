@@ -189,71 +189,8 @@
     display: inline-flex;
 }
 
-.btn {
-    margin: 0;
-    padding: 0;
-    background: none;
-    font: inherit;
-    text-align: center;
-    border: 0;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-.btn:focus {
-    outline: none;
-}
-
-.btnAddElement {
-    position: absolute;
-    z-index: 12;
-    bottom: -24px;
-    width: 48px;
-    height: 48px;
-    font-size: 14px;
-    font-weight: 700;
-    background-color: #00a6a8;
-    color: var(--colorWhite);
-    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-    transition: background-color 0.25s ease-in-out;
-}
-
-.btnAddElement:hover {
-    background-color: rgb(0, 116, 117);
-}
-
-.addElementIcon {
-    max-width: 20px;
-    margin: 0 auto;
-    vertical-align: middle;
-}
-
-.btnDeleteElement {
-    display: none;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    z-index: 10;
-    top: 0;
-    right: 0;
-    width: 32px;
-    height: 32px;
-    background-color: var(--colorWhite);
-    border: 1px solid var(--colorLightGray);
-}
-
-.deleteElementIcon {
-    max-width: 14px;
-    vertical-align: middle;
-}
-
-.btnAddElement:not(.edit),
-.btnDeleteElement:not(.edit),
-.totalElements:not(.edit),
-.preview .btnAddElement,
-.preview .btnDeleteElement,
-.preview .totalElements {
-    display: none !important;
+button.btnDeleteElement {
+    transform: translate(0, 0);
 }
 
 @media screen and (max-width: 600px) {

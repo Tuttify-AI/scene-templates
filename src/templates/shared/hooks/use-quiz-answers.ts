@@ -86,7 +86,7 @@ export default function useQuizAnswers({
 
   const handleImageClick = useCallback(
     (k: string, index: number) => (e: React.MouseEvent<HTMLElement>) => {
-      handleClick(k, getElementData(k))(e);
+      handleClick(k, { data: getElementData(k) })(e);
       handleSetFullImageSrc({
         key: `full_image_${k}`,
         src: (getValue(k, 'full_screen_url') as string) || defaultImages[index] || defaultImages[0],

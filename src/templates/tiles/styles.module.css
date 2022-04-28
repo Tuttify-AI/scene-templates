@@ -1,0 +1,233 @@
+:root {
+    --shape-box-shadow: 1px 1px 12px 1px rgba(100, 100, 100, 0.8);
+    --text-shadow: 0 0 12px rgba(100, 100, 100, 0.8);
+    --colorWhite: #fff;
+    --centerTransform: translate(-50%, -50%);
+    --mainBorderRadius: 16px;
+    --textHoverTranslateY: translateY(-70%)
+}
+
+.root {
+    z-index: 1;
+    width: 100%;
+    height: 600px;
+    position: relative;
+    border-radius: var(--mainBorderRadius);
+    background: var(--colorWhite);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    font-family: 'Lato', sans-serif;
+}
+
+.root > *.edit {
+    transition: all 0.25s ease-in-out;
+}
+
+.root.editRoot {
+    transition: box-shadow 1s ease-in-out;
+}
+
+.edit:not(.active) {
+    opacity: 0.5;
+}
+
+.root > * {
+    box-sizing: border-box;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.preview.root {
+    width: 1200px;
+    height: 600px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    border-radius: 0;
+    opacity: 0;
+}
+
+.slideItem {
+    padding: 6px 12px;
+}
+
+.tile {
+    position: absolute;
+    height: 86%;
+    width: 90%;
+    top: 7%;
+    left: 5%;
+    z-index: 2;
+    --background-hover-color: transparent;
+    --background-color: transparent;
+    cursor: pointer;
+    user-select: none;
+    background-color: var(--background-color);
+    border-radius: var(--mainBorderRadius);
+}
+
+.tile:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: all 0.25s ease-in-out;
+}
+
+.totalTiles {
+    position: absolute;
+    bottom: -24px;
+    right: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgb(117, 117, 117);
+}
+
+.btnDeleteTile {}
+
+.slideItem:hover > .tile:before, .slideItem.preview:first-child > .tile:before {
+    background-color: var(--background-hover-color);
+    transform: scaleY(1.1) scaleX(1.05);
+    border-radius: var(--mainBorderRadius);
+}
+
+.slideItem:hover .btnDeleteTile {
+    display: inline-flex;
+}
+
+.tile.active:before {
+    background-color: var(--background-hover-color);
+    transform: scaleY(1.1) scaleX(1.05);
+    border-radius: var(--mainBorderRadius);
+}
+
+.slideItem:hover > .tileImage, .slideItem.preview:first-child > .tileImage {
+    transform: var(--centerTransform) scale(var(--image-hover-scale)) rotate(360deg);
+}
+
+.tileImage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 3;
+    width: 60%;
+    --image-height: 40%;
+    --image-hover-scale: 1.35;
+    height: var(--image-height);
+    object-fit: contain;
+    transform: var(--centerTransform);
+    transition: all 0.25s ease-in-out;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tileImage > img {
+    border-radius: var(--mainBorderRadius);
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.tileText {
+    cursor: pointer;
+    z-index: 3;
+    font-size: 32px;
+    line-height: 36px;
+    font-weight: 600;
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    text-align: center;
+    --text-color: #000;
+    --text-hover-color: var(--colorWhite);
+    --text-hover-scale: var(--textHoverTranslateY);
+    color: var(--text-color);
+    transition: all 0.25s ease-in-out;
+    word-break: break-word;
+}
+
+.slideItem:hover > .tileText, .slideItem.preview:first-child > .tileText {
+    transform: translateX(-50%) var(--text-hover-scale) scale(1.1);
+    color: var(--text-hover-color);
+}
+
+.swiper {
+    width: 100%;
+    padding: 24px 0;
+}
+
+.activeDiv {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    background-color: transparent;
+    z-index: 10;
+    border-radius: var(--mainBorderRadius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all .2s ease-in-out;
+}
+.activeDiv.showActiveDiv {
+    transform: scale(1);
+}
+
+.activeDiv.hideActiveDiv {
+    transform: scale(0);
+    z-index: -1;
+}
+
+.activeDiv.edit, .activeDiv.preview {
+    display: none;
+}
+
+.activeDiv.hideActiveDiv > .activeImage,  .activeDiv.hideActiveDiv > .activeText {
+    display: none;
+}
+
+.activeImageWrap {
+    position: relative;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 100%;
+}
+
+.activeImage {
+    position: absolute;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    padding: 8px;
+    border-radius: var(--mainBorderRadius);
+}
+
+.activeText {
+    width: 100%;
+    padding: 16px;
+    text-align: center;
+    font-weight: bold;
+    --fullscreen-text-color: var(--colorWhite);
+    color: var(--fullscreen-text-color);
+}
+
+@media screen and (max-width: 600px) {
+    .root:not(.preview) {
+        height: 500px;
+    }
+}

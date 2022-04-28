@@ -1,19 +1,20 @@
-import React, { CSSProperties, forwardRef, useCallback, useMemo, useState, Fragment } from 'react';
+import React, { CSSProperties, forwardRef, useCallback, useMemo, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Grid } from 'swiper';
 
 import { useActions, useWindowSize, useImage, useAudios, useTiles } from '../shared/hooks';
-import { clsx, getElementId } from '../shared/utils';
+import { clsx, getElementId, getElementValue } from '../shared/utils';
 import { IMAGES } from './constants';
 
-import { Parameters, SceneProps, SceneValue, TemplateParameterType } from '../shared/types';
+import { SceneProps, SceneValue, TemplateParameterType } from '../shared/types';
 import { BaseSceneElements, Classes } from './types';
 import SwiperClass from 'swiper/types/swiper-class';
 
 import iconPlus from './assets/icon-plus.svg';
 import iconCross from './assets/icon-cross.svg';
 
-import 'swiper/swiper.scss';
-import 'swiper/components/navigation/navigation.min.css';
+import 'swiper/css';
+import 'swiper/css/grid';
 import styles from './styles.module.css';
 
 export type MultipleTiles4FullImageProps = SceneProps & {
@@ -26,7 +27,7 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
     const [swiper, setSwiper] = useState<SwiperClass | null>(null);
     const { isSm } = useWindowSize();
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
-    const { audios } = useAudios({ values });
+    const { renderAudios, handlePauseAll } = useAudios({ values });
     const isActive = useCallback((key: keyof BaseSceneElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
     const getEditClass = useCallback(
@@ -34,16 +35,12 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
       [editMode]
     );
 
-    const getValue = useCallback(
-      (element: keyof BaseSceneElements, parameter: keyof Parameters) =>
-        (values?.[element]?.[parameter] as SceneValue)?.value,
-      [values]
-    );
+    const getValue = useMemo(() => getElementValue(values), [values]);
+
     const { handleClick } = useActions({
       onClick,
-      getValue,
+      handlePauseAll,
       disabled: editMode || previewMode,
-      audios,
       onActiveElementClick,
     });
 
@@ -53,7 +50,7 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
       [hiddenImageList]
     );
 
-    const handleAddTile = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleAddTile = async (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
       const lastTile = Number(tiles[tiles.length - 1]?.replace('tile', ''));
       if (lastTile && onAdd) {
@@ -108,18 +105,17 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
       }
 
       if (swiper) {
-        swiper.update();
-        setTimeout(() => swiper.slideTo(tiles.length), 0);
+        await swiper.update();
+        await swiper.slideTo(tiles.length);
       }
     };
 
-    const { handleFullImageClick, handleImageClick, handleDeleteTile, fullImage, getTileData } = useTiles({
+    const { handleFullImageClick, onSetFullTile, handleDeleteTile, fullTile, getTileData } = useTiles({
       tiles,
       onSet,
       handleAddTile,
       values,
       handleClick,
-      getValue,
       defaultImages: IMAGES,
       onActiveElementClick,
       previewMode,
@@ -136,32 +132,21 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
         }}
         ref={ref}
       >
-        {audios && (
-          <Fragment>
-            {Object.keys(audios).map(audio => (
-              <audio
-                key={`${audio}_sound`}
-                id={`${audio}_sound`}
-                ref={audios?.[audio]}
-                src={getValue(audio, 'sound') as string}
-              />
-            ))}
-          </Fragment>
-        )}
+        {renderAudios()}
         <div
           className={clsx(
             styles.activeDiv,
             isPreview,
             getEditClass(),
-            fullImage.src ? styles.showActiveDiv : styles.hideActiveDiv
+            fullTile.image.value ? styles.showActiveDiv : styles.hideActiveDiv
           )}
-          onClick={handleFullImageClick}
-          style={{ background: fullImage.background }}
+          onClick={handleFullImageClick()}
+          style={{ background: fullTile.image.background }}
         >
           <img
-            id={getElementId(fullImage.key, previewMode)}
+            id={getElementId(fullTile.image.key, previewMode)}
             alt=""
-            src={fullImage.src}
+            src={fullTile.image.value}
             className={clsx(styles.activeImage, isPreview, getEditClass())}
           />
         </div>
@@ -173,14 +158,17 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
           className={styles.swiper}
           spaceBetween={0}
           slidesPerView={previewMode ? 2 : isSm ? 1 : 2}
-          slidesPerColumn={2}
+          grid={{
+            rows: 2,
+          }}
+          modules={[Grid]}
           onSwiper={setSwiper}
         >
           {tiles.map((k, index) => (
             <SwiperSlide key={k} className={clsx(styles.slideItem, isPreview)}>
               <div
                 id={getElementId(k, previewMode)}
-                onClick={handleClick(k, getTileData(k))}
+                onClick={handleClick(k, { data: getTileData(k) })}
                 className={clsx(styles.tile, isActive(k), getEditClass(), isPreview, classes?.tile)}
                 style={
                   {
@@ -191,7 +179,7 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
                 {index > IMAGES.length - 1 && (
                   <button
                     className={clsx(styles.btn, styles.btnDeleteTile, getEditClass('edit'))}
-                    onClick={e => handleDeleteTile(e, k)}
+                    onClick={e => handleDeleteTile(k, e)}
                   >
                     <img className={styles.deleteTileIcon} src={iconCross} alt="" />
                   </button>
@@ -201,7 +189,7 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
                 id={getElementId(`image_${k}`, previewMode)}
                 alt={`image_${k}`}
                 src={(getValue(`image_${k}`, 'url') as string) || IMAGES[index] || IMAGES[0]}
-                onClick={handleImageClick(k, index)}
+                onClick={onSetFullTile(k, index)}
                 onLoad={() => onImageLoad(`image_${k}`)}
                 onError={() => onImageError(`image_${k}`)}
                 className={clsx(
@@ -215,7 +203,7 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
               />
               <p
                 id={getElementId(`text_${k}`, previewMode)}
-                onClick={handleClick(`text_${k}`, getTileData(k))}
+                onClick={handleClick(`text_${k}`, { data: getTileData(k) })}
                 className={clsx(
                   styles.tileText,
                   isActive(`text_${k}`),

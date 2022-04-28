@@ -1,11 +1,11 @@
-import React, { useCallback, useMemo, forwardRef, Fragment, CSSProperties } from 'react';
+import React, { useCallback, useMemo, forwardRef, CSSProperties } from 'react';
 import { animated } from 'react-spring';
 import sceneStyles from './styles.module.css';
 import { BaseSceneElements, Classes } from './types';
-import { TemplateParameter, SceneProps, SceneValue, Parameters } from '../shared/types';
+import { TemplateParameter, SceneProps, SceneValue } from '../shared/types';
 import { useImage, useActions, useAudios } from '../shared/hooks';
 import { useAnimation } from './hooks';
-import { transition, clsx, getElementId } from '../shared/utils';
+import { transition, clsx, getElementId, getElementValue } from '../shared/utils';
 import defaultImage from './assets/full-image';
 
 export type FullImageWithButtonProps = SceneProps & {
@@ -25,18 +25,14 @@ const FullImageWithButton = forwardRef<HTMLDivElement, FullImageWithButtonProps>
       (type: 'edit' | 'editRoot' | 'editText' = 'edit') => editMode && sceneStyles[type],
       [editMode]
     );
-    const { audios } = useAudios({ values });
-    const getValue = useCallback(
-      (element: keyof BaseSceneElements, parameter: keyof Parameters) =>
-        values?.[element]?.[parameter]?.value ?? parameters?.[element]?.[parameter]?.default_value,
-      [values, parameters]
-    );
+    const { renderAudios, handlePauseAll } = useAudios({ values });
+
+    const getValue = useMemo(() => getElementValue(values, parameters), [values, parameters]);
 
     const { handleClick } = useActions({
       onClick,
-      getValue,
+      handlePauseAll,
       disabled: editMode || previewMode,
-      audios,
       onActiveElementClick,
     });
 
@@ -62,23 +58,12 @@ const FullImageWithButton = forwardRef<HTMLDivElement, FullImageWithButtonProps>
         onMouseLeave={resetAnimatedProps}
         ref={ref}
       >
-        {audios && (
-          <Fragment>
-            {Object.keys(audios).map(audio => (
-              <audio
-                key={`${audio}_sound`}
-                id={`${audio}_sound`}
-                ref={audios?.[audio]}
-                src={getValue(audio, 'sound') as string}
-              />
-            ))}
-          </Fragment>
-        )}
+        {renderAudios()}
         <animated.h1
           id={getElementId(`title`, previewMode)}
           onMouseEnter={handleHover('title')}
           onMouseLeave={clearHover}
-          onClick={handleClick('title', { text: getValue('title', 'text') as string })}
+          onClick={handleClick('title', { data: { text: getValue('title', 'text') as string } })}
           className={clsx(sceneStyles.title, isActive('title'), getEditClass('editText'), isPreview, classes?.title)}
           style={{
             ...scale,
@@ -108,7 +93,7 @@ const FullImageWithButton = forwardRef<HTMLDivElement, FullImageWithButtonProps>
           }}
           onLoad={() => onImageLoad('image')}
           onError={() => onImageError('image')}
-          onClick={handleClick('image', { imageUrl: getValue('image', 'url') as string })}
+          onClick={handleClick('image', { data: { imageUrl: getValue('image', 'url') as string } })}
         />
         <button
           id={getElementId(`button`, previewMode)}
@@ -128,7 +113,7 @@ const FullImageWithButton = forwardRef<HTMLDivElement, FullImageWithButtonProps>
               '--button-text-color': getValue('button', 'text_color'),
             } as CSSProperties
           }
-          onClick={handleClick('button', { text: getValue('button', 'text') as string })}
+          onClick={handleClick('button', { data: { text: getValue('button', 'text') as string } })}
         >
           {getValue('button', 'text')}
         </button>

@@ -1,4 +1,4 @@
-import { Elements, Mods } from './types';
+import { Elements, GetValue, Mods, Parameters, TemplateParameter } from './types';
 
 export const isInViewport = (el: HTMLElement | null) => {
   const rect = el?.getBoundingClientRect();
@@ -43,3 +43,17 @@ export const deleteElement = (values: Elements | undefined, elements: string[], 
     }, {} as Elements);
 
 export const getElementId = (id: string, previewMode?: boolean) => `${id}${previewMode ? '-preview' : ''}`;
+
+export const getNumber = (value: unknown, defaultValue = 1) =>
+  !Number.isNaN(Number(value)) ? Number(value) : defaultValue;
+
+export const getElementValue =
+  <T>(values?: Elements, parameters?: Elements<TemplateParameter>): GetValue<T> =>
+  (element: keyof Elements<T>, parameter: keyof Parameters) =>
+    values?.[element]?.[parameter]?.value ?? parameters?.[element]?.[parameter]?.default_value;
+
+export function range(start: number, end: number) {
+  return Array(end - start + 1)
+    .fill('')
+    .map((_, idx) => start + idx);
+}

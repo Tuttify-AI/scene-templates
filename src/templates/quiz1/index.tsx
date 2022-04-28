@@ -1,16 +1,15 @@
-import React, { forwardRef, Fragment, useCallback, useMemo } from 'react';
+import React, { forwardRef, useCallback, useMemo } from 'react';
 import { useActions, useAudios, useImage, useQuizAnswers } from '../shared/hooks';
 
-import { Parameters, SceneProps, SceneValue, TemplateParameterType } from '../shared/types';
-import { clsx, getElementId } from '../shared/utils';
+import { SceneProps, SceneValue, TemplateParameterType } from '../shared/types';
+import { clsx, getElementId, getElementValue } from '../shared/utils';
 
 import answerImage from './assets/answer';
-import iconCross from './assets/icon-cross.svg';
 
-import iconPlus from './assets/icon-plus.svg';
 import questionImage from './assets/question';
 import styles from './styles.module.css';
 import { Classes, Quiz1SceneElements } from './types';
+import { AddButton, DeleteButton } from '../shared/components';
 
 export type QuizOneProps = SceneProps & {
   values?: Quiz1SceneElements<SceneValue>;
@@ -23,7 +22,7 @@ const MIN_ANSWERS = 2;
 const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet, onActiveElementClick }, ref) => {
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
-    const { audios } = useAudios({ values });
+    const { renderAudios, handlePauseAll } = useAudios({ values });
     const isActive = useCallback((key: keyof Quiz1SceneElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
     const getEditClass = useCallback(
@@ -31,16 +30,12 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
       [editMode]
     );
 
-    const getValue = useCallback(
-      (element: keyof Quiz1SceneElements, parameter: keyof Parameters) =>
-        (values?.[element]?.[parameter] as SceneValue)?.value,
-      [values]
-    );
+    const getValue = useMemo(() => getElementValue(values), [values]);
+
     const { handleClick } = useActions({
       onClick,
-      getValue,
+      handlePauseAll,
       disabled: editMode || previewMode,
-      audios,
       onActiveElementClick,
     });
 
@@ -135,18 +130,7 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
         }}
         ref={ref}
       >
-        {audios && (
-          <Fragment>
-            {Object.keys(audios).map(audio => (
-              <audio
-                key={`${audio}_sound`}
-                id={`${audio}_sound`}
-                ref={audios?.[audio]}
-                src={getValue(audio, 'sound') as string}
-              />
-            ))}
-          </Fragment>
-        )}
+        {renderAudios()}
         <div
           className={clsx(
             styles.activeDiv,
@@ -169,10 +153,8 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
             className={clsx(styles.activeImage, styles.image, isPreview, getEditClass(), classes?.fullScreenImage)}
           />
         </div>
-        {answers.length < MAX_ANSWERS ? (
-          <button className={clsx(styles.btn, styles.btnAddElement, getEditClass())} onClick={handleAddAnswer}>
-            <img className={styles.addElementIcon} src={iconPlus} alt="" />
-          </button>
+        {answers.length < MAX_ANSWERS && editMode && !previewMode ? (
+          <AddButton className={styles.btnAddElement} onClick={handleAddAnswer} />
         ) : null}
         <div
           className={clsx(styles.questionRoot, getEditClass(), classes?.questionRoot)}
@@ -203,13 +185,8 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
               style={answerStyles}
             >
               <div id={getElementId(k, previewMode)} className={clsx(styles.element, isPreview, classes?.answer)}>
-                {answers.length > MIN_ANSWERS && (
-                  <button
-                    className={clsx(styles.btn, styles.btnDeleteElement, getEditClass('edit'))}
-                    onClick={e => handleDelete(e, k)}
-                  >
-                    <img className={styles.deleteElementIcon} src={iconCross} alt="" />
-                  </button>
+                {answers.length > MIN_ANSWERS && editMode && !previewMode && (
+                  <DeleteButton className={styles.btnDeleteElement} onClick={e => handleDelete(e, k)} />
                 )}
                 <p
                   id={getElementId(`text_${k}`, previewMode)}
