@@ -31,7 +31,7 @@ export default function useAudios({ values }: Params) {
     () =>
       audios ? (
         <Fragment>
-          {Object.keys(audios).map(audioKey => (
+          {Object.keys(audios).filter(audioKey => !!getElementValue(values)(audioKey, audios?.[audioKey].parameter)).map(audioKey => (
             <audio
               key={`${audioKey}_sound`}
               id={`${audioKey}_sound`}
