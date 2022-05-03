@@ -224,6 +224,7 @@
     padding: 16px;
     text-align: center;
     font-weight: bold;
+    word-break: break-word;
     --fullscreen-text-color: var(--colorWhite);
     color: var(--fullscreen-text-color);
 }

@@ -12,13 +12,16 @@ const DEFAULTS = {
   textSize: 36,
   textPadding: 8,
   imageHoverScale: 1.35,
-  imageHeight: 0.4, //in percents
+  imageHeight: 0.4, //in percents,
+  maxTiles: 50,
 };
 
 export default function useTilesParams({ values, previewMode, editMode, swiper }: Params) {
   const { isMd, isSm } = useWindowSize();
   const getValue = useMemo(() => getElementValue(values), [values]);
 
+  // tiles limit if view is unlocked
+  const generalTilesLimit = useMemo(() => getNumber(getValue('config', 'tiles_limit')) || DEFAULTS.maxTiles, [getValue]);
   // is slider limited for one screen
   const showNavigation = useMemo(() => getNumber(getValue('config', 'navigation')) === 1, [getValue]);
   // is slider limited for one screen
@@ -34,17 +37,17 @@ export default function useTilesParams({ values, previewMode, editMode, swiper }
   // slides per column from configuration
   const slidesPerColumn = useMemo(() => getNumber(getValue('config', 'slides_per_column')), [getValue]);
   // tile text size depending on total number of slides and screen size,
-  // 0.025 - coefficient for slides per view, 0.075 - coefficient for slides per column
+  // 0.035 - modifier for slides per view, 0.075 - modifier for slides per column
   const textSize = useMemo(
     () =>
       Math.floor(
         DEFAULTS.textSize *
-          (1 - slidesPerViewFromConfig * 0.025 * (isSm ? 0.5 : isMd ? 0.75 : 1) - slidesPerColumn * 0.075)
+          (1 - slidesPerViewFromConfig * 0.035 * (isSm ? 0.5 : isMd ? 0.75 : 1) - slidesPerColumn * 0.075)
       ),
     [slidesPerViewFromConfig, isMd, isSm, slidesPerColumn]
   );
   // fullscreen text size depending on screen resolution
-  const fullScreenTextSize = useMemo(() => DEFAULTS.textSize * (isSm ? 1 : 1.25), [isSm]);
+  const fullScreenTextSize = useMemo(() => DEFAULTS.textSize * (isSm ? 0.85 : 1.25), [isSm]);
   // tile text margin depends on image and slider height
   const textMargin = useMemo(
     () => ((swiper?.height || 0) / slidesPerColumn) * (DEFAULTS.imageHeight / 2) + textSize + DEFAULTS.textPadding / 2,
@@ -56,8 +59,8 @@ export default function useTilesParams({ values, previewMode, editMode, swiper }
     [slideHeight]
   );
   const tilesLimit = useMemo(
-    () => slidesPerViewFromConfig * slidesPerColumn,
-    [slidesPerColumn, slidesPerViewFromConfig]
+    () => sliderLocked ? slidesPerViewFromConfig * slidesPerColumn : generalTilesLimit,
+    [slidesPerColumn, slidesPerViewFromConfig, generalTilesLimit, sliderLocked]
   );
   const tiles = useMemo(() => Object.keys(values || {}).filter(k => k.startsWith('tile')), [values]);
 
@@ -68,7 +71,7 @@ export default function useTilesParams({ values, previewMode, editMode, swiper }
     [tiles, showSceneActionElements, sliderLocked]
   );
 
-  const allowAddTile = useMemo(() => showSceneActionElements && !sliderLocked, [showSceneActionElements, sliderLocked]);
+  const allowAddTile = useMemo(() => showSceneActionElements && !sliderLocked && tiles.length <= tilesLimit, [showSceneActionElements, sliderLocked, tiles, tilesLimit]);
 
   return {
     DEFAULTS,

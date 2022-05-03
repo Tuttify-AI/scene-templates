@@ -75,6 +75,7 @@ export type SceneValue = {
   title: string;
   value: string | number;
   length?: number;
+  hidden?: boolean;
   options?: { label: string; value: string }[];
 };
 
