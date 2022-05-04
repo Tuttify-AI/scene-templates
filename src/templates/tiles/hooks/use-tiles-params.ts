@@ -71,7 +71,7 @@ export default function useTilesParams({ values, previewMode, editMode, swiper }
     [tiles, showSceneActionElements, sliderLocked]
   );
 
-  const allowAddTile = useMemo(() => showSceneActionElements && !sliderLocked && tiles.length <= tilesLimit, [showSceneActionElements, sliderLocked, tiles, tilesLimit]);
+  const allowAddTile = useMemo(() => showSceneActionElements && !sliderLocked && tiles.length < tilesLimit, [showSceneActionElements, sliderLocked, tiles, tilesLimit]);
 
   return {
     DEFAULTS,
