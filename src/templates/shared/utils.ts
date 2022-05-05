@@ -20,12 +20,15 @@ export const transition =
 
 export const clsx = (...args: unknown[]) => args.filter(a => typeof a === 'string').join(' ');
 
-export const deleteElement = (values: Elements | undefined, elements: string[], key: string) =>
+export const deleteElement = (values: Elements | undefined, elements: string[], key: string | string[]) =>
   Object.keys(values || {})
-    .filter(item => !item.includes(key))
+    .filter(item => (Array.isArray(key) ? !key.some(k => item.includes(k)) : !item.includes(key)))
     .reduce((res, parameter) => {
       if (values) {
-        const newIndex = elements.filter(el => el !== key).findIndex(el => parameter.endsWith(el)) + 1;
+        const newIndex =
+          elements
+            .filter(el => (Array.isArray(key) ? !key.includes(el) : el !== key))
+            .findIndex(el => parameter.endsWith(el)) + 1;
         if (newIndex) {
           const parameterStr = parameter.replace(/\d+/gi, '');
           res[`${parameterStr}${newIndex}`] = {

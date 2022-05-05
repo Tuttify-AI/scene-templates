@@ -75,7 +75,7 @@ export default function useTiles({
   const getValue = useMemo(() => getElementValue(values), [values]);
 
   const handleDeleteTile = useCallback(
-    (k: string, e?: React.MouseEvent<HTMLButtonElement>) => {
+    (k: string | string[], e?: React.MouseEvent<HTMLButtonElement>) => {
       e?.stopPropagation();
       onSet && onSet(deleteElement(values, tiles, k));
     },
