@@ -25,8 +25,6 @@
     z-index: 10;
     border-radius: 16px;
     display: flex;
-}
-.activeDiv.showActiveDiv {
     width: 100%;
     height: 100%;
     top: 0;
@@ -34,12 +32,13 @@
     transition: all 0.25s ease-in-out;
 }
 
+.activeDiv.showActiveDiv {
+    transform: scale(1);
+}
+
 .activeDiv.hideActiveDiv {
-    width: 0;
-    height: 0;
-    top: 50%;
-    left: 50%;
-    transition: all 0.25s ease-in-out;
+    transform: scale(0);
+    z-index: -1;
 }
 
 .activeDiv.edit, .activeDiv.preview {
