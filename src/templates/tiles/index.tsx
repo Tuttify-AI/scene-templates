@@ -187,7 +187,9 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
         </div>
         {showSceneActionElements && (
           <span className={clsx(styles.totalTiles)}>
-            {translations?.totalTiles || `Total tiles`}{`: `}{`${tiles.length}/${tilesLimit}`}
+            {translations?.totalTiles || `Total tiles`}
+            {`: `}
+            {`${tiles.length}/${tilesLimit}`}
           </span>
         )}
         <Swiper

@@ -21,7 +21,10 @@ export default function useTilesParams({ values, previewMode, editMode, swiper }
   const getValue = useMemo(() => getElementValue(values), [values]);
 
   // tiles limit if view is unlocked
-  const generalTilesLimit = useMemo(() => getNumber(getValue('config', 'tiles_limit')) || DEFAULTS.maxTiles, [getValue]);
+  const generalTilesLimit = useMemo(
+    () => getNumber(getValue('config', 'tiles_limit')) || DEFAULTS.maxTiles,
+    [getValue]
+  );
   // is slider limited for one screen
   const showNavigation = useMemo(() => getNumber(getValue('config', 'navigation')) === 1, [getValue]);
   // is slider limited for one screen
@@ -59,7 +62,7 @@ export default function useTilesParams({ values, previewMode, editMode, swiper }
     [slideHeight]
   );
   const tilesLimit = useMemo(
-    () => sliderLocked ? slidesPerViewFromConfig * slidesPerColumn : generalTilesLimit,
+    () => (sliderLocked ? slidesPerViewFromConfig * slidesPerColumn : generalTilesLimit),
     [slidesPerColumn, slidesPerViewFromConfig, generalTilesLimit, sliderLocked]
   );
   const tiles = useMemo(() => Object.keys(values || {}).filter(k => k.startsWith('tile')), [values]);
@@ -71,7 +74,10 @@ export default function useTilesParams({ values, previewMode, editMode, swiper }
     [tiles, showSceneActionElements, sliderLocked]
   );
 
-  const allowAddTile = useMemo(() => showSceneActionElements && !sliderLocked && tiles.length < tilesLimit, [showSceneActionElements, sliderLocked, tiles, tilesLimit]);
+  const allowAddTile = useMemo(
+    () => showSceneActionElements && !sliderLocked && tiles.length < tilesLimit,
+    [showSceneActionElements, sliderLocked, tiles, tilesLimit]
+  );
 
   return {
     DEFAULTS,

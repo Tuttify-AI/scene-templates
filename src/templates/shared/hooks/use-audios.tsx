@@ -31,14 +31,16 @@ export default function useAudios({ values }: Params) {
     () =>
       audios ? (
         <Fragment>
-          {Object.keys(audios).filter(audioKey => !!getElementValue(values)(audioKey, audios?.[audioKey].parameter)).map(audioKey => (
-            <audio
-              key={`${audioKey}_sound`}
-              id={`${audioKey}_sound`}
-              ref={audios?.[audioKey].ref}
-              src={getElementValue(values)(audioKey, audios?.[audioKey].parameter) as string}
-            />
-          ))}
+          {Object.keys(audios)
+            .filter(audioKey => !!getElementValue(values)(audioKey, audios?.[audioKey].parameter))
+            .map(audioKey => (
+              <audio
+                key={`${audioKey}_sound`}
+                id={`${audioKey}_sound`}
+                ref={audios?.[audioKey].ref}
+                src={getElementValue(values)(audioKey, audios?.[audioKey].parameter) as string}
+              />
+            ))}
         </Fragment>
       ) : null,
     [audios, values]
