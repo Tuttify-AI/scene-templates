@@ -114,10 +114,9 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
 
     useEffect(() => {
       // removing tiles if slider is locked and tiles limit is reached
-      if (sliderLocked) {
-        tiles.slice(tilesLimit).forEach(tile => {
-          handleDeleteTile(tile);
-        });
+      const tilesToRemove = tiles.slice(tilesLimit);
+      if (sliderLocked && tilesToRemove.length) {
+        handleDeleteTile(tiles.slice(tilesLimit));
       }
     }, [sliderLocked, tiles, tilesLimit, handleDeleteTile]);
 
