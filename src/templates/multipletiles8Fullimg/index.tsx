@@ -59,11 +59,6 @@ const MultipleTiles8Fullimg = forwardRef<HTMLDivElement, MultipleTiles8FullImage
               title: 'Background hover color',
               type: TemplateParameterType.color,
             },
-            sound: {
-              value: '',
-              title: 'On click sound link',
-              type: TemplateParameterType.sound,
-            },
             title: {
               value: `Tile No.${tiles.length + 1}`,
               title: `Tile No.${tiles.length + 1}`,
@@ -92,6 +87,16 @@ const MultipleTiles8Fullimg = forwardRef<HTMLDivElement, MultipleTiles8FullImage
               value: `Tile No.${tiles.length + 1} image`,
               title: `Tile No.${tiles.length + 1} image`,
               type: TemplateParameterType.title,
+            },
+            fullScreenUrl: {
+              value: '',
+              title: 'Fullscreen image',
+              type: TemplateParameterType.image,
+            },
+            sound: {
+              value: '',
+              title: 'On click sound link',
+              type: TemplateParameterType.sound,
             },
           },
         });
