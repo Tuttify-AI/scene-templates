@@ -167,6 +167,10 @@
     padding: 24px 0;
 }
 
+.swiper > div {
+    box-sizing: border-box;
+}
+
 .activeDiv {
     width: 100%;
     height: 100%;

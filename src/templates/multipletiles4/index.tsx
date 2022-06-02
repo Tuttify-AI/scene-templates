@@ -61,11 +61,6 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
               title: 'Background hover color',
               type: TemplateParameterType.color,
             },
-            sound: {
-              value: '',
-              title: 'On click sound link',
-              type: TemplateParameterType.sound,
-            },
             title: {
               value: `Tile No.${tiles.length + 1}`,
               title: `Tile No.${tiles.length + 1}`,
@@ -94,6 +89,11 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
               value: `Tile No.${tiles.length + 1} image`,
               title: `Tile No.${tiles.length + 1} image`,
               type: TemplateParameterType.title,
+            },
+            sound: {
+              value: '',
+              title: 'On click sound link',
+              type: TemplateParameterType.sound,
             },
           },
         });

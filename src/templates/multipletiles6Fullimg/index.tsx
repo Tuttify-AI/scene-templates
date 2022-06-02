@@ -61,11 +61,6 @@ const MultipleTiles6Fullimg = forwardRef<HTMLDivElement, MultipleTiles6FullImage
               title: 'Background hover color',
               type: TemplateParameterType.color,
             },
-            sound: {
-              value: '',
-              title: 'On click sound link',
-              type: TemplateParameterType.sound,
-            },
             title: {
               value: `Tile No.${tiles.length + 1}`,
               title: `Tile No.${tiles.length + 1}`,
@@ -99,6 +94,11 @@ const MultipleTiles6Fullimg = forwardRef<HTMLDivElement, MultipleTiles6FullImage
               value: '',
               title: 'Fullscreen image',
               type: TemplateParameterType.image,
+            },
+            sound: {
+              value: '',
+              title: 'On click sound link',
+              type: TemplateParameterType.sound,
             },
           },
         });

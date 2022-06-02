@@ -204,6 +204,11 @@
     padding: 24px 0;
 }
 
+
+.swiper > div {
+    box-sizing: border-box;
+}
+
 @media screen and (max-width: 1280px) {
     .slideItem:hover > .tileImage {
         transform: scale(1.45) rotate(360deg);
