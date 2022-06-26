@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, forwardRef, CSSProperties } from 'react';
-import { animated } from 'react-spring';
+import { animated } from '@react-spring/web';
 import sceneStyles from './styles.module.css';
 import { BaseSceneElements, Classes } from './types';
 import { TemplateParameter, SceneProps, SceneValue } from '../shared/types';
