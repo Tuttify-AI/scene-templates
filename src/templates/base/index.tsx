@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, forwardRef } from 'react';
-import { animated } from 'react-spring';
+import { animated } from '@react-spring/web';
 import sceneStyles from './styles.module.css';
 import { ANIMATIONS } from './constants';
 import { BaseSceneElements, Classes } from './types';

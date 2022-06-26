@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { to, useSpring } from 'react-spring';
+import { to, useSpring } from '@react-spring/web';
 import { BaseSceneElements } from '../types';
 import { calc } from '../../shared/utils';
 
