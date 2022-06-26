@@ -1,3 +1,5 @@
+@value bounce from "../shared/shared.css";
+
 :root {
     --shape-box-shadow: 1px 1px 12px 1px rgba(100, 100, 100, 0.8);
     --text-shadow: 0 0 12px rgba(100, 100, 100, 0.8);
@@ -32,7 +34,7 @@
     transition: all 0.25s ease-in-out;
 }
 .activeDiv.showActiveDiv {
-    transform: scale(1);
+    animation: bounce 0.25s;
 }
 
 .activeDiv.hideActiveDiv {
