@@ -14,11 +14,6 @@
     position: relative;
     border-radius: var(--mainBorderRadius);
     background: var(--colorWhite);
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: center;
-    align-items: flex-start;
     font-family: 'Lato', sans-serif;
 }
 
@@ -121,7 +116,9 @@
     width: 100%;
     display: flex;
     flex-direction: row;
+    align-items: center;
     padding: 8px;
+    min-height: 150px;
 }
 
 .selectionLetterItemWrapper {
@@ -129,7 +126,57 @@
 }
 
 .selectionLetterItem {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 60px;
+    font-weight: bold;
     padding: 8px;
+    cursor: pointer;
+    border-radius: var(--mainBorderRadius);
+    border: 1px solid black;
+    --letters-text-color: var(--colorBlack);
+    color: var(--letters-text-color);
+    z-index: 100;
+}
+
+.imageWordWrapper{
+    width: 100%;
+    display: flex;
+    padding: 8px;
+}
+
+.imageWrapper{
+    width: 40%;
+    padding: 8px;
+}
+
+.imageWrapper img{
+    width: 100%;
+    height: auto;
+}
+
+.answerTextWrapper{
+    width: 60%;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.answerLetterItemWrapper{
+    padding: 8px;
+}
+
+.answerLetterItem {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 60px;
+    font-weight: bold;
+    padding: 8px;
+    min-height: 110px;
+    cursor: pointer;
     border-radius: var(--mainBorderRadius);
     border: 1px solid black;
     --letters-text-color: var(--colorBlack);

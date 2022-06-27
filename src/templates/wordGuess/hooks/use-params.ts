@@ -24,9 +24,13 @@ export default function useParams({ values, previewMode, editMode, onSet }: Para
     },
     [onSet, values]
   );
-  const lettersArray = useMemo(() => `${getConfigValue('letters_total')}`.split(''), [getConfigValue]);
-  const additionalLettersArray = useMemo(() => `${getConfigValue('additional_letters')}`.split(''), [getConfigValue]);
-  const wordArray = useMemo(() => `${getConfigValue('word')}`.split(''), [getConfigValue]);
+  const lettersArray = useMemo(() => `${getConfigValue('letters_total')}`.toUpperCase().split(''), [getConfigValue]);
+  const additionalLettersArray = useMemo(
+    () => `${getConfigValue('additional_letters')}`.toUpperCase().split(''),
+    [getConfigValue]
+  );
+  const wordArray = useMemo(() => `${getConfigValue('word')}`.toUpperCase().split(''), [getConfigValue]);
+  const answerArray = useMemo(() => Array.from(Array(wordArray.length).fill('')), [wordArray]);
 
   useEffect(() => {
     if (lettersArray.slice().sort().join('') !== [...wordArray, ...additionalLettersArray].slice().sort().join('')) {
@@ -34,6 +38,7 @@ export default function useParams({ values, previewMode, editMode, onSet }: Para
     }
   }, [lettersArray, onSetConfig, wordArray, additionalLettersArray]);
   const selectionLettersWidth = useMemo(() => 100 / (lettersArray.length || 1), [lettersArray]);
+  const answerLettersWidth = useMemo(() => 100 / (wordArray.length || 1), [wordArray]);
 
   // fullscreen text size depending on screen resolution
   //const fullScreenTextSize = useMemo(() => DEFAULTS.textSize * (isSm ? 0.85 : 1.25), [isSm]);
@@ -47,5 +52,7 @@ export default function useParams({ values, previewMode, editMode, onSet }: Para
     DEFAULTS,
     showSceneActionElements,
     selectionLettersWidth,
+    answerLettersWidth,
+    answerArray,
   };
 }
