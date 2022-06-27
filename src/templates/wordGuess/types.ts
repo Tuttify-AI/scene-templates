@@ -3,7 +3,7 @@ import { Parameters, Elements, SceneValue } from '../shared/types';
 export type GuessWordConfig<T = SceneValue> = {
   word: T;
   additional_letters: T;
-  letters_array: T;
+  letters_total: T;
 };
 
 export type GuessWordElements<T = string | number> = Elements<T> & {

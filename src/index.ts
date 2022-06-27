@@ -4,6 +4,7 @@ import Base2, { Base2SceneProps } from './templates/base2';
 import QuizOne, { QuizOneProps } from './templates/quiz1';
 import FullImage, { FullImageSceneProps } from './templates/fullImage';
 import FullImageWithButton, { FullImageWithButtonProps } from './templates/scene15';
+import GuessWord, { GuessWordSceneProps } from './templates/wordGuess';
 import FullVideo, { FullVideoSceneProps } from './templates/fullVideo';
 import MultipleTiles, { MultipleTilesSceneProps } from './templates/multipletiles';
 import Tiles from './templates/tiles';
@@ -80,6 +81,7 @@ export type {
   MultipleTiles8FullImageProps,
   FullVideoSceneProps,
   FullImageWithButtonProps,
+  GuessWordSceneProps,
 };
 
 export const AVAILABLE_SCENES = {
@@ -141,6 +143,10 @@ export const AVAILABLE_SCENES = {
   },
   tiles: {
     component: Tiles,
+    previewImage: previews.tiles,
+  },
+  wordGuess: {
+    component: GuessWord,
     previewImage: previews.tiles,
   },
 };
