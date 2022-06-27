@@ -1,27 +1,58 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-type Props = {
-  selectedLetter: string | null;
-  setSelectedLetter: (l: string | null) => void;
-  answerArray: string[];
+type UseLetterActionParams = {
+  totalLettersArray: string[];
+  answerArray: (null | number)[];
+  editMode?: boolean;
 };
-const useLetterAction = ({ selectedLetter, setSelectedLetter, answerArray }: Props) => {
-  const handleLetterClick = (letter: string) => () => {
-    if (letter === selectedLetter) {
-      setSelectedLetter(null);
-    } else setSelectedLetter(letter);
-  };
+const useLetterAction = ({ answerArray, editMode }: UseLetterActionParams) => {
+  const [selectedLetterIndex, setSelectedLetterIndex] = useState<number | null>(null);
+  const [answer, setAnswer] = useState(answerArray);
 
-  const handleSetAnswer = (index: number) => (e: React.MouseEvent<HTMLElement>) => {
-    e.preventDefault();
-    if (selectedLetter) {
-      answerArray.splice(index, 1, selectedLetter);
-      setSelectedLetter(null);
+  useEffect(() => {
+    editMode && setSelectedLetterIndex(null);
+  }, [editMode]);
+
+  useEffect(() => {
+    if (answerArray.length !== answer.length) {
+      setAnswer(answerArray);
     }
-    return;
-  };
+  }, [answerArray, answer]);
+
+  const checkIsLetterDisabled = useCallback(
+    (index: number) => typeof answer.find(a => a === index) === 'number',
+    [answer]
+  );
+
+  const handleLetterClick = useCallback(
+    (letterIndex: number) => () => {
+      if (!editMode && !checkIsLetterDisabled(letterIndex)) {
+        if (letterIndex === selectedLetterIndex) {
+          setSelectedLetterIndex(null);
+        } else {
+          setSelectedLetterIndex(letterIndex);
+        }
+      }
+    },
+    [selectedLetterIndex, editMode, checkIsLetterDisabled]
+  );
+
+  const handleSetAnswer = useCallback(
+    (index: number) => (e?: React.MouseEvent<HTMLElement>) => {
+      e?.preventDefault();
+      if (!editMode) {
+        selectedLetterIndex !== null &&
+          setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? selectedLetterIndex : a)));
+        setSelectedLetterIndex(null);
+      }
+    },
+    [selectedLetterIndex, editMode]
+  );
 
   return {
+    checkIsLetterDisabled,
+    selectedLetterIndex,
+    answer,
     handleLetterClick,
     handleSetAnswer,
   };

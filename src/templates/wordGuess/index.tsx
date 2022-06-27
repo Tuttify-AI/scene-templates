@@ -1,5 +1,5 @@
-import React, { forwardRef, useCallback, useMemo, useState } from 'react';
-import defaultImage from '../fullImage/assets/full-image';
+import React, { forwardRef, useCallback, useMemo } from 'react';
+import defaultImage from './assets/default';
 import { useActions, useAudios } from '../shared/hooks';
 
 import { SceneProps, SceneValue } from '../shared/types';
@@ -17,7 +17,7 @@ export type GuessWordSceneProps = SceneProps & {
 
 const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick }, ref) => {
-    const { lettersArray, selectionLettersWidth, answerLettersWidth, answerArray } = useParams({
+    const { lettersArray, selectionLettersWidth, answerLettersWidth, answerArray, letterFontSize } = useParams({
       values,
       previewMode,
       editMode,
@@ -25,8 +25,11 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
     });
 
     //const selectedLetterIndex = useState<number | null>();
-    const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
-    const { handleSetAnswer, handleLetterClick } = useLetterAction({ selectedLetter, setSelectedLetter, answerArray });
+    const { handleSetAnswer, handleLetterClick, selectedLetterIndex, answer, checkIsLetterDisabled } = useLetterAction({
+      answerArray,
+      totalLettersArray: lettersArray,
+      editMode,
+    });
     /* const { hiddenImageList } = useImage();*/
     const { renderAudios, handlePauseAll } = useAudios({ values });
     const getEditClass = useCallback(
@@ -63,31 +66,50 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
         ref={ref}
       >
         {renderAudios()}
-        <div className={clsx(styles.selectionLetters)}>
+        <div
+          className={clsx(styles.selectionLetters, isPreview, getEditClass())}
+          onClick={handleClick('selection_text')}
+        >
           {lettersArray.map((letter, index) => (
             <div
               key={index}
-              className={clsx(styles.selectionLetterItemWrapper)}
+              className={clsx(
+                styles.selectionLetterItemWrapper,
+                selectedLetterIndex === index && styles.selected,
+                checkIsLetterDisabled(index) && styles.disabled
+              )}
               style={{
                 width: `${selectionLettersWidth}%`,
               }}
             >
-              <p onClick={handleLetterClick(letter)} className={clsx(styles.selectionLetterItem)}>
+              <p
+                onClick={handleLetterClick(index)}
+                className={clsx(styles.selectionLetterItem, !editMode && styles.withHover)}
+                style={{
+                  fontSize: letterFontSize,
+                  color: getValue('selection_text', 'text_color') as string,
+                }}
+              >
                 {letter}
               </p>
             </div>
           ))}
         </div>
-        <div className={clsx(styles.imageWordWrapper)}>
+        <div className={clsx(styles.wrapper)}>
           <div className={clsx(styles.imageWrapper)}>
             <img
               alt="image"
+              id={getElementId(`image`, previewMode)}
               src={`${getValue('image', 'url') || defaultImage}`}
+              className={clsx(styles.image, getEditClass(), isPreview)}
               onClick={handleClick('image', { data: { imageUrl: getValue('image', 'url') as string } })}
             />
           </div>
-          <div className={clsx(styles.answerTextWrapper)}>
-            {answerArray?.map((answerLetter, index) => (
+          <div
+            className={clsx(styles.answerTextWrapper, getEditClass(), isPreview)}
+            onClick={handleClick('answer_text')}
+          >
+            {answer?.map((answerIndex, index) => (
               <div
                 key={index}
                 className={clsx(styles.answerLetterItemWrapper)}
@@ -95,8 +117,15 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
                   width: `${answerLettersWidth}%`,
                 }}
               >
-                <p className={clsx(styles.answerLetterItem)} onClick={handleSetAnswer(index)}>
-                  {answerLetter}
+                <p
+                  className={clsx(styles.answerLetterItem)}
+                  onClick={handleSetAnswer(index)}
+                  style={{
+                    fontSize: letterFontSize,
+                    color: getValue('answer_text', 'text_color') as string,
+                  }}
+                >
+                  {answerIndex !== null && lettersArray[answerIndex]}
                 </p>
               </div>
             ))}

@@ -1,3 +1,5 @@
+@value bounce from "../shared/shared.css";
+
 :root {
     --shape-box-shadow: 1px 1px 12px 1px rgba(100, 100, 100, 0.8);
     --text-shadow: 0 0 12px rgba(100, 100, 100, 0.8);
@@ -15,6 +17,8 @@
     border-radius: var(--mainBorderRadius);
     background: var(--colorWhite);
     font-family: 'Lato', sans-serif;
+    display: flex;
+    flex-direction: column;
 }
 
 .root > *.edit {
@@ -23,10 +27,6 @@
 
 .root.editRoot {
     transition: box-shadow 1s ease-in-out;
-}
-
-.edit:not(.active) {
-    opacity: 0.5;
 }
 
 .root > * {
@@ -83,6 +83,14 @@
     display: none;
 }
 
+.edit:hover {
+    box-shadow: var(--shape-box-shadow);
+}
+
+.active {
+    box-shadow: var(--shape-box-shadow);
+}
+
 .activeImageWrap {
     position: relative;
     display: flex;
@@ -118,11 +126,27 @@
     flex-direction: row;
     align-items: center;
     padding: 8px;
-    min-height: 150px;
+    z-index: 2;
+    border-radius: var(--mainBorderRadius);
+}
+
+.selectionLetters.edit {
+    cursor: pointer;
 }
 
 .selectionLetterItemWrapper {
     padding: 8px;
+}
+
+.selectionLetterItemWrapper.selected {
+    animation: bounce 0.3s;
+    animation-direction: alternate;
+    animation-timing-function: cubic-bezier(.5, 0.05, 1, .5);
+    animation-iteration-count: infinite;
+}
+
+.selectionLetterItemWrapper.disabled {
+    opacity: 0.3;
 }
 
 .selectionLetterItem {
@@ -130,31 +154,45 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 60px;
     font-weight: bold;
     padding: 8px;
     cursor: pointer;
     border-radius: var(--mainBorderRadius);
-    border: 1px solid black;
-    --letters-text-color: var(--colorBlack);
-    color: var(--letters-text-color);
-    z-index: 100;
+    color: var(--colorBlack);
+    z-index: 2;
 }
 
-.imageWordWrapper{
+.selectionLetterItem.edit:hover {
+    box-shadow: none;
+}
+
+.selectionLetterItem.withHover:hover {
+    box-shadow: var(--shape-box-shadow);
+}
+
+.wrapper {
     width: 100%;
     display: flex;
     padding: 8px;
+    flex: 1;
+    align-items: flex-end;
 }
 
 .imageWrapper{
     width: 40%;
+    height: 60%;
     padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.imageWrapper img{
-    width: 100%;
-    height: auto;
+.image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    cursor: pointer;
+    border-radius: var(--mainBorderRadius);
 }
 
 .answerTextWrapper{
@@ -162,10 +200,17 @@
     padding: 8px;
     display: flex;
     align-items: center;
+    border-radius: var(--mainBorderRadius);
+    height: 50%;
+}
+
+.answerTextWrapper.edit {
+    cursor: pointer;
 }
 
 .answerLetterItemWrapper{
     padding: 8px;
+    height: 100%;
 }
 
 .answerLetterItem {
@@ -175,12 +220,11 @@
     font-size: 60px;
     font-weight: bold;
     padding: 8px;
-    min-height: 110px;
     cursor: pointer;
     border-radius: var(--mainBorderRadius);
-    border: 1px solid black;
-    --letters-text-color: var(--colorBlack);
-    color: var(--letters-text-color);
+    border: 1px solid rgba(100, 100, 100, 0.3);
+    color: var(--colorBlack);
+    height: 100%;
 }
 
 @media screen and (max-width: 600px) {

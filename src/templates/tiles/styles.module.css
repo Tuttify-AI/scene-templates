@@ -1,4 +1,4 @@
-@value bounce from "../shared/shared.css";
+@value bounceZoom from "../shared/shared.css";
 
 :root {
     --shape-box-shadow: 1px 1px 12px 1px rgba(100, 100, 100, 0.8);
@@ -190,7 +190,7 @@
     user-select: none;
 }
 .activeDiv.showActiveDiv {
-    animation: bounce 0.25s;
+    animation: bounceZoom 0.25s;
 }
 
 .activeDiv.hideActiveDiv {
