@@ -1,8 +1,17 @@
-@keyframes bounce {
+@keyframes bounceZoom {
     0% { transform: scale(0.15) }
     60% { transform: scale(1.0) }
     70% { transform: scale(0.95) }
     80% { transform: scale(0.9) }
     90% { transform: scale(0.95) }
     100% { transform: scale(1.0) }
+}
+
+@keyframes bounce {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(0, -10%, 0);
+    }
 }

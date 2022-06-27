@@ -7,9 +7,8 @@ import { GuessWordConfig } from '../types';
 type Params = Pick<SceneProps, 'values' | 'previewMode' | 'editMode' | 'onSet'>;
 
 const DEFAULTS = {
-  textSize: 36,
+  textSize: 72,
   textPadding: 8,
-  imageHeight: 0.4, //in percents,
 };
 
 export default function useParams({ values, previewMode, editMode, onSet }: Params) {
@@ -30,7 +29,7 @@ export default function useParams({ values, previewMode, editMode, onSet }: Para
     [getConfigValue]
   );
   const wordArray = useMemo(() => `${getConfigValue('word')}`.toUpperCase().split(''), [getConfigValue]);
-  const answerArray = useMemo(() => Array.from(Array(wordArray.length).fill('')), [wordArray]);
+  const answerArray = useMemo(() => Array.from(Array(wordArray.length).fill(null)), [wordArray]);
 
   useEffect(() => {
     if (lettersArray.slice().sort().join('') !== [...wordArray, ...additionalLettersArray].slice().sort().join('')) {
@@ -39,6 +38,7 @@ export default function useParams({ values, previewMode, editMode, onSet }: Para
   }, [lettersArray, onSetConfig, wordArray, additionalLettersArray]);
   const selectionLettersWidth = useMemo(() => 100 / (lettersArray.length || 1), [lettersArray]);
   const answerLettersWidth = useMemo(() => 100 / (wordArray.length || 1), [wordArray]);
+  const letterFontSize = useMemo(() => DEFAULTS.textSize, []);
 
   // fullscreen text size depending on screen resolution
   //const fullScreenTextSize = useMemo(() => DEFAULTS.textSize * (isSm ? 0.85 : 1.25), [isSm]);
@@ -47,6 +47,7 @@ export default function useParams({ values, previewMode, editMode, onSet }: Para
   const showSceneActionElements = useMemo(() => editMode && !previewMode, [editMode, previewMode]);
 
   return {
+    letterFontSize,
     lettersArray,
     wordArray,
     DEFAULTS,

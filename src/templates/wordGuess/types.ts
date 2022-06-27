@@ -10,14 +10,10 @@ export type GuessWordElements<T = string | number> = Elements<T> & {
   title?: Parameters<T>;
   config?: GuessWordConfig<T>;
   background?: Parameters<T>;
+  selection_text?: Parameters<T>;
+  answer_text?: Parameters<T>;
 };
 
 export type Classes = {
   root?: string;
-  tile?: string;
-  slide?: string;
-  tileImage?: string;
-  tileText?: string;
-  fullscreenImage?: string;
-  fullscreenText?: string;
 };
