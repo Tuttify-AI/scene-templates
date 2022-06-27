@@ -60,3 +60,9 @@ export function range(start: number, end: number) {
     .fill('')
     .map((_, idx) => start + idx);
 }
+
+export const randomizeString = (str: unknown) =>
+  `${str}`
+    .split('')
+    .sort(() => Math.random() - 0.5)
+    .join('');
