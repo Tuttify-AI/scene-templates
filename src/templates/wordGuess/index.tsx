@@ -1,15 +1,14 @@
 import React, { forwardRef, useCallback, useMemo } from 'react';
-import defaultImage from './assets/default';
 import { useActions, useAudios } from '../shared/hooks';
 
 import { SceneProps, SceneValue } from '../shared/types';
 import { clsx, getElementId, getElementValue } from '../shared/utils';
+import defaultImage from './assets/default';
+import useLetterAction from './hooks/use-letter-action';
 import useParams from './hooks/use-params';
-import useLetterAction from './hooks/useLetterAction';
 
 import styles from './styles.module.css';
 import { Classes, GuessWordElements } from './types';
-import questionImage from '../quiz1/assets/question';
 
 export type GuessWordSceneProps = SceneProps & {
   values?: GuessWordElements<SceneValue>;
@@ -36,13 +35,14 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
       answer,
       checkIsLetterDisabled,
       isFullAnswer,
-      correct,
       handleFullImageClick,
+      fullScreen,
     } = useLetterAction({
       answerArray,
       totalLettersArray: lettersArray,
       editMode,
       wordArray,
+      values,
     });
     /* const { hiddenImageList } = useImage();*/
     const { renderAudios, handlePauseAll } = useAudios({ values });
@@ -86,9 +86,7 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
             isFullAnswer ? styles.showActiveDiv : styles.hideActiveDiv
           )}
           style={{
-            backgroundColor: correct
-              ? `${getValue('image', 'success_background')}`
-              : `${getValue('image', 'error_background')}`,
+            backgroundColor: fullScreen.backgroundColor,
           }}
           onClick={handleFullImageClick}
         >
@@ -96,14 +94,12 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
             id={getElementId(`fullscreenText`, previewMode)}
             className={clsx(styles.fullScreenText, isPreview, classes?.fullScreenText)}
           >
-            {correct ? getValue('image', 'success_text') : getValue('image', 'error_text')}
+            {fullScreen.text}
           </h2>
           <div
             /*id={fullImage.key}*/
             style={{
-              backgroundImage: correct
-                ? `url(${getValue('image', 'success_image')})`
-                : `url(${getValue('image', 'error_image')})`,
+              backgroundImage: `url(${fullScreen.src})`,
             }}
             className={clsx(styles.activeImage, styles.image, isPreview, getEditClass(), classes?.fullScreenImage)}
           />

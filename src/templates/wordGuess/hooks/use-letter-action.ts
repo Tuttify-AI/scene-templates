@@ -1,15 +1,27 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { checkArray, checkCorrectWord } from '../../shared/types';
+import { SceneValue } from '../../shared/types';
+import { getElementValue } from '../../shared/utils';
+import { GuessWordElements } from '../types';
+import { checkArray, checkCorrectWord } from '../utils';
+
+const INITIAL_STATE = {
+  src: '',
+  backgroundColor: 'transparent',
+  text: '',
+};
 
 type UseLetterActionParams = {
   totalLettersArray: string[];
   wordArray: string[];
   answerArray: (null | number)[];
   editMode?: boolean;
+  values?: GuessWordElements<SceneValue>;
 };
-const useLetterAction = ({ answerArray, editMode, totalLettersArray, wordArray }: UseLetterActionParams) => {
+const useLetterAction = ({ answerArray, editMode, totalLettersArray, wordArray, values }: UseLetterActionParams) => {
   const [selectedLetterIndex, setSelectedLetterIndex] = useState<number | null>(null);
   const [answer, setAnswer] = useState(answerArray);
+  const getValue = useMemo(() => getElementValue<GuessWordElements>(values), [values]);
+  const [fullScreen, setFullScreen] = useState(INITIAL_STATE);
 
   useEffect(() => {
     editMode && setSelectedLetterIndex(null);
@@ -38,10 +50,23 @@ const useLetterAction = ({ answerArray, editMode, totalLettersArray, wordArray }
     },
     [selectedLetterIndex, editMode, checkIsLetterDisabled]
   );
+  const correct = useMemo(() => {
+    return checkCorrectWord(answer, totalLettersArray, wordArray.join());
+  }, [answer, totalLettersArray, wordArray]);
 
   const isFullAnswer = useMemo(() => {
-    return checkArray(answer);
-  }, [answer]);
+    const result = checkArray(answer);
+    if (result) {
+      setFullScreen({
+        src: correct ? `${getValue('image', 'success_image')}` : `${getValue('image', 'error_image')}`,
+        backgroundColor: correct
+          ? `${getValue('image', 'success_background')}`
+          : `${getValue('image', 'error_background')}`,
+        text: correct ? `${getValue('image', 'success_text')}` : `${getValue('image', 'error_text')}`,
+      });
+    }
+    return result;
+  }, [answer, correct, getValue]);
 
   const handleSetAnswer = useCallback(
     (index: number) => (e?: React.MouseEvent<HTMLElement>) => {
@@ -55,14 +80,11 @@ const useLetterAction = ({ answerArray, editMode, totalLettersArray, wordArray }
     [selectedLetterIndex, editMode]
   );
 
-  const correct = useMemo(() => {
-    return checkCorrectWord(answer, totalLettersArray, wordArray.join());
-  }, [answer, totalLettersArray, wordArray]);
-
   const handleClearFullImageSrc = useCallback(() => setAnswer(answer.map(() => null)), [answer, setAnswer]);
 
   const handleFullImageClick = useCallback(() => {
     handleClearFullImageSrc();
+    setFullScreen(INITIAL_STATE);
   }, [handleClearFullImageSrc]);
 
   return {
@@ -74,6 +96,7 @@ const useLetterAction = ({ answerArray, editMode, totalLettersArray, wordArray }
     isFullAnswer,
     correct,
     handleFullImageClick,
+    fullScreen,
   };
 };
 
