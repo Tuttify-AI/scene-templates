@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { SceneValue } from '../../shared/types';
+import { ActiveElementData, SceneValue } from '../../shared/types';
 import { getElementValue } from '../../shared/utils';
 import { GuessWordElements } from '../types';
 import { checkArray, checkCorrectWord } from '../utils';
+import { useActions } from '../../shared/hooks';
 
 const INITIAL_STATE = {
   src: '',
@@ -15,9 +16,19 @@ type UseLetterActionParams = {
   wordArray: string[];
   answerArray: (null | number)[];
   editMode?: boolean;
+  lockCorrectSelection?: boolean;
   values?: GuessWordElements<SceneValue>;
+  handleClick?: ReturnType<typeof useActions>['handleClick'];
 };
-const useLetterAction = ({ answerArray, editMode, totalLettersArray, wordArray, values }: UseLetterActionParams) => {
+const useLetterAction = ({
+  answerArray,
+  editMode,
+  totalLettersArray,
+  wordArray,
+  values,
+  lockCorrectSelection,
+  handleClick,
+}: UseLetterActionParams) => {
   const [selectedLetterIndex, setSelectedLetterIndex] = useState<number | null>(null);
   const [answer, setAnswer] = useState(answerArray);
   const getValue = useMemo(() => getElementValue<GuessWordElements>(values), [values]);
@@ -25,6 +36,7 @@ const useLetterAction = ({ answerArray, editMode, totalLettersArray, wordArray, 
 
   useEffect(() => {
     editMode && setSelectedLetterIndex(null);
+    setAnswer([]);
   }, [editMode]);
 
   useEffect(() => {
@@ -68,16 +80,46 @@ const useLetterAction = ({ answerArray, editMode, totalLettersArray, wordArray, 
     return result;
   }, [answer, correct, getValue]);
 
+  const checkIfCorrectLetter = useCallback(
+    (answerIndex: number | null) => {
+      const wordIndexInAnswer = answerIndex !== null ? answer[answerIndex] : null;
+      return answerIndex !== null && wordArray[answerIndex] !== null && wordIndexInAnswer !== null
+        ? wordArray[answerIndex].toUpperCase() === totalLettersArray[wordIndexInAnswer].toUpperCase()
+        : null;
+    },
+    [wordArray, totalLettersArray, answer]
+  );
+
+  const getAnswerData = useCallback(
+    (index: number, totalLetterIndex: number | null) => {
+      const isCorrect = totalLetterIndex !== null && totalLettersArray[totalLetterIndex] === wordArray[index];
+      const letter = totalLetterIndex && totalLettersArray[totalLetterIndex];
+      const word = wordArray.join('');
+      return {
+        ...(isCorrect !== null ? { isCorrect } : {}),
+        ...(letter ? { letter } : {}),
+        ...(word ? { word } : {}),
+        ...(index !== null ? { index } : {}),
+      } as ActiveElementData;
+    },
+    [wordArray, totalLettersArray]
+  );
+
   const handleSetAnswer = useCallback(
     (index: number) => (e?: React.MouseEvent<HTMLElement>) => {
       e?.preventDefault();
-      if (!editMode) {
-        selectedLetterIndex !== null &&
+      const changeLocked = lockCorrectSelection && checkIfCorrectLetter(index);
+      if (!editMode && !changeLocked) {
+        if (selectedLetterIndex === null) {
+          setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? null : a)));
+        } else {
+          handleClick && handleClick('answer', { data: getAnswerData(index, selectedLetterIndex) })(e);
           setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? selectedLetterIndex : a)));
-        setSelectedLetterIndex(null);
+          setSelectedLetterIndex(null);
+        }
       }
     },
-    [selectedLetterIndex, editMode]
+    [selectedLetterIndex, editMode, lockCorrectSelection, checkIfCorrectLetter, handleClick, getAnswerData]
   );
 
   const handleClearFullImageSrc = useCallback(() => setAnswer(answer.map(() => null)), [answer, setAnswer]);
@@ -97,6 +139,7 @@ const useLetterAction = ({ answerArray, editMode, totalLettersArray, wordArray, 
     correct,
     handleFullImageClick,
     fullScreen,
+    checkIfCorrectLetter,
   };
 };
 

@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { useWindowSize } from '../../shared/hooks';
 import { SceneProps, SceneValue } from '../../shared/types';
-import { getElementValue, randomizeString } from '../../shared/utils';
+import { getElementValue, getNumber, randomizeString } from '../../shared/utils';
 import { GuessWordConfig } from '../types';
 
 type Params = Pick<SceneProps, 'values' | 'previewMode' | 'editMode' | 'onSet'>;
 
 const DEFAULTS = {
-  textSize: 72,
+  selectionTextSize: 72,
+  wordTextSize: 90,
   textPadding: 8,
 };
 
@@ -24,6 +25,18 @@ export default function useParams({ values, previewMode, editMode, onSet }: Para
     },
     [onSet, values]
   );
+  const lockCorrectSelection = useMemo(
+    () => getNumber(getConfigValue('lock_correct_selection')) === 1,
+    [getConfigValue]
+  );
+  const highlightCorrectSelection = useMemo(
+    () => getNumber(getConfigValue('highlight_correct_selection')) === 1,
+    [getConfigValue]
+  );
+  const highlightIncorrectSelection = useMemo(
+    () => getNumber(getConfigValue('highlight_incorrect_selection')) === 1,
+    [getConfigValue]
+  );
   const lettersArray = useMemo(() => `${getConfigValue('letters_total')}`.toUpperCase().split(''), [getConfigValue]);
   const additionalLettersArray = useMemo(
     () => `${getConfigValue('additional_letters')}`.toUpperCase().split(''),
@@ -39,7 +52,10 @@ export default function useParams({ values, previewMode, editMode, onSet }: Para
   }, [lettersArray, onSetConfig, wordArray, additionalLettersArray]);
   const selectionLettersWidth = useMemo(() => 100 / (lettersArray.length || 1), [lettersArray]);
   const answerLettersWidth = useMemo(() => 100 / (wordArray.length || 1), [wordArray]);
-  const letterFontSize = useMemo(() => DEFAULTS.textSize, []);
+  const selectionFontSize = useMemo(() => DEFAULTS.selectionTextSize, []);
+  const wordFontSize = useMemo(() => DEFAULTS.wordTextSize, []);
+  const selectionContainerHeight = useMemo(() => selectionFontSize + DEFAULTS.textPadding * 2, [selectionFontSize]);
+  const wordContainerHeight = useMemo(() => wordFontSize + DEFAULTS.textPadding * 2, [wordFontSize]);
 
   // fullscreen text size depending on screen resolution
   //const fullScreenTextSize = useMemo(() => DEFAULTS.textSize * (isSm ? 0.85 : 1.25), [isSm]);
@@ -48,7 +64,13 @@ export default function useParams({ values, previewMode, editMode, onSet }: Para
   const showSceneActionElements = useMemo(() => editMode && !previewMode, [editMode, previewMode]);
 
   return {
-    letterFontSize,
+    highlightIncorrectSelection,
+    highlightCorrectSelection,
+    lockCorrectSelection,
+    selectionFontSize,
+    selectionContainerHeight,
+    wordContainerHeight,
+    wordFontSize,
     lettersArray,
     wordArray,
     DEFAULTS,
