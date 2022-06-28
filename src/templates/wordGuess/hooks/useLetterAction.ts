@@ -1,11 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { checkArray, checkCorrectWord } from '../../shared/types';
 
 type UseLetterActionParams = {
   totalLettersArray: string[];
+  wordArray: string[];
   answerArray: (null | number)[];
   editMode?: boolean;
 };
-const useLetterAction = ({ answerArray, editMode }: UseLetterActionParams) => {
+const useLetterAction = ({ answerArray, editMode, totalLettersArray, wordArray }: UseLetterActionParams) => {
   const [selectedLetterIndex, setSelectedLetterIndex] = useState<number | null>(null);
   const [answer, setAnswer] = useState(answerArray);
 
@@ -37,6 +39,10 @@ const useLetterAction = ({ answerArray, editMode }: UseLetterActionParams) => {
     [selectedLetterIndex, editMode, checkIsLetterDisabled]
   );
 
+  const isFullAnswer = useMemo(() => {
+    return checkArray(answer);
+  }, [answer]);
+
   const handleSetAnswer = useCallback(
     (index: number) => (e?: React.MouseEvent<HTMLElement>) => {
       e?.preventDefault();
@@ -49,12 +55,25 @@ const useLetterAction = ({ answerArray, editMode }: UseLetterActionParams) => {
     [selectedLetterIndex, editMode]
   );
 
+  const correct = useMemo(() => {
+    return checkCorrectWord(answer, totalLettersArray, wordArray.join());
+  }, [answer, totalLettersArray, wordArray]);
+
+  const handleClearFullImageSrc = useCallback(() => setAnswer(answer.map(() => null)), [answer, setAnswer]);
+
+  const handleFullImageClick = useCallback(() => {
+    handleClearFullImageSrc();
+  }, [handleClearFullImageSrc]);
+
   return {
     checkIsLetterDisabled,
     selectedLetterIndex,
     answer,
     handleLetterClick,
     handleSetAnswer,
+    isFullAnswer,
+    correct,
+    handleFullImageClick,
   };
 };
 
