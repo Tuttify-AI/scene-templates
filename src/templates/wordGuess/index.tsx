@@ -9,6 +9,7 @@ import useLetterAction from './hooks/useLetterAction';
 
 import styles from './styles.module.css';
 import { Classes, GuessWordElements } from './types';
+import questionImage from '../quiz1/assets/question';
 
 export type GuessWordSceneProps = SceneProps & {
   values?: GuessWordElements<SceneValue>;
@@ -137,15 +138,12 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
           ))}
         </div>
         <div className={clsx(styles.wrapper)}>
-          <div className={clsx(styles.imageWrapper)}>
-            <img
-              alt="image"
-              id={getElementId(`image`, previewMode)}
-              src={`${getValue('image', 'url') || defaultImage}`}
-              className={clsx(styles.image, getEditClass(), isPreview)}
-              onClick={handleClick('image', { data: { imageUrl: getValue('image', 'url') as string } })}
-            />
-          </div>
+          <div
+            id={getElementId(`image`, previewMode)}
+            className={clsx(styles.image, getEditClass(), isPreview)}
+            style={{ backgroundImage: `url(${getValue('image', 'url') || defaultImage})` }}
+            onClick={handleClick('image', { data: { imageUrl: getValue('image', 'url') as string } })}
+          />
           <div
             className={clsx(styles.answerTextWrapper, getEditClass(), isPreview)}
             onClick={handleClick('answer_text')}
