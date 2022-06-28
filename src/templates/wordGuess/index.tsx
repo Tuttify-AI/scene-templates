@@ -17,18 +17,31 @@ export type GuessWordSceneProps = SceneProps & {
 
 const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick }, ref) => {
-    const { lettersArray, selectionLettersWidth, answerLettersWidth, answerArray, letterFontSize } = useParams({
-      values,
-      previewMode,
-      editMode,
-      onSet,
-    });
+    const getValue = useMemo(() => getElementValue<GuessWordElements>(values), [values]);
+
+    const { lettersArray, selectionLettersWidth, answerLettersWidth, answerArray, letterFontSize, wordArray } =
+      useParams({
+        values,
+        previewMode,
+        editMode,
+        onSet,
+      });
 
     //const selectedLetterIndex = useState<number | null>();
-    const { handleSetAnswer, handleLetterClick, selectedLetterIndex, answer, checkIsLetterDisabled } = useLetterAction({
+    const {
+      handleSetAnswer,
+      handleLetterClick,
+      selectedLetterIndex,
+      answer,
+      checkIsLetterDisabled,
+      isFullAnswer,
+      correct,
+      handleFullImageClick,
+    } = useLetterAction({
       answerArray,
       totalLettersArray: lettersArray,
       editMode,
+      wordArray,
     });
     /* const { hiddenImageList } = useImage();*/
     const { renderAudios, handlePauseAll } = useAudios({ values });
@@ -36,8 +49,6 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
       (type: 'edit' | 'editRoot' = 'edit') => editMode && styles[type as keyof typeof styles],
       [editMode]
     );
-
-    const getValue = useMemo(() => getElementValue<GuessWordElements>(values), [values]);
 
     const { handleClick } = useActions({
       onClick,
@@ -66,6 +77,36 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
         ref={ref}
       >
         {renderAudios()}
+        <div
+          className={clsx(
+            styles.activeDiv,
+            isPreview,
+            getEditClass(),
+            isFullAnswer ? styles.showActiveDiv : styles.hideActiveDiv
+          )}
+          style={{
+            backgroundColor: correct
+              ? `${getValue('image', 'success_background')}`
+              : `${getValue('image', 'error_background')}`,
+          }}
+          onClick={handleFullImageClick}
+        >
+          <h2
+            id={getElementId(`fullscreenText`, previewMode)}
+            className={clsx(styles.fullScreenText, isPreview, classes?.fullScreenText)}
+          >
+            {correct ? getValue('image', 'success_text') : getValue('image', 'error_text')}
+          </h2>
+          <div
+            /*id={fullImage.key}*/
+            style={{
+              backgroundImage: correct
+                ? `url(${getValue('image', 'success_image')})`
+                : `url(${getValue('image', 'error_image')})`,
+            }}
+            className={clsx(styles.activeImage, styles.image, isPreview, getEditClass(), classes?.fullScreenImage)}
+          />
+        </div>
         <div
           className={clsx(styles.selectionLetters, isPreview, getEditClass())}
           onClick={handleClick('selection_text')}

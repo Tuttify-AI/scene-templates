@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react';
+import { useWindowSize } from '../../shared/hooks';
 import { SceneProps, SceneValue } from '../../shared/types';
 import { getElementValue, randomizeString } from '../../shared/utils';
-import { useWindowSize } from '../../shared/hooks';
 import { GuessWordConfig } from '../types';
 
 type Params = Pick<SceneProps, 'values' | 'previewMode' | 'editMode' | 'onSet'>;
@@ -13,6 +13,7 @@ const DEFAULTS = {
 
 export default function useParams({ values, previewMode, editMode, onSet }: Params) {
   const { isMd, isSm } = useWindowSize();
+
   const getConfigValue = useCallback(
     (parameter: keyof GuessWordConfig) => getElementValue(values)('config', parameter),
     [values]

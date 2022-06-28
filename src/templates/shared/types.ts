@@ -102,6 +102,27 @@ export type Translations = {
   totalTiles?: string;
 };
 
+export function checkArray(answer_arr: (number | null)[]) {
+  for (let i = 0; i < answer_arr.length; i++) {
+    const ind = answer_arr[i];
+    if (!ind && typeof ind != 'number') {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function checkCorrectWord(answer_arr: (number | null)[], all_arr: string[], word: string) {
+  const answer = [];
+  for (let i = 0; i < answer_arr.length; i++) {
+    const ind = answer_arr[i];
+    if (!ind && typeof ind != 'number') {
+      return false;
+    } else if (typeof ind === 'number') answer[i] = all_arr[ind];
+  }
+  return answer.join() === word;
+}
+
 export type SceneProps = {
   /**
    * If true - all animation, sounds and customization disabled
