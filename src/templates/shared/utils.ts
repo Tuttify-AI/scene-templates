@@ -52,7 +52,7 @@ export const getNumber = (value: unknown, defaultValue = 1) =>
 
 export const getElementValue =
   <T>(values?: Elements, parameters?: Elements<TemplateParameter>): GetValue<T> =>
-  (element: keyof Elements<T>, parameter: keyof Parameters) =>
+  (element: keyof Elements<T>, parameter: keyof Parameters<T>) =>
     values?.[element]?.[parameter]?.value ?? parameters?.[element]?.[parameter]?.default_value;
 
 export function range(start: number, end: number) {

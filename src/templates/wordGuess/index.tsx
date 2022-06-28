@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useMemo } from 'react';
+import React, { CSSProperties, forwardRef, useCallback, useMemo } from 'react';
 import { useActions, useAudios } from '../shared/hooks';
 
 import { SceneProps, SceneValue } from '../shared/types';
@@ -19,15 +19,33 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick }, ref) => {
     const getValue = useMemo(() => getElementValue<GuessWordElements>(values), [values]);
 
-    const { lettersArray, selectionLettersWidth, answerLettersWidth, answerArray, letterFontSize, wordArray } =
-      useParams({
-        values,
-        previewMode,
-        editMode,
-        onSet,
-      });
+    const {
+      lettersArray,
+      selectionLettersWidth,
+      answerLettersWidth,
+      answerArray,
+      selectionFontSize,
+      selectionContainerHeight,
+      wordContainerHeight,
+      wordFontSize,
+      wordArray,
+      lockCorrectSelection,
+      highlightCorrectSelection,
+      highlightIncorrectSelection,
+    } = useParams({
+      values,
+      previewMode,
+      editMode,
+      onSet,
+    });
+    const { renderAudios, handlePauseAll } = useAudios({ values });
+    const { handleClick } = useActions({
+      onClick,
+      handlePauseAll,
+      disabled: editMode || previewMode,
+      onActiveElementClick,
+    });
 
-    //const selectedLetterIndex = useState<number | null>();
     const {
       handleSetAnswer,
       handleLetterClick,
@@ -37,35 +55,23 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
       isFullAnswer,
       handleFullImageClick,
       fullScreen,
+      checkIfCorrectLetter,
     } = useLetterAction({
       answerArray,
       totalLettersArray: lettersArray,
       editMode,
       wordArray,
       values,
+      lockCorrectSelection,
+      handleClick,
     });
-    /* const { hiddenImageList } = useImage();*/
-    const { renderAudios, handlePauseAll } = useAudios({ values });
+
     const getEditClass = useCallback(
       (type: 'edit' | 'editRoot' = 'edit') => editMode && styles[type as keyof typeof styles],
       [editMode]
     );
-
-    const { handleClick } = useActions({
-      onClick,
-      handlePauseAll,
-      disabled: editMode || previewMode,
-      onActiveElementClick,
-    });
     const isActive = useCallback((key: keyof GuessWordElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
-    /* const isImageHidden = useCallback(
-      (key: keyof GuessWordElements, imageListKey?: string, parameter: keyof Parameters = 'url') => {
-        const hiddenImageListKey = imageListKey || key;
-        return (hiddenImageList[hiddenImageListKey] || !getValue(key, parameter)) && styles.hidden;
-      },
-      [hiddenImageList, getValue]
-    );*/
 
     return (
       <div
@@ -96,13 +102,15 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
           >
             {fullScreen.text}
           </h2>
-          <div
-            /*id={fullImage.key}*/
-            style={{
-              backgroundImage: `url(${fullScreen.src})`,
-            }}
-            className={clsx(styles.activeImage, styles.image, isPreview, getEditClass(), classes?.fullScreenImage)}
-          />
+          {fullScreen.src && (
+            <div
+              id={getElementId(`fullscreenImage`, previewMode)}
+              style={{
+                backgroundImage: `url(${fullScreen.src})`,
+              }}
+              className={clsx(styles.activeImage, styles.image, isPreview, getEditClass(), classes?.fullScreenImage)}
+            />
+          )}
         </div>
         <div
           className={clsx(styles.selectionLetters, isPreview, getEditClass())}
@@ -124,7 +132,8 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
                 onClick={handleLetterClick(index)}
                 className={clsx(styles.selectionLetterItem, !editMode && styles.withHover)}
                 style={{
-                  fontSize: letterFontSize,
+                  fontSize: selectionFontSize,
+                  height: selectionContainerHeight,
                   color: getValue('selection_text', 'text_color') as string,
                 }}
               >
@@ -153,12 +162,21 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
                 }}
               >
                 <p
-                  className={clsx(styles.answerLetterItem)}
+                  className={clsx(
+                    styles.answerLetterItem,
+                    highlightCorrectSelection && checkIfCorrectLetter(index) && styles.correct,
+                    highlightIncorrectSelection && checkIfCorrectLetter(index) === false && styles.incorrect
+                  )}
                   onClick={handleSetAnswer(index)}
-                  style={{
-                    fontSize: letterFontSize,
-                    color: getValue('answer_text', 'text_color') as string,
-                  }}
+                  style={
+                    {
+                      fontSize: wordFontSize,
+                      height: wordContainerHeight,
+                      color: getValue('answer_text', 'text_color') as string,
+                      '--highlightSuccessColor': getValue('answer_text', 'success_highlight_color'),
+                      '--highlightErrorColor': getValue('answer_text', 'error_highlight_color'),
+                    } as CSSProperties
+                  }
                 >
                   {answerIndex !== null && lettersArray[answerIndex]}
                 </p>
