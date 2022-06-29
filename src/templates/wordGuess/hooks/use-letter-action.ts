@@ -95,7 +95,7 @@ const useLetterAction = ({
   const getAnswerData = useCallback(
     (index: number, totalLetterIndex: number | null) => {
       const isCorrect = totalLetterIndex !== null && totalLettersArray[totalLetterIndex] === wordArray[index];
-      const letter = totalLetterIndex && totalLettersArray[totalLetterIndex];
+      const letter = totalLetterIndex !== null && totalLettersArray[totalLetterIndex];
       const word = wordArray.join('');
       return {
         ...(isCorrect !== null ? { isCorrect } : {}),
