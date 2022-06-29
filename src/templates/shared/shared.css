@@ -6,12 +6,3 @@
     90% { transform: scale(0.95) }
     100% { transform: scale(1.0) }
 }
-
-@keyframes bounce {
-    from {
-        transform: translate3d(0, 0, 0);
-    }
-    to {
-        transform: translate3d(0, -10%, 0);
-    }
-}
