@@ -32,6 +32,7 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
       lockCorrectSelection,
       highlightCorrectSelection,
       highlightIncorrectSelection,
+      fullScreenTextSize,
       wordPadding,
     } = useParams({
       values,
@@ -98,6 +99,11 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
           onClick={handleFullImageClick}
         >
           <h2
+            style={{
+              fontSize: fullScreenTextSize,
+              lineHeight: `${fullScreenTextSize}px`,
+              color: fullScreen.textColor,
+            }}
             id={getElementId(`fullscreenText`, previewMode)}
             className={clsx(styles.fullScreenText, isPreview, classes?.fullScreenText)}
           >

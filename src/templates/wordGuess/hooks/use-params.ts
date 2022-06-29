@@ -9,6 +9,7 @@ type Params = Pick<SceneProps, 'values' | 'previewMode' | 'editMode' | 'onSet'>;
 const DEFAULTS = {
   selectionTextSize: 72,
   wordTextSize: 90,
+  fullScreenTextSize: 40,
   textPadding: 8,
 };
 
@@ -65,8 +66,7 @@ export default function useParams({ values, previewMode, editMode, onSet }: Para
   const wordContainerHeight = useMemo(() => wordFontSize + DEFAULTS.textPadding * 2, [wordFontSize]);
 
   // fullscreen text size depending on screen resolution
-  //const fullScreenTextSize = useMemo(() => DEFAULTS.textSize * (isSm ? 0.85 : 1.25), [isSm]);
-  // tile text margin depends on image and slider height
+  const fullScreenTextSize = useMemo(() => Math.floor(DEFAULTS.fullScreenTextSize * (isSm ? 0.85 : 1)), [isSm]);
 
   const showSceneActionElements = useMemo(() => editMode && !previewMode, [editMode, previewMode]);
 
@@ -86,5 +86,6 @@ export default function useParams({ values, previewMode, editMode, onSet }: Para
     answerLettersWidth,
     answerArray,
     wordPadding,
+    fullScreenTextSize,
   };
 }
