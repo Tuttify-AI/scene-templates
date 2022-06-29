@@ -122,6 +122,7 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
         <div
           className={clsx(styles.selectionLetters, isPreview, getEditClass())}
           onClick={handleClick('selection_text')}
+          id={getElementId(`selection_text`, previewMode)}
         >
           {lettersArray.map((letter, index) => (
             <div
@@ -136,6 +137,7 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
               }}
             >
               <p
+                id={getElementId(`text_${letter}`, previewMode)}
                 onClick={handleLetterClick(index)}
                 className={clsx(styles.selectionLetterItem, !editMode && styles.withHover)}
                 style={{
@@ -170,6 +172,7 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
                 }}
               >
                 <p
+                  id={getElementId(`answer_${answerIndex}`, previewMode)}
                   className={clsx(
                     styles.answerLetterItem,
                     highlightCorrectSelection && checkIfCorrectLetter(index) && styles.correct,
