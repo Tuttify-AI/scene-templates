@@ -1,4 +1,7 @@
 export function checkArray(answer_arr: (number | null)[]) {
+  if (!answer_arr?.length) {
+    return false;
+  }
   for (let i = 0; i < answer_arr.length; i++) {
     const index = answer_arr[i];
     if (!index && typeof index != 'number') {
