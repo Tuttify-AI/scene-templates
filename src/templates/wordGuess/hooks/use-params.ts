@@ -50,11 +50,18 @@ export default function useParams({ values, previewMode, editMode, onSet }: Para
       onSetConfig('letters_total', randomizeString([...wordArray, ...additionalLettersArray].join('')));
     }
   }, [lettersArray, onSetConfig, wordArray, additionalLettersArray]);
-  const selectionLettersWidth = useMemo(() => 100 / (lettersArray.length || 1), [lettersArray]);
+  const selectionLettersWidth = useMemo(
+    () => 100 / (isMd && lettersArray.length > 8 ? Math.round(lettersArray.length / 2) : lettersArray.length || 1),
+    [lettersArray, isMd]
+  );
   const answerLettersWidth = useMemo(() => 100 / (wordArray.length || 1), [wordArray]);
-  const selectionFontSize = useMemo(() => DEFAULTS.selectionTextSize, []);
-  const wordFontSize = useMemo(() => DEFAULTS.wordTextSize, []);
-  const selectionContainerHeight = useMemo(() => selectionFontSize + DEFAULTS.textPadding * 2, [selectionFontSize]);
+  const selectionFontSize = useMemo(
+    () => Math.floor(isSm ? DEFAULTS.selectionTextSize * 0.75 : DEFAULTS.selectionTextSize),
+    [isSm]
+  );
+  const wordFontSize = useMemo(() => Math.floor(isSm ? DEFAULTS.wordTextSize * 0.55 : DEFAULTS.wordTextSize), [isSm]);
+  const wordPadding = useMemo(() => (isSm ? DEFAULTS.textPadding * 0.5 : DEFAULTS.textPadding), [isSm]);
+  const selectionContainerHeight = useMemo(() => selectionFontSize + wordPadding * 2, [selectionFontSize, wordPadding]);
   const wordContainerHeight = useMemo(() => wordFontSize + DEFAULTS.textPadding * 2, [wordFontSize]);
 
   // fullscreen text size depending on screen resolution
@@ -78,5 +85,6 @@ export default function useParams({ values, previewMode, editMode, onSet }: Para
     selectionLettersWidth,
     answerLettersWidth,
     answerArray,
+    wordPadding,
   };
 }

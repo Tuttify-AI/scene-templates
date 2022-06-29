@@ -32,6 +32,7 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
       lockCorrectSelection,
       highlightCorrectSelection,
       highlightIncorrectSelection,
+      wordPadding,
     } = useParams({
       values,
       previewMode,
@@ -159,6 +160,7 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
                 className={clsx(styles.answerLetterItemWrapper)}
                 style={{
                   width: `${answerLettersWidth}%`,
+                  padding: wordPadding,
                 }}
               >
                 <p
@@ -170,6 +172,7 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
                   onClick={handleSetAnswer(index)}
                   style={
                     {
+                      padding: wordPadding,
                       fontSize: wordFontSize,
                       height: wordContainerHeight,
                       color: getValue('answer_text', 'text_color') as string,
