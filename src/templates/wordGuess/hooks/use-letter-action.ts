@@ -9,6 +9,7 @@ const INITIAL_STATE = {
   src: '',
   backgroundColor: 'transparent',
   text: '',
+  textColor: '#000',
 };
 
 type UseLetterActionParams = {
@@ -74,6 +75,7 @@ const useLetterAction = ({
         backgroundColor: correct
           ? `${getValue('image', 'success_background')}`
           : `${getValue('image', 'error_background')}`,
+        textColor: correct ? `${getValue('image', 'success_text_color')}` : `${getValue('image', 'error_text_color')}`,
         text: correct ? `${getValue('image', 'success_text')}` : `${getValue('image', 'error_text')}`,
       });
     }
