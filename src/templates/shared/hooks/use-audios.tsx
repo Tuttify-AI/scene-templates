@@ -6,6 +6,11 @@ type Params = {
   values: SceneProps['values'];
 };
 
+const parseKey = (audioKey: string) => ({
+  key: audioKey.split(':')[0] || '',
+  parameter: audioKey.split(':')[1] || '',
+});
+
 export default function useAudios({ values }: Params) {
   const [audios, setAudios] = useState({} as AudioElements);
 
@@ -15,10 +20,7 @@ export default function useAudios({ values }: Params) {
         Object.keys(values).reduce((res, key) => {
           Object.keys(values[key]).forEach(parameter => {
             if (values[key][parameter].type === TemplateParameterType.sound) {
-              res[key] = {
-                ref: createRef<HTMLAudioElement>(),
-                parameter,
-              };
+              res[`${key}:${parameter}`] = createRef<HTMLAudioElement>();
             }
           });
           return res;
@@ -32,13 +34,13 @@ export default function useAudios({ values }: Params) {
       audios ? (
         <Fragment>
           {Object.keys(audios)
-            .filter(audioKey => !!getElementValue(values)(audioKey, audios?.[audioKey].parameter))
+            .filter(audioKey => !!getElementValue(values)(parseKey(audioKey).key, parseKey(audioKey).parameter))
             .map(audioKey => (
               <audio
                 key={`${audioKey}_sound`}
                 id={`${audioKey}_sound`}
-                ref={audios?.[audioKey].ref}
-                src={getElementValue(values)(audioKey, audios?.[audioKey].parameter) as string}
+                ref={audios?.[audioKey]}
+                src={getElementValue(values)(parseKey(audioKey).key, parseKey(audioKey).parameter) as string}
               />
             ))}
         </Fragment>
@@ -51,11 +53,16 @@ export default function useAudios({ values }: Params) {
       if (audios && getElementValue(values)(key, parameter)) {
         await Promise.all(
           Object.keys(audios).map(async audio => {
-            const currentAudio = audios?.[audio]?.ref?.current;
+            const currentAudio = audios?.[audio]?.current;
             if (currentAudio) {
-              if (audio === key) {
-                currentAudio.currentTime = 0;
-                await currentAudio.play();
+              if (parseKey(audio).key === key) {
+                if (!currentAudio.paused) {
+                  currentAudio.currentTime = 0;
+                  await currentAudio.pause();
+                } else {
+                  currentAudio.currentTime = 0;
+                  await currentAudio.play();
+                }
               } else {
                 currentAudio.currentTime = 0;
                 await currentAudio.pause();

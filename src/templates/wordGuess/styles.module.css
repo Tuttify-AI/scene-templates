@@ -243,8 +243,13 @@
     padding: 8px;
     cursor: pointer;
     border-radius: var(--mainBorderRadius);
-    border: 1px solid rgba(100, 100, 100, 0.3);
+    border: 2px solid rgba(100, 100, 100, 0.5);
     color: var(--colorBlack);
+}
+
+.empty {
+    transform: scale(1);
+    animation: pulseSelect 1s infinite;
 }
 
 .answerLetterItem.correct {
@@ -285,6 +290,23 @@
     0% {
         transform: scale(0.95);
         box-shadow: 0 0 0 0 var(--highlightErrorColor);
+    }
+
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(51, 217, 178, 0);
+    }
+
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(51, 217, 178, 0);
+    }
+}
+
+@keyframes pulseSelect {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 gray;
     }
 
     70% {

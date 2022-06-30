@@ -10,6 +10,7 @@ const INITIAL_STATE = {
   backgroundColor: 'transparent',
   text: '',
   textColor: '#000',
+  soundKey: '',
 };
 
 type UseLetterActionParams = {
@@ -77,6 +78,7 @@ const useLetterAction = ({
           : `${getValue('image', 'error_background')}`,
         textColor: correct ? `${getValue('image', 'success_text_color')}` : `${getValue('image', 'error_text_color')}`,
         text: correct ? `${getValue('image', 'success_text')}` : `${getValue('image', 'error_text')}`,
+        soundKey: correct ? 'success_sound' : `error_sound`,
       });
     }
     return result;

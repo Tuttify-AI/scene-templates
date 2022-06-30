@@ -175,6 +175,9 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
                   id={getElementId(`answer_${answerIndex}`, previewMode)}
                   className={clsx(
                     styles.answerLetterItem,
+                    selectedLetterIndex !== null &&
+                      (lockCorrectSelection ? !checkIfCorrectLetter(index) : true) &&
+                      styles.empty,
                     highlightCorrectSelection && checkIfCorrectLetter(index) && styles.correct,
                     highlightIncorrectSelection && checkIfCorrectLetter(index) === false && styles.incorrect
                   )}
