@@ -83,10 +83,8 @@ export type SceneValue = {
 };
 
 export type AudioElements = {
-  [key: string]: {
-    ref: RefObject<HTMLAudioElement>;
-    parameter: keyof Parameters;
-  };
+  //[key:parameter]
+  [key: string]: RefObject<HTMLAudioElement>;
 };
 
 export type ActiveElementData = {
