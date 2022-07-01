@@ -169,7 +169,7 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
           <div className={clsx(styles.imageContainer, isPreview, classes?.questionImageContainer)}>
             <div
               id={getElementId(`question_image`, previewMode)}
-              style={{ backgroundImage: `url(${`${getValue('question', 'url')}` || questionImage})` }}
+              style={{ backgroundImage: `url(${getValue('question', 'url') || questionImage})` }}
               className={clsx(styles.image, isPreview, classes?.questionImage)}
               onLoad={() => onImageLoad('question_image')}
               onError={() => onImageError('question_image')}
@@ -197,7 +197,7 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
                 <div className={clsx(styles.imageContainer, isPreview, classes?.answerImageContainer)}>
                   <div
                     id={getElementId(`image_${k}`, previewMode)}
-                    style={{ backgroundImage: `url(${`${getValue(k, 'url')}` || answerImage})` }}
+                    style={{ backgroundImage: `url(${getValue(k, 'url') || answerImage})` }}
                     onLoad={() => onImageLoad(`image_${k}`)}
                     onError={() => onImageError(`image_${k}`)}
                     className={clsx(styles.image, isImageHidden(`image_${k}`), isPreview, classes?.answerImage)}
