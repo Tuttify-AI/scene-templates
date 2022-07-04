@@ -110,15 +110,16 @@ const useLetterAction = ({
   );
 
   const handleSetAnswer = useCallback(
-    (index: number) => (e?: React.MouseEvent<HTMLElement>) => {
+    (index: number, selectedIndex?: number) => (e?: React.MouseEvent<HTMLElement>) => {
       e?.preventDefault();
+      const letterIndex = selectedIndex ?? selectedLetterIndex;
       const changeLocked = lockCorrectSelection && checkIfCorrectLetter(index);
       if (!editMode && !changeLocked) {
-        if (selectedLetterIndex === null) {
+        if (letterIndex === null) {
           setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? null : a)));
         } else {
-          handleClick && handleClick('answer', { data: getAnswerData(index, selectedLetterIndex) })(e);
-          setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? selectedLetterIndex : a)));
+          handleClick && handleClick('answer', { data: getAnswerData(index, letterIndex) })(e);
+          setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? letterIndex : a)));
           setSelectedLetterIndex(null);
         }
       }
