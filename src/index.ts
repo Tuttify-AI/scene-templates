@@ -147,11 +147,6 @@ export const AVAILABLE_SCENES = {
     component: Tiles,
     previewImage: previews.tiles,
   },
-  //old name
-  wordGuess: {
-    component: SpellBee,
-    previewImage: previews.tiles,
-  },
   spellbee: {
     component: SpellBee,
     previewImage: previews.tiles,
