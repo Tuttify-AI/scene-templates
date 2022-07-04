@@ -8,17 +8,17 @@ import useLetterAction from './hooks/use-letter-action';
 import useParams from './hooks/use-params';
 
 import styles from './styles.module.css';
-import { Classes, GuessWordElements } from './types';
+import { Classes, SpellBeeElements } from './types';
 import useDragNDrop from '../shared/hooks/use-drag-n-drop';
 
-export type GuessWordSceneProps = SceneProps & {
-  values?: GuessWordElements<SceneValue>;
+export type SpellBeeSceneProps = SceneProps & {
+  values?: SpellBeeElements<SceneValue>;
   classes?: Classes;
 };
 
-const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
+const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick }, ref) => {
-    const getValue = useMemo(() => getElementValue<GuessWordElements>(values), [values]);
+    const getValue = useMemo(() => getElementValue<SpellBeeElements>(values), [values]);
 
     const {
       lettersArray,
@@ -74,7 +74,7 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
       (type: 'edit' | 'editRoot' = 'edit') => editMode && styles[type as keyof typeof styles],
       [editMode]
     );
-    const isActive = useCallback((key: keyof GuessWordElements) => activeKey === key && styles.active, [activeKey]);
+    const isActive = useCallback((key: keyof SpellBeeElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
     const highlightSelection = useCallback(
       (index: number) => (lockCorrectSelection ? !checkIfCorrectLetter(index) : true),
@@ -219,4 +219,4 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
   }
 );
 
-export default GuessWord;
+export default SpellBee;

@@ -1,6 +1,6 @@
 import { Parameters, Elements, SceneValue } from '../shared/types';
 
-export type GuessWordConfig<T = SceneValue> = {
+export type SpellBeeConfig<T = SceneValue> = {
   word: T;
   additional_letters: T;
   letters_total: T;
@@ -9,9 +9,9 @@ export type GuessWordConfig<T = SceneValue> = {
   highlight_incorrect_selection: T;
 };
 
-export type GuessWordElements<T = string | number> = Elements<T> & {
+export type SpellBeeElements<T = string | number> = Elements<T> & {
   title?: Parameters<T>;
-  config?: GuessWordConfig<T>;
+  config?: SpellBeeConfig<T>;
   image?: Parameters<T>;
   background?: Parameters<T>;
   selection_text?: Parameters<T>;

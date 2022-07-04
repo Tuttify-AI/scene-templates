@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActiveElementData, SceneValue } from '../../shared/types';
 import { getElementValue } from '../../shared/utils';
-import { GuessWordElements } from '../types';
+import { SpellBeeElements } from '../types';
 import { checkArray, checkCorrectWord } from '../utils';
 import { useActions } from '../../shared/hooks';
 
@@ -19,7 +19,7 @@ type UseLetterActionParams = {
   answerArray: (null | number)[];
   editMode?: boolean;
   lockCorrectSelection?: boolean;
-  values?: GuessWordElements<SceneValue>;
+  values?: SpellBeeElements<SceneValue>;
   handleClick?: ReturnType<typeof useActions>['handleClick'];
 };
 const useLetterAction = ({
@@ -33,7 +33,7 @@ const useLetterAction = ({
 }: UseLetterActionParams) => {
   const [selectedLetterIndex, setSelectedLetterIndex] = useState<number | null>(null);
   const [answer, setAnswer] = useState(answerArray);
-  const getValue = useMemo(() => getElementValue<GuessWordElements>(values), [values]);
+  const getValue = useMemo(() => getElementValue<SpellBeeElements>(values), [values]);
   const [fullScreen, setFullScreen] = useState(INITIAL_STATE);
 
   useEffect(() => {
