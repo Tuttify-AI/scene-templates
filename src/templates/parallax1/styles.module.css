@@ -17,6 +17,7 @@
     z-index: 5;
     position: absolute;
     max-width: 17%;
+    max-height: 32%;
     object-fit: contain;
     left: 10%;
     bottom: 22%;
@@ -28,6 +29,7 @@
     z-index: 5;
     position: absolute;
     max-width: 13%;
+    max-height: 25%;
     object-fit: contain;
     right: 10%;
     bottom: 25%;
@@ -39,6 +41,7 @@
     z-index: 5;
     position: absolute;
     max-width: 25%;
+    max-height: 25%;
     object-fit: contain;
     right: 1%;
     bottom: 0;
