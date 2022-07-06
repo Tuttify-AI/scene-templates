@@ -23,7 +23,7 @@ export const IMAGES: Image[] = [
     name: 'image2',
     defaultImage: image2,
     isStatic: false,
-    mods: { modX: 15, modY: 15 },
+    mods: { modX: -2, modY: 20 },
   },
   {
     name: 'image3',
@@ -35,7 +35,7 @@ export const IMAGES: Image[] = [
     name: 'image4',
     defaultImage: image4,
     isStatic: false,
-    mods: { modX: 15, modY: 15 },
+    mods: { modX: 20, modY: 20 },
     scale: 1.03,
   },
 ];
