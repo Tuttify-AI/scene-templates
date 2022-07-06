@@ -66,7 +66,7 @@ const Parallax1 = forwardRef<HTMLDivElement, Parallax1SceneProps>(
       >
         {renderAudios()}
         <div ref={scrollRef} className={sceneStyles.scroll} />
-        {IMAGES.map(({ name, defaultImage, isStatic, scale }) => (
+        {IMAGES.map(({ name, defaultImage, isStatic, scale, mods }) => (
           <animated.img
             id={getElementId(name, previewMode)}
             onMouseEnter={handleHover(name)}
@@ -86,8 +86,9 @@ const Parallax1 = forwardRef<HTMLDivElement, Parallax1SceneProps>(
             style={{
               opacity,
               translateY,
+              backgroundColor: `${getValue(name, 'background')}`,
               ...(!isStatic && getScale(name, scale)),
-              ...(!isStatic && getAnimationsStyle(transition({ modX: 20, modY: 20 }))),
+              ...(!isStatic && getAnimationsStyle(transition(mods))),
             }}
             onLoad={() => onImageLoad(name)}
             onError={() => onImageError(name)}
