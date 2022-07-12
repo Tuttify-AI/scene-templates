@@ -45,7 +45,7 @@
 
 .slideItem {
     padding: 6px 12px;
-    height: 50%;
+    height: 50%!important;
 }
 
 .tile {
