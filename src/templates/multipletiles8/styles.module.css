@@ -6,6 +6,7 @@
     --colorSlateGray: #455a64;
     --centerTransform: translate(-50%, -50%);
     --mainBorderRadius: 16px;
+    --textHoverTranslateY: translateY(-70%)
 }
 
 .root {
@@ -202,10 +203,10 @@
     line-height: 36px;
     font-weight: 600;
     position: absolute;
-    top: 50%;
+    top: 45%;
     width: 100%;
-    left: 50%;
-    transform: translate(-50%, -100%);
+    left: 0;
+    /*transform: translate(-50%, -100%);*/
     text-align: center;
     --text-color: #000;
     --text-hover-color: var(--colorWhite);
