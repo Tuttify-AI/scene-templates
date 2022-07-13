@@ -1,14 +1,18 @@
-import { Animation } from '../shared/types';
 import { Image } from './types';
 import image1 from './assets/image1';
 import image2 from './assets/image2';
 import image3 from './assets/image3';
-import image4 from './assets/image4';
 
-export const ANIMATIONS: Animation[] = [
+export const ANIMATIONS: Image[] = [
   {
     name: 'background1',
     mods: { modX: 20, modY: 20 },
+  },
+  {
+    name: 'image4',
+    isStatic: false,
+    mods: { modX: 20, modY: 20 },
+    scale: 1.03,
   },
 ];
 
@@ -30,12 +34,5 @@ export const IMAGES: Image[] = [
     defaultImage: image3,
     isStatic: true,
     mods: { modX: 15, modY: 15 },
-  },
-  {
-    name: 'image4',
-    defaultImage: image4,
-    isStatic: false,
-    mods: { modX: 20, modY: 20 },
-    scale: 1.03,
   },
 ];
