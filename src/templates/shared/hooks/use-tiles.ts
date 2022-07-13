@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActiveElementData, Parameters, SceneProps } from '../types';
 import { deleteElement, getElementValue } from '../utils';
-import { useActions } from './index';
+import { useActions, useWindowSize } from './index';
+import SwiperClass from 'swiper/types/swiper-class';
 
 type Params = Pick<SceneProps, 'editMode' | 'previewMode' | 'onSet' | 'values'> & {
   onActiveElementClick?: SceneProps['onActiveElementClick'];
@@ -11,6 +12,9 @@ type Params = Pick<SceneProps, 'editMode' | 'previewMode' | 'onSet' | 'values'> 
   defaultImages?: string[];
   defaultImageKey?: string;
   params?: Partial<FullTileParams>;
+  swiper?: SwiperClass | null;
+  slidesPerViewFromConfig?: number;
+  slidesPerColumn?: number;
 };
 
 type FullTileParams = {
@@ -18,6 +22,12 @@ type FullTileParams = {
   imageUrl: string;
   text: string;
   textColor: string;
+  imageHoverScale: number;
+  imageHeight: number; //in percents,
+  slidesPerColumn: number;
+  textSize: number;
+  slidesPerViewFromConfig: number;
+  textPadding: number;
 };
 
 type FullElementState = {
@@ -45,6 +55,12 @@ const DEFAULT_PARAMS: FullTileParams = {
   imageUrl: 'fullscreen_url',
   text: 'fullscreen_text',
   textColor: 'fullscreen_text_color',
+  imageHoverScale: 1.35,
+  imageHeight: 0.4, //in percents,
+  slidesPerColumn: 2,
+  textSize: 36,
+  slidesPerViewFromConfig: 8,
+  textPadding: 8,
 };
 
 export default function useTiles({
@@ -58,8 +74,10 @@ export default function useTiles({
   defaultImages,
   defaultImageKey = 'image_',
   params = DEFAULT_PARAMS,
+  swiper,
 }: Params) {
   const [fullTile, setFullTile] = useState(INITIAL_STATE);
+  const { isMd, isSm } = useWindowSize();
   const fullTileParams = useMemo(() => ({ ...DEFAULT_PARAMS, ...params }), [params]);
   useEffect(() => {
     if (editMode || previewMode) {
@@ -120,6 +138,32 @@ export default function useTiles({
     [onActiveElementClick, handleClearFullTile, fullTile, handleClick, defaultImageKey]
   );
 
+  const slideHeight = useMemo(() => 100 / DEFAULT_PARAMS.slidesPerColumn, []);
+
+  const textSize = useMemo(
+    () =>
+      Math.floor(
+        DEFAULT_PARAMS.textSize *
+          (1 -
+            DEFAULT_PARAMS.slidesPerViewFromConfig * 0.035 * (isSm ? 0.5 : isMd ? 0.75 : 1) -
+            DEFAULT_PARAMS.slidesPerColumn * 0.075)
+      ),
+    [isMd, isSm]
+  );
+
+  const textMargin = useMemo(
+    () =>
+      ((swiper?.height || 0) / DEFAULT_PARAMS.slidesPerColumn) * (DEFAULT_PARAMS.imageHeight / 2) +
+      textSize +
+      DEFAULT_PARAMS.textPadding / 2,
+    [swiper?.height, textSize]
+  );
+
+  const textTranslateY = useMemo(
+    () => `translateY(calc(-100% + ${slideHeight * DEFAULT_PARAMS.imageHoverScale - slideHeight}px))`,
+    [slideHeight]
+  );
+
   const onSetFullTile = useCallback(
     (k: string, index: number, parameter?: keyof Parameters) => (e: React.MouseEvent<HTMLElement>) => {
       const defaultValue = defaultImages ? defaultImages[index] || defaultImages[0] : '';
@@ -153,5 +197,10 @@ export default function useTiles({
     getTileData,
     parsedFullImageKey,
     parsedFullTextKey,
+    DEFAULT_PARAMS,
+    slideHeight,
+    textSize,
+    textMargin,
+    textTranslateY,
   };
 }
