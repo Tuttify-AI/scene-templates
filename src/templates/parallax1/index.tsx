@@ -55,6 +55,14 @@ const Parallax1 = forwardRef<HTMLDivElement, Parallax1SceneProps>(
       handlePauseAll,
     });
 
+    const getImageSrc = useCallback(
+      (k: string) => {
+        const src = getValue(k, 'url') as string;
+        return src !== '' && !Number.isNaN(Number(src)) ? IMAGES[Number(src)].defaultImage : src;
+      },
+      [getValue]
+    );
+
     return (
       <animated.div
         id={getElementId('background', previewMode)}
@@ -66,14 +74,14 @@ const Parallax1 = forwardRef<HTMLDivElement, Parallax1SceneProps>(
       >
         {renderAudios()}
         <div ref={scrollRef} className={sceneStyles.scroll} />
-        {IMAGES.map(({ name, defaultImage, isStatic, scale, mods }) => (
+        {IMAGES.map(({ name, isStatic, scale, mods }) => (
           <animated.img
             id={getElementId(name, previewMode)}
             onMouseEnter={handleHover(name)}
             onMouseLeave={clearHover}
             key={name}
             alt={name}
-            src={`${getValue(name, 'url') || defaultImage}`}
+            src={getImageSrc(name)}
             className={clsx(
               //sceneStyles.previewImage
               sceneStyles[name as keyof typeof sceneStyles],
@@ -109,6 +117,7 @@ const Parallax1 = forwardRef<HTMLDivElement, Parallax1SceneProps>(
               classes?.[name as keyof Classes]
             )}
             style={{
+              backgroundImage: `url(${getValue(name, 'url')})`,
               backgroundColor: `${getValue(name, 'background')}`,
               ...getScale(name, 1.03),
               ...getAnimationsStyle(transition(mods)),

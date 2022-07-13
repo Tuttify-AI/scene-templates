@@ -20,8 +20,8 @@ export type Classes = {
 
 export type Image = {
   name: string;
-  defaultImage: string;
-  isStatic: boolean;
+  defaultImage?: string;
+  isStatic?: boolean;
   mods: Mods;
   scale?: number;
 };
