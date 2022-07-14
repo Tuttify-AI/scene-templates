@@ -138,29 +138,29 @@ export default function useTiles({
     [onActiveElementClick, handleClearFullTile, fullTile, handleClick, defaultImageKey]
   );
 
-  const slideHeight = useMemo(() => 100 / DEFAULT_PARAMS.slidesPerColumn, []);
+  const slideHeight = useMemo(() => 100 / fullTileParams.slidesPerColumn, []);
 
   const textSize = useMemo(
     () =>
       Math.floor(
-        DEFAULT_PARAMS.textSize *
+        fullTileParams.textSize *
           (1 -
-            DEFAULT_PARAMS.slidesPerViewFromConfig * 0.035 * (isSm ? 0.5 : isMd ? 0.75 : 1) -
-            DEFAULT_PARAMS.slidesPerColumn * 0.075)
+            fullTileParams.slidesPerViewFromConfig * 0.035 * (isSm ? 0.5 : isMd ? 0.75 : 1) -
+            fullTileParams.slidesPerColumn * 0.075)
       ),
     [isMd, isSm]
   );
 
   const textMargin = useMemo(
     () =>
-      ((swiper?.height || 0) / DEFAULT_PARAMS.slidesPerColumn) * (DEFAULT_PARAMS.imageHeight / 2) +
+      ((swiper?.height || 0) / fullTileParams.slidesPerColumn) * (fullTileParams.imageHeight / 2) +
       textSize +
-      DEFAULT_PARAMS.textPadding / 2,
-    [swiper?.height, textSize]
+      fullTileParams.textPadding / 2,
+    [fullTileParams, swiper?.height, textSize]
   );
 
   const textTranslateY = useMemo(
-    () => `translateY(calc(-100% + ${slideHeight * DEFAULT_PARAMS.imageHoverScale - slideHeight}px))`,
+    () => `translateY(calc(-100% + ${slideHeight * fullTileParams.imageHoverScale - slideHeight}px))`,
     [slideHeight]
   );
 
