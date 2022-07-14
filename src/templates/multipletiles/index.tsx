@@ -103,17 +103,31 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
       }
     };
 
-    const { handleDeleteTile, getTileData } = useTiles({
-      tiles,
-      onSet,
-      handleAddTile,
-      values,
-      handleClick,
-      defaultImages: IMAGES,
-      onActiveElementClick,
-      previewMode,
-      editMode,
-    });
+    const { handleDeleteTile, getTileData, DEFAULT_PARAMS, slideHeight, textSize, textMargin, textTranslateY } =
+      useTiles({
+        tiles,
+        onSet,
+        handleAddTile,
+        values,
+        handleClick,
+        defaultImages: IMAGES,
+        onActiveElementClick,
+        previewMode,
+        editMode,
+        swiper,
+        params: {
+          slidesPerViewFromConfig: 4,
+          slidesPerColumn: 1,
+        },
+      });
+
+    const getImageSrc = useCallback(
+      (k: string) => {
+        const src = getValue(k, 'url') as string;
+        return src !== '' && !Number.isNaN(Number(src)) ? IMAGES[Number(src)] : src;
+      },
+      [getValue]
+    );
 
     return (
       <div
@@ -137,7 +151,13 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
           onSwiper={setSwiper}
         >
           {tiles.map((k, index) => (
-            <SwiperSlide key={k} className={clsx(styles.slideItem, isPreview)}>
+            <SwiperSlide
+              key={k}
+              className={clsx(styles.slideItem, isPreview)}
+              style={{
+                height: `${slideHeight.toFixed(2)}%`,
+              }}
+            >
               <div
                 id={getElementId(k, previewMode)}
                 onClick={handleClick(k, { data: getTileData(k) as ActiveElementData })}
@@ -157,13 +177,7 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
                   </button>
                 )}
               </div>
-              <img
-                id={getElementId(`image_${k}`, previewMode)}
-                alt={`image_${k}`}
-                src={(getValue(`image_${k}`, 'url') as string) || IMAGES[index] || IMAGES[0]}
-                onClick={handleClick(`image_${k}`, { data: getTileData(k) })}
-                onLoad={() => onImageLoad(`image_${k}`)}
-                onError={() => onImageError(`image_${k}`)}
+              <div
                 className={clsx(
                   styles.tileImage,
                   isActive(`image_${k}`),
@@ -172,7 +186,22 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
                   isPreview,
                   classes?.tileImage
                 )}
-              />
+                style={
+                  {
+                    '--image-height': `${DEFAULT_PARAMS.imageHeight * 100}%`,
+                    '--image-hover-scale': DEFAULT_PARAMS.imageHoverScale,
+                  } as CSSProperties
+                }
+              >
+                <img
+                  id={getElementId(`image_${k}`, previewMode)}
+                  alt={`image_${k}`}
+                  src={(getValue(`image_${k}`, 'url') as string) || IMAGES[index] || IMAGES[0]}
+                  onClick={handleClick(`image_${k}`, { data: getTileData(k) })}
+                  onLoad={() => onImageLoad(`image_${k}`)}
+                  onError={() => onImageError(`image_${k}`)}
+                />
+              </div>
               <p
                 id={getElementId(`text_${k}`, previewMode)}
                 onClick={handleClick(`text_${k}`, { data: getTileData(k) })}
@@ -183,6 +212,17 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
                   isPreview,
                   classes?.tileText
                 )}
+                style={
+                  {
+                    marginTop: isImageHidden(k) ? textSize / 2 : textMargin,
+                    fontSize: textSize,
+                    lineHeight: `${textSize}px`,
+                    '--text-color': getValue(k, 'text_color'),
+                    '--text-hover-color': getValue(k, 'text_hover_color'),
+                    '--text-hover-scale': getImageSrc(k) ? textTranslateY : 'translateY(-100%)',
+                    padding: `0 ${DEFAULT_PARAMS.textPadding}px`,
+                  } as CSSProperties
+                }
               >
                 {getValue(`text_${k}`, 'text')}
               </p>
