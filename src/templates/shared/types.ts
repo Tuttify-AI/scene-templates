@@ -93,6 +93,7 @@ export type ActiveElementData = {
   audioUrl?: string;
   videoUrl?: string;
   background?: string;
+  templateName?: string;
   [key: string]: string | undefined;
 };
 
