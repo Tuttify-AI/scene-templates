@@ -34,7 +34,7 @@ import spellbee from './templates/spellBee/assets/preview';
 import atomiHalloween from './templates/atomiHalloween/assets/preview';
 import parallax1 from './templates/parallax1/assets/preview';
 
-export enum Scenes {
+export enum SceneNames {
   Base = 'base',
   Base2 = 'base2',
   Quiz1 = 'quiz1',
@@ -113,71 +113,71 @@ export type {
 };
 
 export const AVAILABLE_SCENES = {
-  [Scenes.Base]: {
+  [SceneNames.Base]: {
     component: Base,
     previewImage: previews.base,
   },
-  [Scenes.Base2]: {
+  [SceneNames.Base2]: {
     component: Base2,
     previewImage: previews.base2,
   },
-  [Scenes.Atomi]: {
+  [SceneNames.Atomi]: {
     component: AtomiHalloween,
     previewImage: previews.atomiHalloween,
   },
-  [Scenes.Quiz1]: {
+  [SceneNames.Quiz1]: {
     component: QuizOne,
     previewImage: previews.quiz1,
   },
-  [Scenes.FullImage]: {
+  [SceneNames.FullImage]: {
     component: FullImage,
     previewImage: previews.fullImage,
   },
-  [Scenes.FullVideo]: {
+  [SceneNames.FullVideo]: {
     component: FullVideo,
     previewImage: previews.fullImage,
   },
-  [Scenes.MultipleTiles]: {
+  [SceneNames.MultipleTiles]: {
     component: MultipleTiles,
     previewImage: previews.multipleTiles,
   },
-  [Scenes.MultipleTiles4]: {
+  [SceneNames.MultipleTiles4]: {
     component: MultipleTiles4,
     previewImage: previews.multipleTiles4,
   },
-  [Scenes.MultipleTiles4FullImage]: {
+  [SceneNames.MultipleTiles4FullImage]: {
     component: MultipleTiles4FullImage,
     previewImage: previews.multipleTiles4FullImage,
   },
-  [Scenes.MultipleTiles6]: {
+  [SceneNames.MultipleTiles6]: {
     component: MultipleTiles6,
     previewImage: previews.multipleTiles6,
   },
-  [Scenes.MultipleTiles6FullImage]: {
+  [SceneNames.MultipleTiles6FullImage]: {
     component: MultipleTiles6FullImage,
     previewImage: previews.multipleTiles6FullImage,
   },
-  [Scenes.MultipleTiles8]: {
+  [SceneNames.MultipleTiles8]: {
     component: MultipleTiles8,
     previewImage: previews.multipleTiles8,
   },
-  [Scenes.MultipleTiles4FullImage]: {
+  [SceneNames.MultipleTiles4FullImage]: {
     component: MultipleTiles8FullImage,
     previewImage: previews.multipleTiles8FullImage,
   },
-  [Scenes.Scene15]: {
+  [SceneNames.Scene15]: {
     component: FullImageWithButton,
     previewImage: previews.fullImageWithButton,
   },
-  [Scenes.Tiles]: {
+  [SceneNames.Tiles]: {
     component: Tiles,
     previewImage: previews.tiles,
   },
-  [Scenes.Spellbee]: {
+  [SceneNames.Spellbee]: {
     component: SpellBee,
     previewImage: previews.tiles,
   },
-  [Scenes.Parallax1]: {
+  [SceneNames.Parallax1]: {
     component: Parallax1,
     previewImage: previews.parallax1,
   },
