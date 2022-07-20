@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ActiveElementData, Elements, Parameters, SceneProps } from '../types';
 import { deleteElement } from '../utils';
 import { useActions } from './index';
-import { Scenes } from '../../../index';
+import { SceneNames } from '../../../index';
 
 type Params = Pick<SceneProps, 'editMode' | 'previewMode' | 'onSet' | 'values'> & {
   onActiveElementClick?: SceneProps['onActiveElementClick'];
@@ -64,7 +64,7 @@ export default function useQuizAnswers({
         ...(fullScreenUrl ? { fullScreenUrl } : {}),
         ...(audioUrl ? { audioUrl } : {}),
         ...(isCorrect ? { isCorrect } : {}),
-        templateName: Scenes.Quiz1,
+        templateName: SceneNames.Quiz1,
       } as ActiveElementData;
     },
     [getValue]
