@@ -22,6 +22,6 @@ export type Image = {
   name: string;
   defaultImage?: string;
   isStatic?: boolean;
-  mods: Mods;
+  mods?: Mods;
   scale?: number;
 };
