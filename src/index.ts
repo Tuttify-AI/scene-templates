@@ -36,6 +36,28 @@ import spellbee from './templates/spellBee/assets/preview';
 import atomiHalloween from './templates/atomiHalloween/assets/preview';
 import parallax1 from './templates/parallax1/assets/preview';
 
+export enum SceneNames {
+  Base = 'base',
+  Base2 = 'base2',
+  Base3 = 'base3',
+  Quiz1 = 'quiz1',
+  FullImage = 'fullImage',
+  FullVideo = 'fullVideo',
+  MultipleTiles = 'multipletiles',
+  MultipleTiles4 = 'multipletiles4',
+  MultipleTiles4FullImage = 'multipletiles4FullImg',
+  MultipleTiles6FullImage = 'multipletiles6FullImg',
+  MultipleTiles8FullImage = 'multipletiles8FullImg',
+  MultipleTiles6 = 'multipletiles6',
+  MultipleTiles8 = 'multipletiles8',
+  FullImageWithButton = 'fullImageWithButton',
+  Tiles = 'tiles',
+  Spellbee = 'spellbee',
+  Parallax1 = 'parallax1',
+  Scene15 = 'scene15',
+  Atomi = 'atomi',
+}
+
 const previews = {
   base,
   base2,
@@ -97,75 +119,75 @@ export type {
 };
 
 export const AVAILABLE_SCENES = {
-  base: {
+  [SceneNames.Base]: {
     component: Base,
     previewImage: previews.base,
   },
-  base2: {
+  [SceneNames.Base2]: {
     component: Base2,
     previewImage: previews.base2,
   },
-  base3: {
+  [SceneNames.Base3]: {
     component: Base3,
     previewImage: previews.base3,
   },
-  atomi: {
+  [SceneNames.Atomi]: {
     component: AtomiHalloween,
     previewImage: previews.atomiHalloween,
   },
-  quiz1: {
+  [SceneNames.Quiz1]: {
     component: QuizOne,
     previewImage: previews.quiz1,
   },
-  fullImage: {
+  [SceneNames.FullImage]: {
     component: FullImage,
     previewImage: previews.fullImage,
   },
-  fullVideo: {
+  [SceneNames.FullVideo]: {
     component: FullVideo,
     previewImage: previews.fullImage,
   },
-  multipletiles: {
+  [SceneNames.MultipleTiles]: {
     component: MultipleTiles,
     previewImage: previews.multipleTiles,
   },
-  multipletiles4: {
+  [SceneNames.MultipleTiles4]: {
     component: MultipleTiles4,
     previewImage: previews.multipleTiles4,
   },
-  multipletiles4FullImg: {
+  [SceneNames.MultipleTiles4FullImage]: {
     component: MultipleTiles4FullImage,
     previewImage: previews.multipleTiles4FullImage,
   },
-  multipletiles6: {
+  [SceneNames.MultipleTiles6]: {
     component: MultipleTiles6,
     previewImage: previews.multipleTiles6,
   },
-  multipletiles6FullImg: {
+  [SceneNames.MultipleTiles6FullImage]: {
     component: MultipleTiles6FullImage,
     previewImage: previews.multipleTiles6FullImage,
   },
-  multipletiles8: {
+  [SceneNames.MultipleTiles8]: {
     component: MultipleTiles8,
     previewImage: previews.multipleTiles8,
   },
-  multipletiles8FullImg: {
+  [SceneNames.MultipleTiles4FullImage]: {
     component: MultipleTiles8FullImage,
     previewImage: previews.multipleTiles8FullImage,
   },
-  scene15: {
+  [SceneNames.Scene15]: {
     component: FullImageWithButton,
     previewImage: previews.fullImageWithButton,
   },
-  tiles: {
+  [SceneNames.Tiles]: {
     component: Tiles,
     previewImage: previews.tiles,
   },
-  spellbee: {
+  [SceneNames.Spellbee]: {
     component: SpellBee,
     previewImage: previews.tiles,
   },
-  parallax1: {
+  [SceneNames.Parallax1]: {
     component: Parallax1,
     previewImage: previews.parallax1,
   },
