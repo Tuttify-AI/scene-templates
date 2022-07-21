@@ -66,3 +66,5 @@ export const randomizeString = (str: unknown) =>
     .split('')
     .sort(() => Math.random() - 0.5)
     .join('');
+
+export const randomizeArray = (arr: string[]) => arr.sort(() => Math.random() - 0.7);

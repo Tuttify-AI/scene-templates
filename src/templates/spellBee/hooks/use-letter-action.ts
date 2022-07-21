@@ -4,7 +4,6 @@ import { getElementValue } from '../../shared/utils';
 import { SpellBeeElements } from '../types';
 import { checkArray, checkCorrectWord } from '../utils';
 import { useActions } from '../../shared/hooks';
-import { SceneNames } from '../../../index';
 
 const INITIAL_STATE = {
   src: '',
@@ -105,7 +104,6 @@ const useLetterAction = ({
         ...(letter ? { letter } : {}),
         ...(word ? { word } : {}),
         ...(index !== null ? { index } : {}),
-        templateName: SceneNames.Spellbee,
       } as ActiveElementData;
     },
     [wordArray, totalLettersArray]

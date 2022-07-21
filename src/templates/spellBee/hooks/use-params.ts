@@ -1,19 +1,23 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { useWindowSize } from '../../shared/hooks';
 import { SceneProps, SceneValue } from '../../shared/types';
-import { getElementValue, getNumber, randomizeString } from '../../shared/utils';
+import { getElementValue, getNumber, randomizeArray, randomizeString } from '../../shared/utils';
 import { SpellBeeConfig } from '../types';
 
-type Params = Pick<SceneProps, 'values' | 'previewMode' | 'editMode' | 'onSet'>;
+type Params = Pick<SceneProps, 'values' | 'previewMode' | 'editMode' | 'onSet'> & {
+  useWords?: boolean;
+};
 
 const DEFAULTS = {
   selectionTextSize: 72,
+  selectionWordSize: 38,
   wordTextSize: 90,
+  wordSize: 42,
   fullScreenTextSize: 40,
   textPadding: 8,
 };
 
-export default function useParams({ values, previewMode, editMode, onSet }: Params) {
+export default function useParams({ values, previewMode, editMode, onSet, useWords }: Params) {
   const { isMd, isSm } = useWindowSize();
 
   const getConfigValue = useCallback(
@@ -38,30 +42,85 @@ export default function useParams({ values, previewMode, editMode, onSet }: Para
     () => getNumber(getConfigValue('highlight_incorrect_selection')) === 1,
     [getConfigValue]
   );
-  const lettersArray = useMemo(() => `${getConfigValue('letters_total')}`.toUpperCase().split(''), [getConfigValue]);
-  const additionalLettersArray = useMemo(
-    () => `${getConfigValue('additional_letters')}`.toUpperCase().split(''),
-    [getConfigValue]
+  const lettersArray = useMemo(
+    () =>
+      useWords && typeof getConfigValue('words_total') === 'object'
+        ? (getConfigValue('words_total') as string[])?.map(w => w.toUpperCase())
+        : `${getConfigValue('letters_total')}`.toUpperCase().split(''),
+    [getConfigValue, useWords]
   );
-  const wordArray = useMemo(() => `${getConfigValue('word')}`.toUpperCase().split(''), [getConfigValue]);
+  const additionalLettersArray = useMemo(
+    () =>
+      useWords && typeof getConfigValue('additional_words') === 'object'
+        ? (getConfigValue('additional_words') as string[])?.map(w => w.toUpperCase())
+        : `${getConfigValue('additional_letters')}`.toUpperCase().split(''),
+    [getConfigValue, useWords]
+  );
+  const wordArray = useMemo(
+    () =>
+      useWords && typeof getConfigValue('words') === 'object'
+        ? (getConfigValue('words') as string[])?.map(w => w.toUpperCase())
+        : `${getConfigValue('word')}`.toUpperCase().split(''),
+    [getConfigValue, useWords]
+  );
+
   const answerArray = useMemo(() => Array.from(Array(wordArray.length).fill(null)), [wordArray]);
 
   useEffect(() => {
-    if (lettersArray.slice().sort().join('') !== [...wordArray, ...additionalLettersArray].slice().sort().join('')) {
+    if (
+      useWords &&
+      lettersArray.slice().sort().join('') !== [...wordArray, ...additionalLettersArray].slice().sort().join('')
+    ) {
+      onSetConfig('words_total', randomizeArray([...wordArray, ...additionalLettersArray]));
+    } else if (
+      !useWords &&
+      lettersArray.slice().sort().join('') !== [...wordArray, ...additionalLettersArray].slice().sort().join('')
+    ) {
       onSetConfig('letters_total', randomizeString([...wordArray, ...additionalLettersArray].join('')));
     }
-  }, [lettersArray, onSetConfig, wordArray, additionalLettersArray]);
+  }, [lettersArray, onSetConfig, wordArray, additionalLettersArray, useWords]);
   const selectionLettersWidth = useMemo(
-    () => 100 / (isMd && lettersArray.length > 8 ? Math.round(lettersArray.length / 2) : lettersArray.length || 1),
-    [lettersArray, isMd]
+    () =>
+      100 /
+      (isMd && lettersArray.length > (useWords ? 4 : 8)
+        ? Math.round(lettersArray.length / (useWords ? 1.2 : 2))
+        : lettersArray.length || 1),
+    [isMd, lettersArray.length, useWords]
   );
+
   const answerLettersWidth = useMemo(() => 100 / (wordArray.length || 1), [wordArray]);
+
   const selectionFontSize = useMemo(
-    () => Math.floor(isSm ? DEFAULTS.selectionTextSize * 0.75 : DEFAULTS.selectionTextSize),
-    [isSm]
+    () =>
+      Math.floor(
+        isSm && useWords
+          ? DEFAULTS.selectionWordSize * 0.4
+          : !isSm && useWords
+          ? DEFAULTS.selectionWordSize
+          : isSm
+          ? DEFAULTS.selectionTextSize * 0.75
+          : DEFAULTS.selectionTextSize
+      ),
+    [isSm, useWords]
   );
-  const wordFontSize = useMemo(() => Math.floor(isSm ? DEFAULTS.wordTextSize * 0.55 : DEFAULTS.wordTextSize), [isSm]);
-  const wordPadding = useMemo(() => (isSm ? DEFAULTS.textPadding * 0.5 : DEFAULTS.textPadding), [isSm]);
+  const wordFontSize = useMemo(
+    () =>
+      Math.floor(
+        isSm && useWords
+          ? DEFAULTS.wordSize * 0.4
+          : !isSm && useWords
+          ? DEFAULTS.wordSize
+          : isSm && !useWords
+          ? DEFAULTS.wordTextSize * 0.55
+          : DEFAULTS.wordTextSize
+      ),
+    [isSm, useWords]
+  );
+
+  const wordPadding = useMemo(
+    () => (isSm ? DEFAULTS.textPadding * (useWords ? 0.4 : 0.5) : DEFAULTS.textPadding * (useWords ? 0.8 : 1)),
+    [isSm, useWords]
+  );
   const selectionContainerHeight = useMemo(() => selectionFontSize + wordPadding * 2, [selectionFontSize, wordPadding]);
   const wordContainerHeight = useMemo(() => wordFontSize + DEFAULTS.textPadding * 2, [wordFontSize]);
 
