@@ -14,10 +14,11 @@ import useDragNDrop from '../shared/hooks/use-drag-n-drop';
 export type SpellBeeSceneProps = SceneProps & {
   values?: SpellBeeElements<SceneValue>;
   classes?: Classes;
+  useWords?: boolean;
 };
 
 const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
-  ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick }, ref) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick, useWords }, ref) => {
     const getValue = useMemo(() => getElementValue<SpellBeeElements>(values), [values]);
 
     const {
@@ -40,6 +41,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       previewMode,
       editMode,
       onSet,
+      useWords,
     });
     const { renderAudios, handlePauseAll } = useAudios({ values });
     const { handleClick } = useActions({
@@ -150,7 +152,8 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
                 className={clsx(
                   styles.selectionLetterItem,
                   !editMode && styles.withHover,
-                  dragSelectedIndex === index && styles.dragged
+                  dragSelectedIndex === index && styles.dragged,
+                  useWords && styles.wordText
                 )}
                 style={{
                   fontSize: selectionFontSize,

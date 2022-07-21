@@ -16,6 +16,7 @@ import MultipleTiles8FullImage, { MultipleTiles8FullImageProps } from './templat
 import MultipleTiles6, { MultipleTiles6SceneProps } from './templates/multipletiles6';
 import MultipleTiles8, { MultipleTiles8SceneProps } from './templates/multipletiles8';
 import Parallax1, { Parallax1SceneProps } from './templates/parallax1';
+import WordGuess, { WordGuessSceneProps } from './templates/wordGuess';
 import AtomiHalloween from './templates/atomiHalloween';
 
 import base from './templates/base/assets/preview';
@@ -35,6 +36,7 @@ import multipleTiles8 from './templates/multipletiles8/assets/preview';
 import spellbee from './templates/spellBee/assets/preview';
 import atomiHalloween from './templates/atomiHalloween/assets/preview';
 import parallax1 from './templates/parallax1/assets/preview';
+import wordGuess from './templates/wordGuess/assets/preview';
 
 export enum SceneNames {
   Base = 'base',
@@ -56,6 +58,7 @@ export enum SceneNames {
   Parallax1 = 'parallax1',
   Scene15 = 'scene15',
   Atomi = 'atomi',
+  WordGuess = 'wordGuess',
 }
 
 const previews = {
@@ -76,6 +79,7 @@ const previews = {
   tiles,
   spellbee,
   parallax1,
+  wordGuess,
 };
 
 export {
@@ -98,6 +102,7 @@ export {
   Tiles,
   Types,
   previews,
+  WordGuess,
 };
 export type {
   BaseSceneProps,
@@ -116,6 +121,7 @@ export type {
   FullImageWithButtonProps,
   SpellBeeSceneProps,
   Parallax1SceneProps,
+  WordGuessSceneProps,
 };
 
 export const AVAILABLE_SCENES = {
@@ -190,5 +196,9 @@ export const AVAILABLE_SCENES = {
   [SceneNames.Parallax1]: {
     component: Parallax1,
     previewImage: previews.parallax1,
+  },
+  [SceneNames.WordGuess]: {
+    component: WordGuess,
+    previewImage: previews.wordGuess,
   },
 };
