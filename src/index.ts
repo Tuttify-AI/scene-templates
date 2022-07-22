@@ -16,6 +16,7 @@ import MultipleTiles6, { MultipleTiles6SceneProps } from './templates/multipleti
 import MultipleTiles8, { MultipleTiles8SceneProps } from './templates/multipletiles8';
 import Parallax1, { Parallax1SceneProps } from './templates/parallax1';
 import AtomiHalloween from './templates/atomiHalloween';
+import Twocando, { TwocandoSceneProps } from './templates/twocando';
 
 import base from './templates/base/assets/preview';
 import base2 from './templates/base2/assets/preview';
@@ -33,6 +34,7 @@ import multipleTiles8 from './templates/multipletiles8/assets/preview';
 import spellbee from './templates/spellBee/assets/preview';
 import atomiHalloween from './templates/atomiHalloween/assets/preview';
 import parallax1 from './templates/parallax1/assets/preview';
+import twocando from './templates/twocando/assets/preview';
 
 export enum SceneNames {
   Base = 'base',
@@ -53,6 +55,7 @@ export enum SceneNames {
   Parallax1 = 'parallax1',
   Scene15 = 'scene15',
   Atomi = 'atomi',
+  Twocando = 'twocando',
 }
 
 const previews = {
@@ -72,6 +75,7 @@ const previews = {
   tiles,
   spellbee,
   parallax1,
+  twocando,
 };
 
 export {
@@ -90,6 +94,7 @@ export {
   AtomiHalloween,
   FullImageWithButton,
   Parallax1,
+  Twocando,
   Tiles,
   Types,
   previews,
@@ -110,6 +115,7 @@ export type {
   FullImageWithButtonProps,
   SpellBeeSceneProps,
   Parallax1SceneProps,
+  TwocandoSceneProps,
 };
 
 export const AVAILABLE_SCENES = {
@@ -180,5 +186,9 @@ export const AVAILABLE_SCENES = {
   [SceneNames.Parallax1]: {
     component: Parallax1,
     previewImage: previews.parallax1,
+  },
+  [SceneNames.Twocando]: {
+    component: Twocando,
+    previewImage: previews.twocando,
   },
 };
