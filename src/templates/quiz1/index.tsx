@@ -170,7 +170,7 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
             <div
               id={getElementId(`question_image`, previewMode)}
               style={{ backgroundImage: `url(${getValue('question', 'url') || questionImage})` }}
-              className={clsx(styles.image, isPreview, classes?.questionImage)}
+              className={clsx(styles.element, styles.image, isPreview, classes?.questionImage)}
               onLoad={() => onImageLoad('question_image')}
               onError={() => onImageError('question_image')}
             />

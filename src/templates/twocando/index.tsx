@@ -94,7 +94,6 @@ const Twocando = forwardRef<HTMLDivElement, TwocandoSceneProps>(
               classes?.[name as keyof Classes]
             )}
             style={{
-              opacity,
               translateY,
               backgroundColor: `${getValue(name, 'background')}`,
               ...(!isStatic && getScale(name, scale)),
