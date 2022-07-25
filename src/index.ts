@@ -167,7 +167,7 @@ export const AVAILABLE_SCENES = {
     component: MultipleTiles8,
     previewImage: previews.multipleTiles8,
   },
-  [SceneNames.MultipleTiles4FullImage]: {
+  [SceneNames.MultipleTiles8FullImage]: {
     component: MultipleTiles8FullImage,
     previewImage: previews.multipleTiles8FullImage,
   },
