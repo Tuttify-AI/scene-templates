@@ -66,14 +66,14 @@ export enum TemplateParameterType {
 export type TemplateParameter = {
   type: TemplateParameterType;
   title: string;
-  default_value: string | number;
+  default_value: string | number | string[] | number[];
   length?: number;
 };
 
 export type SceneValue = {
   type: TemplateParameterType;
   title: string;
-  value: string | number;
+  value: string | number | string[] | number[];
   length?: number;
   max_length?: number;
   min_length?: number;

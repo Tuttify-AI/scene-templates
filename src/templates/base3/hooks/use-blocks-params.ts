@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, createRef } from 'react';
 import { useWindowSize } from '../../shared/hooks';
 import { SceneProps } from '../../shared/types';
 import { getElementValue, getNumber } from '../../shared/utils';
@@ -38,7 +38,16 @@ export default function useBlocksParams({ values, previewMode, editMode }: Param
     [isSm, previewMode, slidesPerViewFromConfig]
   );
 
-  const blocks = useMemo(() => Object.keys(values || {}).filter(k => k.startsWith('block')), [values]);
+  const blocks = useMemo(
+    () =>
+      Object.keys(values || {})
+        .filter(k => k.startsWith('block'))
+        .map(id => ({
+          id,
+          ref: createRef(),
+        })),
+    [values]
+  );
 
   const showSceneActionElements = useMemo(() => editMode && !previewMode, [editMode, previewMode]);
 

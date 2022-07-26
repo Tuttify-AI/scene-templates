@@ -44,21 +44,21 @@ export default function useParams({ values, previewMode, editMode, onSet, useWor
   );
   const lettersArray = useMemo(
     () =>
-      useWords && typeof getConfigValue('words_total') === 'object'
+      useWords && Array.isArray(getConfigValue('words_total'))
         ? (getConfigValue('words_total') as string[])?.map(w => w.toUpperCase())
         : `${getConfigValue('letters_total')}`.toUpperCase().split(''),
     [getConfigValue, useWords]
   );
   const additionalLettersArray = useMemo(
     () =>
-      useWords && typeof getConfigValue('additional_words') === 'object'
+      useWords && Array.isArray(getConfigValue('additional_words'))
         ? (getConfigValue('additional_words') as string[])?.map(w => w.toUpperCase())
         : `${getConfigValue('additional_letters')}`.toUpperCase().split(''),
     [getConfigValue, useWords]
   );
   const wordArray = useMemo(
     () =>
-      useWords && typeof getConfigValue('words') === 'object'
+      useWords && Array.isArray(getConfigValue('words'))
         ? (getConfigValue('words') as string[])?.map(w => w.toUpperCase())
         : `${getConfigValue('word')}`.toUpperCase().split(''),
     [getConfigValue, useWords]

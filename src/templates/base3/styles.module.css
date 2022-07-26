@@ -1,9 +1,6 @@
 :root {
     --shape-box-shadow: 1px 1px 12px 1px rgba(100, 100, 100, 0.8);
     --text-shadow: 0 0 12px rgba(100, 100, 100, 0.8);
-    --background-color:rgba(255,255,0, 0.5);
-    --top: 20px;
-    --left: 20px;
 }
 
 .scroll {
@@ -33,51 +30,57 @@
     transition: all 0.25s ease-in-out;
 }
 
-.title {
-    cursor: pointer;
-    width: 50%;
-    padding: 24px;
-    z-index: 6;
-    font-size: 80px;
-}
-
-.description {
-    cursor: pointer;
-    width: 50%;
-    color: #175AE4;
-    font-size: 64px;
-    padding: 24px;
-    z-index: 6;
-}
-
 .block {
     cursor: pointer;
     z-index: 2;
     position: absolute;
-    background: rgba(255,255,0, 0.5);
-    width: 15%;
-    height: 15%;
-    top: var(--top);
-    left: var(--left);
+    background-color: transparent;
+    width: 20%;
+    height: 20%;
+    border-radius: 8px;
 }
 
-.editBlock:hover {
-    text-shadow: var(--text-shadow);
+.block.editBlock {
+    opacity: 0.5;
+    transition: all 0.25s ease-in-out;
+    border: 1px dashed gray;
+}
+
+.block.editBlock > .dragBlock {
+    visibility: visible;
+}
+
+.dragBlock {
+    visibility: hidden;
+    position: absolute;
+    opacity: 0.3;
+    border: 1px dashed black;
+    width: 20%;
+    height: 20%;
+    transform: translate(-50%, -50%);
+    min-width: 40px;
+    min-height: 40px;
+    top: 50%;
+    left: 50%;
+    border-radius: 8px;
+    background: transparent;
+    cursor: move;
+}
+
+.block.editBlock:hover > .dragBlock {
+    opacity: 0.6;
+}
+
+.block.editBlock > .dragBlock:hover {
+    opacity: 1;
+}
+
+.block.editBlock:hover {
+    opacity: 1;
 }
 
 .addBtn {
     left: 50%;
-}
-
-.image {
-    cursor: pointer;
-    z-index: 4;
-    position: absolute;
-    max-width: 400px;
-    object-fit: contain;
-    bottom: 130px;
-    right: 112px;
-    border-radius: 4px;
 }
 
 .hidden {
@@ -86,10 +89,6 @@
 
 .edit:hover {
     box-shadow: var(--shape-box-shadow);
-}
-
-.editText:hover {
-    text-shadow: var(--text-shadow);
 }
 
 .active {
@@ -110,102 +109,4 @@
     z-index: -1;
     border-radius: 0;
     opacity: 0;
-}
-
-@media screen and (max-width: 960px) {
-    .title:not(.preview) {
-        font-size: 60px;
-        padding: 16px;
-    }
-
-    .description:not(.preview) {
-        padding: 16px;
-    }
-
-    .shape1:not(.preview) {
-        bottom: -45px;
-    }
-
-    .shape3:not(.preview) {
-        top: -35px;
-    }
-
-    .shape5:not(.preview) {
-        width: 300px;
-        height: 300px;
-    }
-}
-
-
-@media screen and (max-width: 600px) {
-    .root:not(.preview) {
-        height: auto;
-        max-height: none;
-        min-height: auto;
-        padding-top: 340px;
-    }
-
-    .image:not(.preview) {
-        width: 100%;
-    }
-
-    .title:not(.preview) {
-        width: 100%;
-        text-align: center;
-        font-size: 48px;
-        line-height: 50px;
-        padding: 8px;
-    }
-
-    .description:not(.preview) {
-        width: 100%;
-        text-align: center;
-        font-size: 15px;
-        padding: 8px;
-    }
-
-    .image:not(.preview) {
-        max-width: 280px;
-        top: 40px;
-        right: 0;
-    }
-
-    .shape1:not(.preview) {
-        top: 45px;
-        right: 5%;
-        left: unset;
-    }
-
-    .shape2:not(.preview) {
-        left: 5%;
-        top: 10%;
-    }
-
-    .shape3:not(.preview) {
-        width: 15%;
-        padding-bottom: 15%;
-        top: 15%;
-        left: 7%;
-    }
-
-    .shape4:not(.preview) {
-        top: 51%;
-        right: 60px;
-    }
-
-    .shape5:not(.preview) {
-        width: 250px;
-        height: 250px;
-        top: 10%;
-        right: 50%;
-        margin-right: -125px;
-    }
-}
-
-@media screen and (max-width: 420px) {
-    .image:not(.preview) {
-        max-width: 240px;
-        top: 60px;
-        right: 0;
-    }
 }
