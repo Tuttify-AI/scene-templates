@@ -54,6 +54,7 @@ export enum TemplateParameterType {
   textColor = 'textColor',
   text = 'text',
   textarea = 'textarea',
+  textArray = 'textArray',
   title = 'title',
   sound = 'sound',
   image = 'image',
