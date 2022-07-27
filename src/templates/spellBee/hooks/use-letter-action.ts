@@ -14,8 +14,8 @@ const INITIAL_STATE = {
 };
 
 type UseLetterActionParams = {
-  totalLettersArray: string[];
-  wordArray: string[];
+  totalItemsArray: string[];
+  itemsArray: string[];
   answerArray: (null | number)[];
   editMode?: boolean;
   lockCorrectSelection?: boolean;
@@ -25,8 +25,8 @@ type UseLetterActionParams = {
 const useLetterAction = ({
   answerArray,
   editMode,
-  totalLettersArray,
-  wordArray,
+  totalItemsArray,
+  itemsArray,
   values,
   lockCorrectSelection,
   handleClick,
@@ -65,8 +65,8 @@ const useLetterAction = ({
     [selectedLetterIndex, editMode, checkIsLetterDisabled]
   );
   const correct = useMemo(() => {
-    return checkCorrectWord(answer, totalLettersArray, wordArray.join());
-  }, [answer, totalLettersArray, wordArray]);
+    return checkCorrectWord(answer, totalItemsArray, itemsArray.join());
+  }, [answer, totalItemsArray, itemsArray]);
 
   const isFullAnswer = useMemo(() => {
     const result = checkArray(answer);
@@ -87,18 +87,18 @@ const useLetterAction = ({
   const checkIfCorrectLetter = useCallback(
     (answerIndex: number | null) => {
       const wordIndexInAnswer = answerIndex !== null ? answer[answerIndex] : null;
-      return answerIndex !== null && wordArray[answerIndex] !== null && wordIndexInAnswer !== null
-        ? wordArray[answerIndex].toUpperCase() === totalLettersArray[wordIndexInAnswer].toUpperCase()
+      return answerIndex !== null && itemsArray[answerIndex] !== null && wordIndexInAnswer !== null
+        ? itemsArray[answerIndex].toUpperCase() === totalItemsArray[wordIndexInAnswer].toUpperCase()
         : null;
     },
-    [wordArray, totalLettersArray, answer]
+    [itemsArray, totalItemsArray, answer]
   );
 
   const getAnswerData = useCallback(
     (index: number, totalLetterIndex: number | null) => {
-      const isCorrect = totalLetterIndex !== null && totalLettersArray[totalLetterIndex] === wordArray[index];
-      const letter = totalLetterIndex !== null && totalLettersArray[totalLetterIndex];
-      const word = wordArray.join('');
+      const isCorrect = totalLetterIndex !== null && totalItemsArray[totalLetterIndex] === itemsArray[index];
+      const letter = totalLetterIndex !== null && totalItemsArray[totalLetterIndex];
+      const word = itemsArray.join('');
       return {
         ...(isCorrect !== null ? { isCorrect } : {}),
         ...(letter ? { letter } : {}),
@@ -106,7 +106,7 @@ const useLetterAction = ({
         ...(index !== null ? { index } : {}),
       } as ActiveElementData;
     },
-    [wordArray, totalLettersArray]
+    [itemsArray, totalItemsArray]
   );
 
   const handleSetAnswer = useCallback(

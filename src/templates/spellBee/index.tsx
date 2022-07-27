@@ -14,15 +14,15 @@ import useDragNDrop from '../shared/hooks/use-drag-n-drop';
 export type SpellBeeSceneProps = SceneProps & {
   values?: SpellBeeElements<SceneValue>;
   classes?: Classes;
-  useWords?: boolean;
+  useArray?: boolean;
 };
 
 const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
-  ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick, useWords }, ref) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick, useArray }, ref) => {
     const getValue = useMemo(() => getElementValue<SpellBeeElements>(values), [values]);
 
     const {
-      lettersArray,
+      totalItemsArray,
       selectionLettersWidth,
       answerLettersWidth,
       answerArray,
@@ -30,7 +30,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       selectionContainerHeight,
       wordContainerHeight,
       wordFontSize,
-      wordArray,
+      itemsArray,
       lockCorrectSelection,
       highlightCorrectSelection,
       highlightIncorrectSelection,
@@ -41,7 +41,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       previewMode,
       editMode,
       onSet,
-      useWords,
+      useArray,
     });
     const { renderAudios, handlePauseAll } = useAudios({ values });
     const { handleClick } = useActions({
@@ -63,9 +63,9 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       checkIfCorrectLetter,
     } = useLetterAction({
       answerArray,
-      totalLettersArray: lettersArray,
+      totalItemsArray,
       editMode,
-      wordArray,
+      itemsArray,
       values,
       lockCorrectSelection,
       handleClick,
@@ -131,7 +131,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
           onClick={handleClick('selection_text')}
           id={getElementId(`selection_text`, previewMode)}
         >
-          {lettersArray.map((letter, index) => (
+          {totalItemsArray.map((letter, index) => (
             <div
               key={index}
               className={clsx(
@@ -153,7 +153,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
                   styles.selectionLetterItem,
                   !editMode && styles.withHover,
                   dragSelectedIndex === index && styles.dragged,
-                  useWords && styles.wordText
+                  useArray && styles.wordText
                 )}
                 style={{
                   fontSize: selectionFontSize,
@@ -211,7 +211,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
                     } as CSSProperties
                   }
                 >
-                  {answerIndex !== null && lettersArray[answerIndex]}
+                  {answerIndex !== null && totalItemsArray[answerIndex]}
                 </p>
               </div>
             ))}

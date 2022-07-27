@@ -5,7 +5,7 @@ import { getElementValue, getNumber, randomizeArray, randomizeString } from '../
 import { SpellBeeConfig } from '../types';
 
 type Params = Pick<SceneProps, 'values' | 'previewMode' | 'editMode' | 'onSet'> & {
-  useWords?: boolean;
+  useArray?: boolean;
 };
 
 const DEFAULTS = {
@@ -17,7 +17,7 @@ const DEFAULTS = {
   textPadding: 8,
 };
 
-export default function useParams({ values, previewMode, editMode, onSet, useWords }: Params) {
+export default function useParams({ values, previewMode, editMode, onSet, useArray }: Params) {
   const { isMd, isSm } = useWindowSize();
 
   const getConfigValue = useCallback(
@@ -42,84 +42,82 @@ export default function useParams({ values, previewMode, editMode, onSet, useWor
     () => getNumber(getConfigValue('highlight_incorrect_selection')) === 1,
     [getConfigValue]
   );
-  const lettersArray = useMemo(
+  const totalItemsArray = useMemo(
     () =>
-      useWords && Array.isArray(getConfigValue('words_total'))
-        ? (getConfigValue('words_total') as string[])?.map(w => w.toUpperCase())
-        : `${getConfigValue('letters_total')}`.toUpperCase().split(''),
-    [getConfigValue, useWords]
+      useArray && Array.isArray(getConfigValue('items_total'))
+        ? (getConfigValue('items_total') as string[])?.map(w => w.toUpperCase())
+        : `${getConfigValue('items_total')}`.toUpperCase().split(''),
+    [getConfigValue, useArray]
   );
   const additionalLettersArray = useMemo(
     () =>
-      useWords && Array.isArray(getConfigValue('additional_words'))
-        ? (getConfigValue('additional_words') as string[])?.map(w => w.toUpperCase())
-        : `${getConfigValue('additional_letters')}`.toUpperCase().split(''),
-    [getConfigValue, useWords]
+      useArray && Array.isArray(getConfigValue('additional_items'))
+        ? (getConfigValue('additional_items') as string[])?.map(w => w.toUpperCase())
+        : `${getConfigValue('additional_items')}`.toUpperCase().split(''),
+    [getConfigValue, useArray]
   );
-  const wordArray = useMemo(
+  const itemsArray = useMemo(
     () =>
-      useWords && Array.isArray(getConfigValue('words'))
-        ? (getConfigValue('words') as string[])?.map(w => w.toUpperCase())
-        : `${getConfigValue('word')}`.toUpperCase().split(''),
-    [getConfigValue, useWords]
+      useArray && Array.isArray(getConfigValue('items'))
+        ? (getConfigValue('items') as string[])?.map(w => w.toUpperCase())
+        : `${getConfigValue('items')}`.toUpperCase().split(''),
+    [getConfigValue, useArray]
   );
 
-  const answerArray = useMemo(() => Array.from(Array(wordArray.length).fill(null)), [wordArray]);
+  const answerArray = useMemo(() => Array.from(Array(itemsArray.length).fill(null)), [itemsArray]);
 
   useEffect(() => {
     if (
-      useWords &&
-      lettersArray.slice().sort().join('') !== [...wordArray, ...additionalLettersArray].slice().sort().join('')
+      totalItemsArray.slice().sort().join('') !== [...itemsArray, ...additionalLettersArray].slice().sort().join('')
     ) {
-      onSetConfig('words_total', randomizeArray([...wordArray, ...additionalLettersArray]));
-    } else if (
-      !useWords &&
-      lettersArray.slice().sort().join('') !== [...wordArray, ...additionalLettersArray].slice().sort().join('')
-    ) {
-      onSetConfig('letters_total', randomizeString([...wordArray, ...additionalLettersArray].join('')));
+      if (useArray) {
+        onSetConfig('items_total', randomizeArray([...itemsArray, ...additionalLettersArray]));
+      } else {
+        onSetConfig('items_total', randomizeString([...itemsArray, ...additionalLettersArray].join('')));
+      }
     }
-  }, [lettersArray, onSetConfig, wordArray, additionalLettersArray, useWords]);
+  }, [totalItemsArray, onSetConfig, itemsArray, additionalLettersArray, useArray]);
   const selectionLettersWidth = useMemo(
     () =>
       100 /
-      (isMd && lettersArray.length > (useWords ? 4 : 8)
-        ? Math.round(lettersArray.length / (useWords ? 1.2 : 2))
-        : lettersArray.length || 1),
-    [isMd, lettersArray.length, useWords]
+      (isMd && totalItemsArray.length > (useArray ? 4 : 8)
+        ? Math.round(totalItemsArray.length / (useArray ? 1.2 : 2))
+        : totalItemsArray.length || 1),
+    [isMd, totalItemsArray.length, useArray]
   );
 
-  const answerLettersWidth = useMemo(() => 100 / (wordArray.length || 1), [wordArray]);
+  const answerLettersWidth = useMemo(() => 100 / (itemsArray.length || 1), [itemsArray]);
 
   const selectionFontSize = useMemo(
     () =>
       Math.floor(
-        isSm && useWords
+        isSm && useArray
           ? DEFAULTS.selectionWordSize * 0.4
-          : !isSm && useWords
+          : !isSm && useArray
           ? DEFAULTS.selectionWordSize
           : isSm
           ? DEFAULTS.selectionTextSize * 0.75
           : DEFAULTS.selectionTextSize
       ),
-    [isSm, useWords]
+    [isSm, useArray]
   );
   const wordFontSize = useMemo(
     () =>
       Math.floor(
-        isSm && useWords
+        isSm && useArray
           ? DEFAULTS.wordSize * 0.4
-          : !isSm && useWords
+          : !isSm && useArray
           ? DEFAULTS.wordSize
-          : isSm && !useWords
+          : isSm && !useArray
           ? DEFAULTS.wordTextSize * 0.55
           : DEFAULTS.wordTextSize
       ),
-    [isSm, useWords]
+    [isSm, useArray]
   );
 
   const wordPadding = useMemo(
-    () => (isSm ? DEFAULTS.textPadding * (useWords ? 0.4 : 0.5) : DEFAULTS.textPadding * (useWords ? 0.8 : 1)),
-    [isSm, useWords]
+    () => (isSm ? DEFAULTS.textPadding * (useArray ? 0.4 : 0.5) : DEFAULTS.textPadding * (useArray ? 0.8 : 1)),
+    [isSm, useArray]
   );
   const selectionContainerHeight = useMemo(() => selectionFontSize + wordPadding * 2, [selectionFontSize, wordPadding]);
   const wordContainerHeight = useMemo(() => wordFontSize + DEFAULTS.textPadding * 2, [wordFontSize]);
@@ -137,8 +135,8 @@ export default function useParams({ values, previewMode, editMode, onSet, useWor
     selectionContainerHeight,
     wordContainerHeight,
     wordFontSize,
-    lettersArray,
-    wordArray,
+    totalItemsArray,
+    itemsArray,
     DEFAULTS,
     showSceneActionElements,
     selectionLettersWidth,
