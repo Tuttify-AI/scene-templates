@@ -23,7 +23,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
 
     const {
       totalItemsArray,
-      selectionLettersWidth,
+      selectionItemsWidth,
       answerLettersWidth,
       answerArray,
       selectionFontSize,
@@ -140,7 +140,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
                 checkIsLetterDisabled(index) && styles.disabled
               )}
               style={{
-                width: `${selectionLettersWidth}%`,
+                width: useArray ? 'auto' : `${selectionItemsWidth}%`,
               }}
             >
               <p
