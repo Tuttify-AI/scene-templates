@@ -10,7 +10,7 @@ type Params = Pick<SceneProps, 'values' | 'previewMode' | 'editMode' | 'onSet'> 
 
 const DEFAULTS = {
   selectionTextSize: 72,
-  selectionWordSize: 38,
+  selectionWordSize: 50,
   wordTextSize: 90,
   wordSize: 42,
   fullScreenTextSize: 40,
@@ -77,16 +77,13 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
       }
     }
   }, [totalItemsArray, onSetConfig, itemsArray, additionalLettersArray, useArray]);
-  const selectionLettersWidth = useMemo(
+  const selectionItemsWidth = useMemo(
     () =>
-      100 /
-      (isMd && totalItemsArray.length > (useArray ? 4 : 8)
-        ? Math.round(totalItemsArray.length / (useArray ? 1.2 : 2))
-        : totalItemsArray.length || 1),
-    [isMd, totalItemsArray.length, useArray]
+      100 / (isMd && totalItemsArray.length > 8 ? Math.round(totalItemsArray.length / 2) : totalItemsArray.length || 1),
+    [isMd, totalItemsArray.length]
   );
 
-  const answerLettersWidth = useMemo(() => 100 / (itemsArray.length || 1), [itemsArray]);
+  const answerLettersWidth = useMemo(() => (useArray ? 25 : 100 / (itemsArray.length || 1)), [itemsArray, useArray]);
 
   const selectionFontSize = useMemo(
     () =>
@@ -139,7 +136,7 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
     itemsArray,
     DEFAULTS,
     showSceneActionElements,
-    selectionLettersWidth,
+    selectionItemsWidth,
     answerLettersWidth,
     answerArray,
     wordPadding,
