@@ -77,6 +77,7 @@ export type SceneValue = {
   value: string | number | string[] | number[];
   length?: number;
   max_length?: number;
+  max_array_length?: number;
   min_length?: number;
   hidden?: boolean;
   replace_pattern?: string;
