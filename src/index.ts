@@ -19,6 +19,7 @@ import Parallax1, { Parallax1SceneProps } from './templates/parallax1';
 import WordGuess, { WordGuessSceneProps } from './templates/wordGuess';
 import AtomiHalloween from './templates/atomiHalloween';
 import Twocando, { TwocandoSceneProps } from './templates/twocando';
+import Counting, { CountingSceneProps } from './templates/counting';
 
 import base from './templates/base/assets/preview';
 import base2 from './templates/base2/assets/preview';
@@ -62,6 +63,7 @@ export enum SceneNames {
   Atomi = 'atomi',
   Twocando = 'twocando',
   WordGuess = 'wordGuess',
+  Counting = 'counting',
 }
 
 const previews = {
@@ -128,6 +130,7 @@ export type {
   Parallax1SceneProps,
   TwocandoSceneProps,
   WordGuessSceneProps,
+  CountingSceneProps,
 };
 
 export const AVAILABLE_SCENES = {
@@ -209,6 +212,10 @@ export const AVAILABLE_SCENES = {
   },
   [SceneNames.WordGuess]: {
     component: WordGuess,
+    previewImage: previews.wordGuess,
+  },
+  [SceneNames.Counting]: {
+    component: Counting,
     previewImage: previews.wordGuess,
   },
 };
