@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { useWindowSize } from '../../shared/hooks';
+import { usePrevious, useWindowSize } from '../../shared/hooks';
 import { SceneProps, SceneValue } from '../../shared/types';
-import { getElementValue, getNumber, randomizeArray, randomizeString } from '../../shared/utils';
+import { arrayIsEqual, getElementValue, getNumber, randomizeArray, randomizeString } from '../../shared/utils';
 import { SpellBeeConfig } from '../types';
 
 type Params = Pick<SceneProps, 'values' | 'previewMode' | 'editMode' | 'onSet'> & {
@@ -66,10 +66,23 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
 
   const answerArray = useMemo(() => Array.from(Array(itemsArray.length).fill(null)), [itemsArray]);
 
+  const predefinedTotalItemIndexes = useMemo(
+    () => getConfigValue('predefined_total_item_indexes') as number[],
+    [getConfigValue]
+  );
+
+  const setPredefinedTotalItemIndexes = useCallback(
+    (values: number[]) => onSetConfig('predefined_total_item_indexes', values),
+    [onSetConfig]
+  );
+
+  const isPredefinedIndex = useCallback(
+    (index: number) => predefinedTotalItemIndexes?.includes(index),
+    [predefinedTotalItemIndexes]
+  );
+
   useEffect(() => {
-    if (
-      totalItemsArray.slice().sort().join('') !== [...itemsArray, ...additionalLettersArray].slice().sort().join('')
-    ) {
+    if (!arrayIsEqual(totalItemsArray, [...itemsArray, ...additionalLettersArray])) {
       if (useArray) {
         onSetConfig('items_total', randomizeArray([...itemsArray, ...additionalLettersArray]));
       } else {
@@ -77,6 +90,21 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
       }
     }
   }, [totalItemsArray, onSetConfig, itemsArray, additionalLettersArray, useArray]);
+
+  const prevItemsArray = usePrevious(itemsArray);
+  const prevTotalItemsArray = usePrevious(totalItemsArray);
+
+  useEffect(() => {
+    // clearing predefined items if items or totalItems array changed
+    if (
+      prevItemsArray &&
+      prevTotalItemsArray &&
+      (!arrayIsEqual(prevItemsArray, itemsArray) || !arrayIsEqual(prevTotalItemsArray, totalItemsArray))
+    ) {
+      setPredefinedTotalItemIndexes([]);
+    }
+  }, [setPredefinedTotalItemIndexes, itemsArray, totalItemsArray, prevTotalItemsArray, prevItemsArray]);
+
   const selectionItemsWidth = useMemo(
     () =>
       100 / (isMd && totalItemsArray.length > 8 ? Math.round(totalItemsArray.length / 2) : totalItemsArray.length || 1),
@@ -141,5 +169,7 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
     answerArray,
     wordPadding,
     fullScreenTextSize,
+    predefinedTotalItemIndexes,
+    isPredefinedIndex,
   };
 }
