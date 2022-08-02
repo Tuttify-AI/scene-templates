@@ -98,11 +98,11 @@ const useNumbersAction = ({
     (index: number, totalNumberIndex: number | null) => {
       const isCorrect = totalNumberIndex !== null && totalItemsArray[totalNumberIndex] === itemsArray[index];
       const number = totalNumberIndex !== null && totalItemsArray[totalNumberIndex];
-      const numbers = itemsArray.join('');
+      const correctAnswer = itemsArray.join('');
       return {
         ...(isCorrect !== null ? { isCorrect } : {}),
         ...(number ? { number } : {}),
-        ...(numbers ? { numbers } : {}),
+        ...(correctAnswer ? { correctAnswer } : {}),
         ...(index !== null ? { index } : {}),
       } as ActiveElementData;
     },
