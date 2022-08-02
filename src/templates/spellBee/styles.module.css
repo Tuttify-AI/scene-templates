@@ -179,6 +179,10 @@
     padding: 8px;
 }
 
+.selectionLetterItemWrapper.predefinedItem {
+    display: none;
+}
+
 .selectionLetterItemWrapper.selected {
     animation: bounce 0.3s;
     animation-direction: alternate;
@@ -253,6 +257,9 @@
     border-radius: var(--mainBorderRadius);
     border: 2px solid rgba(100, 100, 100, 0.5);
     color: var(--colorBlack);
+}
+.answerLetterItem.predefinedAnswer {
+    cursor: default;
 }
 
 .empty {

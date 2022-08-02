@@ -7,6 +7,7 @@ export type SpellBeeConfig<T = SceneValue> = {
   lock_correct_selection: T;
   highlight_correct_selection: T;
   highlight_incorrect_selection: T;
+  predefined_total_item_indexes: T;
 };
 
 export type SpellBeeElements<T = string | number> = Elements<T> & {

@@ -36,6 +36,8 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       highlightIncorrectSelection,
       fullScreenTextSize,
       wordPadding,
+      predefinedTotalItemIndexes,
+      isPredefinedIndex,
     } = useParams({
       values,
       previewMode,
@@ -69,6 +71,8 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       values,
       lockCorrectSelection,
       handleClick,
+      predefinedTotalItemIndexes,
+      isPredefinedIndex,
     });
     const { onDrop, onDragEnter, onDragLeave, dragTargetIndex, onDragStart, dragSelectedIndex, onDragEnd, onDragOver } =
       useDragNDrop({ handleDrop: handleSetAnswer });
@@ -81,6 +85,28 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
     const highlightSelection = useCallback(
       (index: number) => (lockCorrectSelection ? !checkIfCorrectLetter(index) : true),
       [checkIfCorrectLetter, lockCorrectSelection]
+    );
+
+    const answerLetterClasses = useCallback(
+      (index: number) => {
+        return isPredefinedIndex(index)
+          ? [styles.predefinedAnswer]
+          : [
+              selectedLetterIndex !== null && highlightSelection(index) && styles.empty,
+              dragTargetIndex === index && highlightSelection(index) && styles.empty,
+              highlightCorrectSelection && checkIfCorrectLetter(index) && styles.correct,
+              highlightIncorrectSelection && checkIfCorrectLetter(index) === false && styles.incorrect,
+            ];
+      },
+      [
+        checkIfCorrectLetter,
+        highlightCorrectSelection,
+        highlightIncorrectSelection,
+        dragTargetIndex,
+        selectedLetterIndex,
+        highlightSelection,
+        isPredefinedIndex,
+      ]
     );
     return (
       <div
@@ -136,6 +162,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
               key={index}
               className={clsx(
                 styles.selectionLetterItemWrapper,
+                isPredefinedIndex(index) && styles.predefinedItem,
                 selectedLetterIndex === index && styles.selected,
                 checkIsLetterDisabled(index) && styles.disabled
               )}
@@ -188,13 +215,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
               >
                 <p
                   id={getElementId(`answer_${answerIndex}`, previewMode)}
-                  className={clsx(
-                    styles.answerLetterItem,
-                    selectedLetterIndex !== null && highlightSelection(index) && styles.empty,
-                    dragTargetIndex === index && highlightSelection(index) && styles.empty,
-                    highlightCorrectSelection && checkIfCorrectLetter(index) && styles.correct,
-                    highlightIncorrectSelection && checkIfCorrectLetter(index) === false && styles.incorrect
-                  )}
+                  className={clsx(styles.answerLetterItem, ...answerLetterClasses(index))}
                   onDragOver={onDragOver}
                   onDrop={onDrop}
                   onDragEnter={onDragEnter(index)}
