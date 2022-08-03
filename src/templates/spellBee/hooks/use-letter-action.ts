@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActiveElementData, SceneValue } from '../../shared/types';
-import { arrayIsEqual, getElementValue } from '../../shared/utils';
-import { SpellBeeElements } from '../types';
+import { getElementValue } from '../../shared/utils';
+import { AnswerType, SpellBeeElements } from '../types';
 import { checkArray, checkCorrectWord } from '../utils';
 import { useActions } from '../../shared/hooks';
 import useParams from './use-params';
@@ -14,13 +14,12 @@ const INITIAL_STATE = {
   soundKey: '',
 };
 
-const EMPTY_ARRAY: number[] = [];
+const EMPTY_ARRAY: AnswerType[] = [];
 
 type UseLetterActionParams = {
   totalItemsArray: ReturnType<typeof useParams>['totalItemsArray'];
   predefinedTotalItemIndexes?: ReturnType<typeof useParams>['predefinedTotalItemIndexes'];
   itemsArray: ReturnType<typeof useParams>['itemsArray'];
-  isPredefinedIndex: ReturnType<typeof useParams>['isPredefinedIndex'];
   answerArray: (null | number)[];
   editMode?: boolean;
   lockCorrectSelection?: boolean;
@@ -36,25 +35,16 @@ const useLetterAction = ({
   lockCorrectSelection,
   handleClick,
   predefinedTotalItemIndexes = EMPTY_ARRAY,
-  isPredefinedIndex,
 }: UseLetterActionParams) => {
-  const [selectedLetterIndex, setSelectedLetterIndex] = useState<number | null>(null);
-  const [answer, setAnswer] = useState(answerArray);
+  const [selectedLetterIndex, setSelectedLetterIndex] = useState<AnswerType>(null);
+  const [answer, setAnswer] = useState(predefinedTotalItemIndexes);
   const getValue = useMemo(() => getElementValue<SpellBeeElements>(values), [values]);
   const [fullScreen, setFullScreen] = useState(INITIAL_STATE);
 
-  const answerBasedOnPredefinedValues = useMemo(() => {
-    const newAnswer = [...answer];
-    predefinedTotalItemIndexes.forEach(predefinedIndex => {
-      newAnswer[predefinedIndex] = predefinedIndex;
-    });
-    return newAnswer;
-  }, [predefinedTotalItemIndexes, answer]);
-
   useEffect(() => {
     editMode && setSelectedLetterIndex(null);
-    !arrayIsEqual(answerBasedOnPredefinedValues, answer) && setAnswer(answerBasedOnPredefinedValues);
-  }, [editMode, answerBasedOnPredefinedValues, answer]);
+    setAnswer(predefinedTotalItemIndexes);
+  }, [editMode, predefinedTotalItemIndexes]);
 
   useEffect(() => {
     if (answerArray.length !== answer.length) {
@@ -129,7 +119,7 @@ const useLetterAction = ({
       e?.preventDefault();
       const letterIndex = selectedIndex ?? selectedLetterIndex;
       const changeLocked = lockCorrectSelection && checkIfCorrectLetter(index);
-      if (!editMode && !changeLocked && !isPredefinedIndex(index)) {
+      if (!editMode && !changeLocked) {
         if (letterIndex === null) {
           setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? null : a)));
         } else {
@@ -139,18 +129,13 @@ const useLetterAction = ({
         }
       }
     },
-    [
-      selectedLetterIndex,
-      editMode,
-      lockCorrectSelection,
-      checkIfCorrectLetter,
-      handleClick,
-      getAnswerData,
-      isPredefinedIndex,
-    ]
+    [selectedLetterIndex, editMode, lockCorrectSelection, checkIfCorrectLetter, handleClick, getAnswerData]
   );
 
-  const handleClearFullImageSrc = useCallback(() => setAnswer(answer.map(() => null)), [answer, setAnswer]);
+  const handleClearFullImageSrc = useCallback(
+    () => setAnswer(predefinedTotalItemIndexes),
+    [setAnswer, predefinedTotalItemIndexes]
+  );
 
   const handleFullImageClick = useCallback(() => {
     handleClearFullImageSrc();

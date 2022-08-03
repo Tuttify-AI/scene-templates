@@ -8,8 +8,9 @@ import useLetterAction from './hooks/use-letter-action';
 import useParams from './hooks/use-params';
 
 import styles from './styles.module.css';
-import { Classes, SpellBeeElements } from './types';
+import { AnswerType, Classes, SpellBeeElements } from './types';
 import useDragNDrop from '../shared/hooks/use-drag-n-drop';
+import { ReactComponent as IconPlus } from '../shared/assets/icon-plus.svg';
 
 export type SpellBeeSceneProps = SceneProps & {
   values?: SpellBeeElements<SceneValue>;
@@ -38,6 +39,8 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       wordPadding,
       predefinedTotalItemIndexes,
       isPredefinedIndex,
+      allowPredefine,
+      handlePredefinedTotalItemIndexes,
     } = useParams({
       values,
       previewMode,
@@ -72,7 +75,6 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       lockCorrectSelection,
       handleClick,
       predefinedTotalItemIndexes,
-      isPredefinedIndex,
     });
     const { onDrop, onDragEnter, onDragLeave, dragTargetIndex, onDragStart, dragSelectedIndex, onDragEnd, onDragOver } =
       useDragNDrop({ handleDrop: handleSetAnswer });
@@ -88,8 +90,8 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
     );
 
     const answerLetterClasses = useCallback(
-      (index: number) => {
-        return isPredefinedIndex(index)
+      (answerIndex: AnswerType, index: number) => {
+        return isPredefinedIndex(answerIndex)
           ? [styles.predefinedAnswer]
           : [
               selectedLetterIndex !== null && highlightSelection(index) && styles.empty,
@@ -215,7 +217,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
               >
                 <p
                   id={getElementId(`answer_${answerIndex}`, previewMode)}
-                  className={clsx(styles.answerLetterItem, ...answerLetterClasses(index))}
+                  className={clsx(styles.answerLetterItem, ...answerLetterClasses(answerIndex, index))}
                   onDragOver={onDragOver}
                   onDrop={onDrop}
                   onDragEnter={onDragEnter(index)}
@@ -234,6 +236,14 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
                 >
                   {answerIndex !== null && totalItemsArray[answerIndex]}
                 </p>
+                {allowPredefine(answerIndex) && editMode && (
+                  <div
+                    onClick={handlePredefinedTotalItemIndexes(index)}
+                    className={clsx(styles.answerPredefinedBox, isPreview)}
+                  >
+                    {isPredefinedIndex(answerIndex) ? null : <IconPlus className={clsx(styles.answerPredefinedIcon)} />}
+                  </div>
+                )}
               </div>
             ))}
           </div>
