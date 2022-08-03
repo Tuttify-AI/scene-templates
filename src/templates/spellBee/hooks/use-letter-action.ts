@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActiveElementData, SceneValue } from '../../shared/types';
 import { getElementValue } from '../../shared/utils';
-import { SpellBeeElements } from '../types';
+import { AnswerType, SpellBeeElements } from '../types';
 import { checkArray, checkCorrectWord } from '../utils';
 import { useActions } from '../../shared/hooks';
+import useParams from './use-params';
 
 const INITIAL_STATE = {
   src: '',
@@ -13,9 +14,12 @@ const INITIAL_STATE = {
   soundKey: '',
 };
 
+const EMPTY_ARRAY: AnswerType[] = [];
+
 type UseLetterActionParams = {
-  totalItemsArray: string[];
-  itemsArray: string[];
+  totalItemsArray: ReturnType<typeof useParams>['totalItemsArray'];
+  predefinedTotalItemIndexes?: ReturnType<typeof useParams>['predefinedTotalItemIndexes'];
+  itemsArray: ReturnType<typeof useParams>['itemsArray'];
   answerArray: (null | number)[];
   editMode?: boolean;
   lockCorrectSelection?: boolean;
@@ -30,16 +34,17 @@ const useLetterAction = ({
   values,
   lockCorrectSelection,
   handleClick,
+  predefinedTotalItemIndexes = EMPTY_ARRAY,
 }: UseLetterActionParams) => {
-  const [selectedLetterIndex, setSelectedLetterIndex] = useState<number | null>(null);
-  const [answer, setAnswer] = useState(answerArray);
+  const [selectedLetterIndex, setSelectedLetterIndex] = useState<AnswerType>(null);
+  const [answer, setAnswer] = useState(predefinedTotalItemIndexes);
   const getValue = useMemo(() => getElementValue<SpellBeeElements>(values), [values]);
   const [fullScreen, setFullScreen] = useState(INITIAL_STATE);
 
   useEffect(() => {
     editMode && setSelectedLetterIndex(null);
-    setAnswer([]);
-  }, [editMode]);
+    setAnswer(predefinedTotalItemIndexes);
+  }, [editMode, predefinedTotalItemIndexes]);
 
   useEffect(() => {
     if (answerArray.length !== answer.length) {
@@ -127,7 +132,10 @@ const useLetterAction = ({
     [selectedLetterIndex, editMode, lockCorrectSelection, checkIfCorrectLetter, handleClick, getAnswerData]
   );
 
-  const handleClearFullImageSrc = useCallback(() => setAnswer(answer.map(() => null)), [answer, setAnswer]);
+  const handleClearFullImageSrc = useCallback(
+    () => setAnswer(predefinedTotalItemIndexes),
+    [setAnswer, predefinedTotalItemIndexes]
+  );
 
   const handleFullImageClick = useCallback(() => {
     handleClearFullImageSrc();
