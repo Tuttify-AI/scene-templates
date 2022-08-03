@@ -223,12 +223,14 @@
     flex-direction: row;
     align-items: center;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .answerTextWrapper{
     width: 100%;
     display: flex;
     align-items: center;
+    justify-content: center;
     border-radius: var(--mainBorderRadius);
 }
 
@@ -238,18 +240,16 @@
 
 .answerNumberItemWrapper{
     padding: 8px;
-    height: 100%;
-    width: 100%;
 }
 
 .answerNumberItem {
     display: flex;
-    width: 20%;
-    left: 80%;
     position: relative;
     justify-content: center;
     align-items: center;
     font-size: 60px;
+    height: 70px;
+    width: 70px;
     font-weight: bold;
     padding: 8px;
     cursor: pointer;
