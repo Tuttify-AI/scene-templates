@@ -1,7 +1,8 @@
 import React, { CSSProperties, forwardRef, useCallback, useMemo, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Grid } from 'swiper';
-import { useActions, useWindowSize, useImage, useAudios, useTiles } from '../shared/hooks';
+import { useActions, useWindowSize, useImage, useAudios } from '../shared/hooks';
+import useTiles from '../shared/hooks/use-tiles';
 import { clsx, getElementId, getElementValue } from '../shared/utils';
 import { IMAGES } from './constants';
 

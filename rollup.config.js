@@ -7,6 +7,7 @@ import url from '@rollup/plugin-url';
 import image from '@rollup/plugin-image';
 import files from 'rollup-plugin-import-file';
 import autoprefixer from 'autoprefixer';
+import svgr from '@svgr/rollup'
 
 const packageJson = require('./package.json');
 
@@ -27,6 +28,7 @@ export default {
     typescript({ useTsconfigDeclarationDir: true }),
     url(),
     image(),
+    svgr(),
     files({
       output: `build/`,
       plugins: [autoprefixer()],
