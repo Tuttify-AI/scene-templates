@@ -8,8 +8,9 @@ import useLetterAction from './hooks/use-letter-action';
 import useParams from './hooks/use-params';
 
 import styles from './styles.module.css';
-import { Classes, SpellBeeElements } from './types';
+import { AnswerType, Classes, SpellBeeElements } from './types';
 import useDragNDrop from '../shared/hooks/use-drag-n-drop';
+import { ReactComponent as IconPlus } from '../shared/assets/icon-plus.svg';
 
 export type SpellBeeSceneProps = SceneProps & {
   values?: SpellBeeElements<SceneValue>;
@@ -36,6 +37,10 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       highlightIncorrectSelection,
       fullScreenTextSize,
       wordPadding,
+      predefinedTotalItemIndexes,
+      isPredefinedIndex,
+      allowPredefine,
+      handlePredefinedTotalItemIndexes,
     } = useParams({
       values,
       previewMode,
@@ -69,6 +74,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       values,
       lockCorrectSelection,
       handleClick,
+      predefinedTotalItemIndexes,
     });
     const { onDrop, onDragEnter, onDragLeave, dragTargetIndex, onDragStart, dragSelectedIndex, onDragEnd, onDragOver } =
       useDragNDrop({ handleDrop: handleSetAnswer });
@@ -81,6 +87,28 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
     const highlightSelection = useCallback(
       (index: number) => (lockCorrectSelection ? !checkIfCorrectLetter(index) : true),
       [checkIfCorrectLetter, lockCorrectSelection]
+    );
+
+    const answerLetterClasses = useCallback(
+      (answerIndex: AnswerType, index: number) => {
+        return isPredefinedIndex(answerIndex)
+          ? [styles.predefinedAnswer]
+          : [
+              selectedLetterIndex !== null && highlightSelection(index) && styles.empty,
+              dragTargetIndex === index && highlightSelection(index) && styles.empty,
+              highlightCorrectSelection && checkIfCorrectLetter(index) && styles.correct,
+              highlightIncorrectSelection && checkIfCorrectLetter(index) === false && styles.incorrect,
+            ];
+      },
+      [
+        checkIfCorrectLetter,
+        highlightCorrectSelection,
+        highlightIncorrectSelection,
+        dragTargetIndex,
+        selectedLetterIndex,
+        highlightSelection,
+        isPredefinedIndex,
+      ]
     );
     return (
       <div
@@ -136,6 +164,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
               key={index}
               className={clsx(
                 styles.selectionLetterItemWrapper,
+                isPredefinedIndex(index) && styles.predefinedItem,
                 selectedLetterIndex === index && styles.selected,
                 checkIsLetterDisabled(index) && styles.disabled
               )}
@@ -188,13 +217,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
               >
                 <p
                   id={getElementId(`answer_${answerIndex}`, previewMode)}
-                  className={clsx(
-                    styles.answerLetterItem,
-                    selectedLetterIndex !== null && highlightSelection(index) && styles.empty,
-                    dragTargetIndex === index && highlightSelection(index) && styles.empty,
-                    highlightCorrectSelection && checkIfCorrectLetter(index) && styles.correct,
-                    highlightIncorrectSelection && checkIfCorrectLetter(index) === false && styles.incorrect
-                  )}
+                  className={clsx(styles.answerLetterItem, ...answerLetterClasses(answerIndex, index))}
                   onDragOver={onDragOver}
                   onDrop={onDrop}
                   onDragEnter={onDragEnter(index)}
@@ -213,6 +236,14 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
                 >
                   {answerIndex !== null && totalItemsArray[answerIndex]}
                 </p>
+                {allowPredefine(answerIndex) && editMode && (
+                  <div
+                    onClick={handlePredefinedTotalItemIndexes(index)}
+                    className={clsx(styles.answerPredefinedBox, isPreview)}
+                  >
+                    {isPredefinedIndex(answerIndex) ? null : <IconPlus className={clsx(styles.answerPredefinedIcon)} />}
+                  </div>
+                )}
               </div>
             ))}
           </div>

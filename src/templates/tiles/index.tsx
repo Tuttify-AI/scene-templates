@@ -2,7 +2,8 @@ import React, { CSSProperties, forwardRef, useCallback, useEffect, useMemo, useS
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Grid, Navigation } from 'swiper';
 
-import { useActions, useImage, useAudios, useTiles } from '../shared/hooks';
+import { useActions, useImage, useAudios } from '../shared/hooks';
+import useTiles from '../shared/hooks/use-tiles';
 import { clsx, getElementId, getElementValue, range } from '../shared/utils';
 import { IMAGES } from './constants';
 

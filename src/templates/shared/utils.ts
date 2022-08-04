@@ -68,3 +68,6 @@ export const randomizeString = (str: unknown) =>
     .join('');
 
 export const randomizeArray = (arr: string[]) => arr.sort(() => Math.random() - 0.7);
+
+export const arrayIsEqual = (arr1?: unknown[], arr2?: unknown[]) =>
+  arr1?.slice().sort().join('') === arr2?.slice().sort().join('');
