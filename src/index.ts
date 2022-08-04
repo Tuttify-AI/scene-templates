@@ -17,7 +17,6 @@ import MultipleTiles6, { MultipleTiles6SceneProps } from './templates/multipleti
 import MultipleTiles8, { MultipleTiles8SceneProps } from './templates/multipletiles8';
 import Parallax1, { Parallax1SceneProps } from './templates/parallax1';
 import WordGuess, { WordGuessSceneProps } from './templates/wordGuess';
-import AtomiHalloween from './templates/atomiHalloween';
 import Twocando, { TwocandoSceneProps } from './templates/twocando';
 import Counting, { CountingSceneProps } from './templates/counting';
 
@@ -36,7 +35,6 @@ import multipleTiles8FullImage from './templates/multipletiles8Fullimg/assets/pr
 import multipleTiles6 from './templates/multipletiles6/assets/preview';
 import multipleTiles8 from './templates/multipletiles8/assets/preview';
 import spellbee from './templates/spellBee/assets/preview';
-import atomiHalloween from './templates/atomiHalloween/assets/preview';
 import parallax1 from './templates/parallax1/assets/preview';
 import twocando from './templates/twocando/assets/preview';
 import wordGuess from './templates/wordGuess/assets/preview';
@@ -79,7 +77,6 @@ const previews = {
   multipleTiles8FullImage,
   multipleTiles6,
   multipleTiles8,
-  atomiHalloween,
   fullImageWithButton,
   tiles,
   spellbee,
@@ -102,7 +99,6 @@ export {
   MultipleTiles6FullImage,
   MultipleTiles8,
   MultipleTiles8FullImage,
-  AtomiHalloween,
   FullImageWithButton,
   Parallax1,
   Twocando,
@@ -145,10 +141,6 @@ export const AVAILABLE_SCENES = {
   [SceneNames.Base3]: {
     component: Base3,
     previewImage: previews.base3,
-  },
-  [SceneNames.Atomi]: {
-    component: AtomiHalloween,
-    previewImage: previews.atomiHalloween,
   },
   [SceneNames.Quiz1]: {
     component: QuizOne,

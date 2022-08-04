@@ -1,6 +1,9 @@
 import React, { RefObject } from 'react';
 
-export type GetValue<T> = (element: keyof Elements<T>, parameter: keyof Parameters) => SceneValue['value'] | undefined;
+export type GetValue<T, P = SceneValue['value'] | undefined> = (
+  element: keyof Elements<T>,
+  parameter: keyof Parameters
+) => P;
 
 export type AtomiDocument = Record<string, unknown> & {
   destroy?: () => void;
@@ -64,19 +67,22 @@ export enum TemplateParameterType {
   select = 'select',
 }
 
+export type DefaultType = number | null | string;
+
 export type TemplateParameter = {
   type: TemplateParameterType;
   title: string;
-  default_value: string | number | string[] | number[];
+  default_value: DefaultType | DefaultType[];
   length?: number;
 };
 
 export type SceneValue = {
   type: TemplateParameterType;
   title: string;
-  value: string | number | string[] | number[];
+  value: DefaultType | DefaultType[];
   length?: number;
   max_length?: number;
+  max_array_length?: number;
   min_length?: number;
   hidden?: boolean;
   replace_pattern?: string;

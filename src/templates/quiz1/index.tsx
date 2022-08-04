@@ -1,5 +1,6 @@
 import React, { forwardRef, useCallback, useMemo } from 'react';
-import { useActions, useAudios, useImage, useQuizAnswers } from '../shared/hooks';
+import { useActions, useAudios, useImage } from '../shared/hooks';
+import useQuizAnswers from '../shared/hooks/use-quiz-answers';
 
 import { SceneProps, SceneValue, TemplateParameterType } from '../shared/types';
 import { clsx, getElementId, getElementValue } from '../shared/utils';

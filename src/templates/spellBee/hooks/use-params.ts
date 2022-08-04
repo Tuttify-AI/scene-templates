@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { useWindowSize } from '../../shared/hooks';
+import { usePrevious, useWindowSize } from '../../shared/hooks';
 import { SceneProps, SceneValue } from '../../shared/types';
-import { getElementValue, getNumber, randomizeArray, randomizeString } from '../../shared/utils';
-import { SpellBeeConfig } from '../types';
+import { arrayIsEqual, getElementValue, getNumber, randomizeArray, randomizeString } from '../../shared/utils';
+import { AnswerType, SpellBeeConfig } from '../types';
 
 type Params = Pick<SceneProps, 'values' | 'previewMode' | 'editMode' | 'onSet'> & {
   useArray?: boolean;
@@ -66,10 +66,53 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
 
   const answerArray = useMemo(() => Array.from(Array(itemsArray.length).fill(null)), [itemsArray]);
 
+  const predefinedTotalItemIndexes = useMemo(
+    () => (getConfigValue('predefined_total_item_indexes') as AnswerType[]) || [],
+    [getConfigValue]
+  );
+
+  const setPredefinedTotalItemIndexes = useCallback(
+    (values: AnswerType[]) => onSetConfig('predefined_total_item_indexes', values),
+    [onSetConfig]
+  );
+
+  const isPredefinedIndex = useCallback(
+    (answerIndex: AnswerType) => answerIndex !== null && predefinedTotalItemIndexes?.includes(answerIndex),
+    [predefinedTotalItemIndexes]
+  );
+
+  const allowPredefine = useCallback(
+    (itemsIndex: AnswerType) => {
+      return !(!isPredefinedIndex(itemsIndex) && predefinedTotalItemIndexes.filter(v => v === null).length <= 1);
+    },
+    [predefinedTotalItemIndexes, isPredefinedIndex]
+  );
+
+  const handlePredefinedTotalItemIndexes = useCallback(
+    (answerIndex: number | null) => (e: React.MouseEvent) => {
+      e?.preventDefault();
+      e?.stopPropagation();
+      const totalItemsIndexes = totalItemsArray.reduce(
+        (acc, item, i) =>
+          answerIndex !== null && item?.toUpperCase() === itemsArray?.[answerIndex]?.toUpperCase() ? [...acc, i] : acc,
+        [] as number[]
+      );
+      setPredefinedTotalItemIndexes(
+        predefinedTotalItemIndexes.map((item, index, array) => {
+          if (index === answerIndex && totalItemsIndexes.length) {
+            const filteredIndexes = totalItemsIndexes.filter(i => !array.includes(i));
+            const checkIndex = filteredIndexes.length ? filteredIndexes[0] : totalItemsIndexes[0];
+            return item !== null ? null : checkIndex;
+          }
+          return item;
+        })
+      );
+    },
+    [totalItemsArray, itemsArray, setPredefinedTotalItemIndexes, predefinedTotalItemIndexes]
+  );
+
   useEffect(() => {
-    if (
-      totalItemsArray.slice().sort().join('') !== [...itemsArray, ...additionalLettersArray].slice().sort().join('')
-    ) {
+    if (!arrayIsEqual(totalItemsArray, [...itemsArray, ...additionalLettersArray])) {
       if (useArray) {
         onSetConfig('items_total', randomizeArray([...itemsArray, ...additionalLettersArray]));
       } else {
@@ -77,6 +120,21 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
       }
     }
   }, [totalItemsArray, onSetConfig, itemsArray, additionalLettersArray, useArray]);
+
+  const prevItemsArray = usePrevious(itemsArray);
+  const prevTotalItemsArray = usePrevious(totalItemsArray);
+
+  useEffect(() => {
+    // clearing predefined items if items or totalItems array changed
+    if (
+      prevItemsArray &&
+      prevTotalItemsArray &&
+      (!arrayIsEqual(prevItemsArray, itemsArray) || !arrayIsEqual(prevTotalItemsArray, totalItemsArray))
+    ) {
+      setPredefinedTotalItemIndexes(answerArray);
+    }
+  }, [setPredefinedTotalItemIndexes, itemsArray, totalItemsArray, prevTotalItemsArray, prevItemsArray, answerArray]);
+
   const selectionItemsWidth = useMemo(
     () =>
       100 / (isMd && totalItemsArray.length > 8 ? Math.round(totalItemsArray.length / 2) : totalItemsArray.length || 1),
@@ -141,5 +199,9 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
     answerArray,
     wordPadding,
     fullScreenTextSize,
+    predefinedTotalItemIndexes,
+    isPredefinedIndex,
+    allowPredefine,
+    handlePredefinedTotalItemIndexes,
   };
 }

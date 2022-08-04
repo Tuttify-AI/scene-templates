@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 const useBlocks = (block: string, editMode: boolean) => {
-  const ref = useRef(null);
+  /* const ref = useRef(null);
   const ghostRef = useRef(null);
   const paletteRef = useRef(null);
   const pane = document.getElementById(block);
@@ -355,7 +355,7 @@ const useBlocks = (block: string, editMode: boolean) => {
     }
   }, []);
 
-  animate();
+  animate();*/
 };
 
 export default useBlocks;
