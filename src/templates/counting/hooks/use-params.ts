@@ -10,7 +10,7 @@ type Params = Pick<SceneProps, 'values' | 'previewMode' | 'editMode' | 'onSet'> 
 
 const DEFAULTS = {
   selectionTextSize: 72,
-  selectionWordSize: 38,
+  selectionWordSize: 72,
   wordTextSize: 90,
   wordSize: 42,
   fullScreenTextSize: 40,
@@ -80,7 +80,7 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
       100 /
       (isMd && totalItemsArray.length > (useArray ? 4 : 8)
         ? Math.round(totalItemsArray.length / (useArray ? 1.2 : 2))
-        : totalItemsArray.length || 1),
+        : totalItemsArray.length * 1.25 || 1),
     [isMd, totalItemsArray.length, useArray]
   );
 
