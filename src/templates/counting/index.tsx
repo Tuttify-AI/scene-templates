@@ -1,4 +1,4 @@
-import React, { CSSProperties, forwardRef, useCallback, useEffect, useMemo } from 'react';
+import React, { CSSProperties, forwardRef, useCallback, useMemo } from 'react';
 import { useActions, useAudios } from '../shared/hooks';
 
 import { SceneProps, SceneValue } from '../shared/types';
@@ -14,20 +14,17 @@ import useDragNDrop from '../shared/hooks/use-drag-n-drop';
 export type CountingSceneProps = SceneProps & {
   values?: CountingElements<SceneValue>;
   classes?: Classes;
-  useArray?: boolean;
 };
 
 const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
-  ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick, useArray }, ref) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick }, ref) => {
     const getValue = useMemo(() => getElementValue<CountingElements>(values), [values]);
     const {
       totalItemsArray,
       selectionNumbersWidth,
-      answerNumbersWidth,
       answerArray,
       selectionFontSize,
       selectionContainerHeight,
-      wordContainerHeight,
       wordFontSize,
       itemsArray,
       lockCorrectSelection,
@@ -43,7 +40,6 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
       previewMode,
       editMode,
       onSet,
-      useArray,
     });
     const { renderAudios, handlePauseAll } = useAudios({ values });
     const { handleClick } = useActions({
@@ -155,8 +151,7 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
                 className={clsx(
                   styles.selectionNumberItem,
                   !editMode && styles.withHover,
-                  dragSelectedIndex === index && styles.dragged,
-                  useArray && styles.wordText
+                  dragSelectedIndex === index && styles.dragged
                 )}
                 style={{
                   fontSize: selectionFontSize,

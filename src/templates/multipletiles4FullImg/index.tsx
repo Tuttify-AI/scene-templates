@@ -193,17 +193,17 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
             <SwiperSlide
               key={k}
               className={clsx(styles.slideItem, isPreview)}
+              onClick={handleClick(k, { data: getTileData(k) })}
               style={{
                 height: `${slideHeight.toFixed(2)}%`,
               }}
             >
               <div
                 id={getElementId(k, previewMode)}
-                onClick={handleClick(k, { data: getTileData(k) })}
                 className={clsx(styles.tile, isActive(k), getEditClass(), isPreview, classes?.tile)}
                 style={
                   {
-                    '--custom_color': getValue(k, 'background_hover'),
+                    '--background-hover-color': getValue(k, 'background_hover'),
                   } as CSSProperties
                 }
               >
