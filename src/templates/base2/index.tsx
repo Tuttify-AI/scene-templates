@@ -95,7 +95,6 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
                 classes?.[name as keyof Classes]
               )}
               style={{
-                opacity,
                 translateY,
                 ...getScale(name),
                 ...getAnimationsStyle(transition({ modX: 20, modY: 20 })),
@@ -125,7 +124,6 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
               classes?.[name as keyof Classes]
             )}
             style={{
-              opacity,
               translateY,
               ...getScale(name),
               ...getAnimationsStyle(transition({ modX: 20, modY: 20 })),
