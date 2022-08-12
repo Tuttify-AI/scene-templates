@@ -82,7 +82,6 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
           className={clsx(sceneStyles.title, isActive('title'), getEditClass('editText'), isPreview, classes?.title)}
           style={{
             x: visibleX,
-            opacity,
             ...getScale('title'),
             ...getAnimationsStyle(transition({ modX: 20, modY: 20 })),
           }}
@@ -103,7 +102,6 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
           )}
           style={{
             x: visibleX,
-            opacity,
             ...getScale('description'),
             ...getAnimationsStyle(transition({ modX: 15, modY: 15 })),
           }}
@@ -126,7 +124,6 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
           )}
           style={{
             rotate,
-            opacity,
             ...getScale('image'),
             ...getAnimationsStyle(transition({ modX: 20, modY: 20 })),
           }}
