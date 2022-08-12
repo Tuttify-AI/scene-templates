@@ -186,7 +186,7 @@
 }
 
 .slideItem:hover > .tile:before, .slideItem.preview:first-child > .tile:before {
-    background-color: var(--custom_color);
+    background-color: var(--background-hover-color);
     transform: scaleY(1.1) scaleX(1.05);
     border-radius: 24px;
 }
@@ -196,7 +196,7 @@
 }
 
 .tile.active:before {
-    background-color: var(--custom_color);
+    background-color: var(--background-hover-color);
     transform: scaleY(1.1) scaleX(1.05);
     border-radius: 24px;
 }

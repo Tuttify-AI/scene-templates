@@ -17,7 +17,7 @@ const DEFAULTS = {
   textPadding: 8,
 };
 
-export default function useParams({ values, previewMode, editMode, onSet, useArray }: Params) {
+export default function useParams({ values, previewMode, editMode, onSet, useArray = true }: Params) {
   const { isMd, isSm } = useWindowSize();
 
   const getConfigValue = useCallback(
@@ -61,7 +61,7 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
     return Array.from(Array(parseInt(item as string)).keys());
   }, [getConfigValue]);
 
-  const answerArray = useMemo(() => Array.from(Array(1).fill(null)), [itemsArray]);
+  const answerArray = useMemo(() => Array.from(Array(1).fill(null)), []);
 
   useEffect(() => {
     const filteredAdditionalNumbers = additionalNumbersArray.filter(item => item !== ',');

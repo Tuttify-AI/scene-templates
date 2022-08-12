@@ -20,19 +20,11 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
     const { handlePauseAll, renderAudios } = useAudios({ values });
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
 
-    const {
-      opacity,
-      translateY,
-      getAnimationsStyle,
-      handleMouseMove,
-      resetAnimatedProps,
-      getScale,
-      clearHover,
-      handleHover,
-    } = useAnimation({
-      disabled: editMode || previewMode,
-      element: scrollRef.current,
-    });
+    const { translateY, getAnimationsStyle, handleMouseMove, resetAnimatedProps, getScale, clearHover, handleHover } =
+      useAnimation({
+        disabled: editMode || previewMode,
+        element: scrollRef.current,
+      });
 
     const getEditClass = useCallback(
       (type: 'edit' | 'editText' | 'editRoot' = 'edit') => editMode && sceneStyles[type as keyof typeof sceneStyles],

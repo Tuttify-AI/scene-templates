@@ -22,7 +22,6 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
     const {
       visibleX,
       rotate,
-      opacity,
       getAnimationsStyle,
       handleMouseMove,
       resetAnimatedProps,

@@ -193,13 +193,13 @@ const MultipleTiles6Fullimg = forwardRef<HTMLDivElement, MultipleTiles6FullImage
             <SwiperSlide
               key={k}
               className={clsx(styles.slideItem, isPreview)}
+              onClick={handleClick(k, { data: getTileData(k) })}
               style={{
                 height: `${slideHeight.toFixed(2)}%`,
               }}
             >
               <div
                 id={getElementId(k, previewMode)}
-                onClick={handleClick(k, { data: getTileData(k) })}
                 className={clsx(styles.tile, isActive(k), getEditClass(), isPreview, classes?.tile)}
                 style={
                   {
