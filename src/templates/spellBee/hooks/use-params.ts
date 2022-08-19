@@ -93,7 +93,7 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
       e?.preventDefault();
       e?.stopPropagation();
       const totalItemsIndexes = totalItemsArray.reduce(
-        (acc, item: string, i) =>
+        (acc, item, i) =>
           answerIndex !== null && item?.toUpperCase() === itemsArray?.[answerIndex]?.toUpperCase() ? [...acc, i] : acc,
         [] as number[]
       );
