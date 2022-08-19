@@ -29,14 +29,14 @@ export default function useAudios({ values }: Params) {
     }
   }, [values]);
 
-    const pauseOtherAudios = (ignoreEl: HTMLAudioElement) => {
-        Array.from(document.getElementsByTagName('audio')).forEach(el => {
-            if (ignoreEl !== el) {
-                el.currentTime = 0;
-                el.pause();
-            }
-        });
-    }
+  const pauseOtherAudios = (ignoreEl: HTMLAudioElement) => {
+    Array.from(document.getElementsByTagName('audio')).forEach(el => {
+      if (ignoreEl !== el) {
+        el.currentTime = 0;
+        el.pause();
+      }
+    });
+  };
 
   const renderAudios = useCallback(
     () =>
@@ -71,7 +71,7 @@ export default function useAudios({ values }: Params) {
                 } else {
                   currentAudio.currentTime = 0;
                   await currentAudio.play();
-                  pauseOtherAudios(currentAudio)
+                  pauseOtherAudios(currentAudio);
                 }
               } else {
                 currentAudio.currentTime = 0;

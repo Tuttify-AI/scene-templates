@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { usePrevious, useWindowSize } from '../../shared/hooks';
 import { SceneProps, SceneValue } from '../../shared/types';
 import { arrayIsEqual, getElementValue, getNumber, randomizeArray, randomizeString } from '../../shared/utils';
@@ -42,32 +42,32 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
     () => getNumber(getConfigValue('highlight_incorrect_selection')) === 1,
     [getConfigValue]
   );
-  const totalItemsArray = useMemo(
-    () =>
-      useArray && Array.isArray(getConfigValue('items_total'))
-        ? (getConfigValue('items_total') as string[])?.map(w => w.toUpperCase())
-        : `${getConfigValue('items_total')}`.toUpperCase().split(''),
-    [getConfigValue, useArray]
-  );
-  const additionalLettersArray = useMemo(
-    () =>
-      useArray && Array.isArray(getConfigValue('additional_items'))
-        ? (getConfigValue('additional_items') as string[])?.map(w => w.toUpperCase())
-        : `${getConfigValue('additional_items')}`.toUpperCase().split(''),
-    [getConfigValue, useArray]
-  );
-  const itemsArray = useMemo(
-    () =>
-      useArray && Array.isArray(getConfigValue('items'))
-        ? (getConfigValue('items') as string[])?.map(w => w.toUpperCase())
-        : `${getConfigValue('items')}`.toUpperCase().split(''),
-    [getConfigValue, useArray]
-  );
+
+  const totalItemsArray = useMemo(() => {
+    const totalItems = getConfigValue('items_total') || getConfigValue('letters_total');
+    return useArray && Array.isArray(totalItems)
+      ? (totalItems as string[])?.map(w => w.toUpperCase())
+      : `${totalItems}`.toUpperCase().split('');
+  }, [getConfigValue, useArray]);
+
+  const additionalLettersArray = useMemo(() => {
+    const additionalItems = getConfigValue('additional_items') || getConfigValue('additional_letters');
+    return useArray && Array.isArray(additionalItems)
+      ? (additionalItems as string[])?.map(w => w.toUpperCase())
+      : `${additionalItems}`.toUpperCase().split('');
+  }, [getConfigValue, useArray]);
+
+  const itemsArray = useMemo(() => {
+    const items = getConfigValue('items') || getConfigValue('word');
+    return useArray && Array.isArray(items)
+      ? (items as string[])?.map(w => w.toUpperCase())
+      : `${items}`.toUpperCase().split('');
+  }, [getConfigValue, useArray]);
 
   const answerArray = useMemo(() => Array.from(Array(itemsArray.length).fill(null)), [itemsArray]);
 
   const predefinedTotalItemIndexes = useMemo(
-    () => (getConfigValue('predefined_total_item_indexes') as AnswerType[]) || [],
+    () => (getConfigValue('predefined_total_item_indexes') || []) as AnswerType[],
     [getConfigValue]
   );
 
