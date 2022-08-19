@@ -20,8 +20,6 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
     const scrollRef = useRef<HTMLDivElement>(null);
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
     const {
-      visibleX,
-      rotate,
       getAnimationsStyle,
       handleMouseMove,
       resetAnimatedProps,
@@ -80,7 +78,6 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
           onClick={handleClick('title', { data: { text: getValue('title', 'text') as string } })}
           className={clsx(sceneStyles.title, isActive('title'), getEditClass('editText'), isPreview, classes?.title)}
           style={{
-            x: visibleX,
             ...getScale('title'),
             ...getAnimationsStyle(transition({ modX: 20, modY: 20 })),
           }}
@@ -100,7 +97,6 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
             classes?.description
           )}
           style={{
-            x: visibleX,
             ...getScale('description'),
             ...getAnimationsStyle(transition({ modX: 15, modY: 15 })),
           }}
@@ -122,7 +118,6 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
             classes?.image
           )}
           style={{
-            rotate,
             ...getScale('image'),
             ...getAnimationsStyle(transition({ modX: 20, modY: 20 })),
           }}
