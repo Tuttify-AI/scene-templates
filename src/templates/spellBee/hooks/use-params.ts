@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { usePrevious, useWindowSize } from '../../shared/hooks';
 import { SceneProps, SceneValue } from '../../shared/types';
 import { arrayIsEqual, getElementValue, getNumber, randomizeArray, randomizeString } from '../../shared/utils';
@@ -67,7 +67,7 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
   const answerArray = useMemo(() => Array.from(Array(itemsArray.length).fill(null)), [itemsArray]);
 
   const predefinedTotalItemIndexes = useMemo(
-    () => (getConfigValue('predefined_total_item_indexes') as AnswerType[]) || [],
+    () => (getConfigValue('predefined_total_item_indexes') || []) as AnswerType[],
     [getConfigValue]
   );
 
@@ -83,7 +83,7 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
 
   const allowPredefine = useCallback(
     (itemsIndex: AnswerType) => {
-      return !(!isPredefinedIndex(itemsIndex) && predefinedTotalItemIndexes.filter((v: null) => v === null).length <= 1);
+      return !(!isPredefinedIndex(itemsIndex) && predefinedTotalItemIndexes.filter(v => v === null).length <= 1);
     },
     [predefinedTotalItemIndexes, isPredefinedIndex]
   );
@@ -93,14 +93,14 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
       e?.preventDefault();
       e?.stopPropagation();
       const totalItemsIndexes = totalItemsArray.reduce(
-        (acc: any, item: string, i: any) =>
+        (acc, item: string, i) =>
           answerIndex !== null && item?.toUpperCase() === itemsArray?.[answerIndex]?.toUpperCase() ? [...acc, i] : acc,
         [] as number[]
       );
       setPredefinedTotalItemIndexes(
-        predefinedTotalItemIndexes.map((item: null, index: number | null, array: string | any[]) => {
+        predefinedTotalItemIndexes.map((item, index, array) => {
           if (index === answerIndex && totalItemsIndexes.length) {
-            const filteredIndexes = totalItemsIndexes.filter((i: string) => !array.includes(i));
+            const filteredIndexes = totalItemsIndexes.filter(i => !array.includes(i));
             const checkIndex = filteredIndexes.length ? filteredIndexes[0] : totalItemsIndexes[0];
             return item !== null ? null : checkIndex;
           }
