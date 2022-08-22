@@ -19,6 +19,7 @@ import Parallax1, { Parallax1SceneProps } from './templates/parallax1';
 import WordGuess, { WordGuessSceneProps } from './templates/wordGuess';
 import Twocando, { TwocandoSceneProps } from './templates/twocando';
 import Counting, { CountingSceneProps } from './templates/counting';
+import MathBase, { MathBaseSceneProps } from './templates/mathBase';
 
 import base from './templates/base/assets/preview';
 import base2 from './templates/base2/assets/preview';
@@ -38,6 +39,7 @@ import spellbee from './templates/spellBee/assets/preview';
 import parallax1 from './templates/parallax1/assets/preview';
 import twocando from './templates/twocando/assets/preview';
 import wordGuess from './templates/wordGuess/assets/preview';
+import mathBase from './templates/mathBase/assets/preview';
 
 export enum SceneNames {
   Base = 'base',
@@ -62,6 +64,7 @@ export enum SceneNames {
   Twocando = 'twocando',
   WordGuess = 'wordGuess',
   Counting = 'counting',
+  MathBase = 'mathBase',
 }
 
 const previews = {
@@ -83,6 +86,7 @@ const previews = {
   parallax1,
   wordGuess,
   twocando,
+  mathBase,
 };
 
 export {
@@ -106,6 +110,7 @@ export {
   Types,
   previews,
   WordGuess,
+  MathBase,
 };
 export type {
   BaseSceneProps,
@@ -127,6 +132,7 @@ export type {
   TwocandoSceneProps,
   WordGuessSceneProps,
   CountingSceneProps,
+  MathBaseSceneProps,
 };
 
 export const AVAILABLE_SCENES = {
@@ -209,5 +215,9 @@ export const AVAILABLE_SCENES = {
   [SceneNames.Counting]: {
     component: Counting,
     previewImage: previews.wordGuess,
+  },
+  [SceneNames.MathBase]: {
+    component: MathBase,
+    previewImage: previews.mathBase,
   },
 };
