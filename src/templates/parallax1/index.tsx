@@ -94,7 +94,6 @@ const Parallax1 = forwardRef<HTMLDivElement, Parallax1SceneProps>(
               classes?.[name as keyof Classes]
             )}
             style={{
-              opacity,
               translateY,
               backgroundColor: `${getValue(name, 'background')}`,
               ...(!isStatic && getScale(name, scale)),
