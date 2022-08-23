@@ -68,7 +68,7 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
       lockCorrectSelection,
       handleClick,
     });
-    const { onDrop, onDragEnter, onDragLeave, dragTargetIndex, onDragStart, dragSelectedIndex, onDragEnd, onDragOver } =
+    const { onDrop, onDragEnter, onDragLeave, dragTargetItem, onDragStart, dragSelectedItem, onDragEnd, onDragOver } =
       useDragNDrop({ handleDrop: handleSetAnswer });
     const getEditClass = useCallback(
       (type: 'edit' | 'editRoot' = 'edit') => editMode && styles[type as keyof typeof styles],
@@ -151,7 +151,7 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
                 className={clsx(
                   styles.selectionNumberItem,
                   !editMode && styles.withHover,
-                  dragSelectedIndex === index && styles.dragged
+                  dragSelectedItem === index && styles.dragged
                 )}
                 style={{
                   fontSize: selectionFontSize,
@@ -193,7 +193,7 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
                 className={clsx(
                   styles.answerNumberItem,
                   selectedNumberIndex !== null && highlightSelection(index) && styles.empty,
-                  dragTargetIndex === index && highlightSelection(index) && styles.empty,
+                  dragTargetItem === index && highlightSelection(index) && styles.empty,
                   highlightCorrectSelection && checkIfCorrectNumber(index) && styles.correct,
                   highlightIncorrectSelection && checkIfCorrectNumber(index) === false && styles.incorrect
                 )}

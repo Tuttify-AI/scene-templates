@@ -2,8 +2,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActiveElementData, SceneValue } from '../../shared/types';
 import { getElementValue } from '../../shared/utils';
 import { CountingElements } from '../types';
-import { checkArray, checkCorrectResult } from '../utils';
 import { useActions } from '../../shared/hooks';
+import useParams from './use-params';
+import { checkCorrectResult } from '../utils';
 
 const INITIAL_STATE = {
   src: '',
@@ -14,152 +15,98 @@ const INITIAL_STATE = {
 };
 
 type UseNumbersActionParams = {
-  totalItemsArray: string[];
-  resultNumber: null | number;
-  leftNumber: null | number;
-  rightNumber: null | number;
-  answerArray: (null | number)[];
-  answerValueArray: (number | string | null)[];
-  additionalNumbers: (null | number)[];
+  predefinedValues: ReturnType<typeof useParams>['predefinedValues'];
+  mathOperand: ReturnType<typeof useParams>['mathOperand'];
   editMode?: boolean;
-  lockCorrectSelection?: boolean;
   values?: CountingElements<SceneValue>;
   handleClick?: ReturnType<typeof useActions>['handleClick'];
 };
-const useNumbersAction = ({
-  answerArray,
-  editMode,
-  totalItemsArray,
-  values,
-  lockCorrectSelection,
-  handleClick,
-  answerValueArray,
-  additionalNumbers,
-}: UseNumbersActionParams) => {
-  const [selectedNumberIndex, setSelectedNumberIndex] = useState<number | null>(null);
-  const [answer, setAnswer] = useState(answerArray);
+const useNumbersAction = ({ predefinedValues, editMode, values, handleClick, mathOperand }: UseNumbersActionParams) => {
+  const [selectedNumber, setSelectedNumber] = useState<number | null>(null);
+  const [answer, setAnswer] = useState(predefinedValues);
   const getValue = useMemo(() => getElementValue<CountingElements>(values), [values]);
   const [fullScreen, setFullScreen] = useState(INITIAL_STATE);
 
-  useEffect(() => {
-    editMode && setSelectedNumberIndex(null);
-    setAnswer([]);
-  }, [editMode]);
+  const onClearAnswer = useCallback(() => setAnswer(predefinedValues), [predefinedValues]);
 
   useEffect(() => {
-    if (answerArray.length !== answer.length) {
-      setAnswer(answerArray);
-    }
-  }, [answerArray, answer]);
+    editMode && setSelectedNumber(null);
+    onClearAnswer();
+  }, [editMode, onClearAnswer]);
 
-  /*const checkIsNumberDisabled = useCallback(
-    (index: number) => typeof answer.find(a => a === index) === 'number',
-    [answer]
-  );*/
-  const checkIsNumberDisabled = useCallback((index: number) => false, []);
   const handleNumberClick = useCallback(
     (numberIndex: number) => () => {
-      if (!editMode && !checkIsNumberDisabled(numberIndex)) {
-        if (numberIndex === selectedNumberIndex) {
-          setSelectedNumberIndex(null);
+      if (!editMode) {
+        if (numberIndex === selectedNumber) {
+          setSelectedNumber(null);
         } else {
-          setSelectedNumberIndex(numberIndex);
+          setSelectedNumber(numberIndex);
         }
       }
     },
-    [selectedNumberIndex, editMode, checkIsNumberDisabled]
+    [selectedNumber, editMode, setSelectedNumber]
   );
-  const correct = useMemo(() => {
-    return checkCorrectResult(answer, answerValueArray);
-  }, [answer, answerValueArray]);
+
+  const isCorrect = useMemo(() => {
+    return checkCorrectResult(answer.leftNumber, answer.rightNumber, answer.resultNumber, mathOperand);
+  }, [answer, mathOperand]);
 
   const isFullAnswer = useMemo(() => {
-    const result = checkArray(answer);
+    const result = Object.values(answer).every(val => val !== null);
     if (result) {
       setFullScreen({
-        src: correct ? `${getValue('image', 'success_image')}` : `${getValue('image', 'error_image')}`,
-        backgroundColor: correct
+        src: isCorrect ? `${getValue('image', 'success_image')}` : `${getValue('image', 'error_image')}`,
+        backgroundColor: isCorrect
           ? `${getValue('image', 'success_background')}`
           : `${getValue('image', 'error_background')}`,
-        textColor: correct ? `${getValue('image', 'success_text_color')}` : `${getValue('image', 'error_text_color')}`,
-        text: correct ? `${getValue('image', 'success_text')}` : `${getValue('image', 'error_text')}`,
-        soundKey: correct ? 'success_sound' : `error_sound`,
+        textColor: isCorrect
+          ? `${getValue('image', 'success_text_color')}`
+          : `${getValue('image', 'error_text_color')}`,
+        text: isCorrect ? `${getValue('image', 'success_text')}` : `${getValue('image', 'error_text')}`,
+        soundKey: isCorrect ? 'success_sound' : `error_sound`,
       });
     }
     return result;
-  }, [answer, correct, getValue]);
-
-  const checkIfCorrectNumber = useCallback(
-    (answerIndex: number | null) => {
-      const wordIndexInAnswer = answerIndex !== null ? answer[answerIndex] : null;
-      return answerIndex !== null && totalItemsArray[answerIndex] !== null && wordIndexInAnswer !== null
-        ? totalItemsArray[answerIndex]?.toUpperCase() === totalItemsArray[wordIndexInAnswer]?.toUpperCase()
-        : null;
-    },
-    [totalItemsArray, answer]
-  );
+  }, [answer, isCorrect, getValue]);
 
   const getAnswerData = useCallback(
-    (index: number, totalNumberIndex: number | null) => {
-      //const isCorrect = totalNumberIndex !== null && totalItemsArray[totalNumberIndex] === itemsArray[index];
-      const number = totalNumberIndex !== null && totalItemsArray[totalNumberIndex];
-      // const correctAnswer = itemsArray.join('');
+    (type: keyof typeof answer, number?: number | null) => {
+      const result = Object.values(answer).every(val => val !== null);
       return {
-        //...(isCorrect !== null ? { isCorrect } : {}),
+        ...(result ? { isCorrect } : {}),
+        ...(type ? { type } : {}),
         ...(number ? { number } : {}),
-        //...(correctAnswer ? { correctAnswer } : {}),
-        ...(index !== null ? { index } : {}),
       } as ActiveElementData;
     },
-    [totalItemsArray]
+    [isCorrect, answer]
   );
-
   const handleSetAnswer = useCallback(
-    (index: number, selectedIndex?: number) => (e?: React.MouseEvent<HTMLElement>) => {
+    (type: keyof typeof answer, value?: number | null) => (e?: React.MouseEvent<HTMLElement>) => {
       e?.preventDefault();
-      const numberIndex = selectedIndex ?? selectedNumberIndex;
-      const correctIndex =
-        selectedIndex && additionalNumbers[selectedIndex]
-          ? answerValueArray?.indexOf(additionalNumbers[selectedIndex])
-          : null;
-      const changeLocked = lockCorrectSelection && checkIfCorrectNumber(index);
-      if (!editMode && !changeLocked) {
-        if (numberIndex === null) {
-          setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? null : a)));
-        } else {
-          handleClick && correctIndex && handleClick('answer', { data: getAnswerData(index, correctIndex) })(e);
-          setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? correctIndex : a)));
-          setSelectedNumberIndex(null);
+      const selectedValue = value ?? selectedNumber;
+      if (!editMode && selectedValue !== null) {
+        if ((answer[type] && !predefinedValues[type]) || !answer[type]) {
+          handleClick && handleClick(type, { data: getAnswerData(type, selectedValue) })(e);
+          setAnswer(prev => ({ ...prev, [type]: selectedValue }));
+          setSelectedNumber(null);
         }
       }
     },
-    [
-      selectedNumberIndex,
-      lockCorrectSelection,
-      checkIfCorrectNumber,
-      editMode,
-      additionalNumbers,
-      answerValueArray,
-      handleClick,
-      getAnswerData,
-    ]
+    [predefinedValues, selectedNumber, answer, editMode, handleClick, getAnswerData]
   );
 
-  const handleClearFullImageSrc = useCallback(() => setAnswer(answer.map(() => null)), [answer, setAnswer]);
-
   const handleFullImageClick = useCallback(() => {
-    handleClearFullImageSrc();
+    onClearAnswer();
     setFullScreen(INITIAL_STATE);
-  }, [handleClearFullImageSrc]);
+  }, [onClearAnswer]);
 
   return {
-    checkIsNumberDisabled,
-    selectedNumberIndex,
+    selectedNumber,
     answer,
     handleNumberClick,
     handleSetAnswer,
     isFullAnswer,
-    correct,
+    correct: isCorrect,
     handleFullImageClick,
     fullScreen,
   };
