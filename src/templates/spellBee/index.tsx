@@ -76,7 +76,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       handleClick,
       predefinedTotalItemIndexes,
     });
-    const { onDrop, onDragEnter, onDragLeave, dragTargetIndex, onDragStart, dragSelectedIndex, onDragEnd, onDragOver } =
+    const { onDrop, onDragEnter, onDragLeave, dragTargetItem, onDragStart, dragSelectedItem, onDragEnd, onDragOver } =
       useDragNDrop({ handleDrop: handleSetAnswer });
     const getEditClass = useCallback(
       (type: 'edit' | 'editRoot' = 'edit') => editMode && styles[type as keyof typeof styles],
@@ -95,7 +95,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
           ? [styles.predefinedAnswer]
           : [
               selectedLetterIndex !== null && highlightSelection(index) && styles.empty,
-              dragTargetIndex === index && highlightSelection(index) && styles.empty,
+              dragTargetItem === index && highlightSelection(index) && styles.empty,
               highlightCorrectSelection && checkIfCorrectLetter(index) && styles.correct,
               highlightIncorrectSelection && checkIfCorrectLetter(index) === false && styles.incorrect,
             ];
@@ -104,7 +104,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
         checkIfCorrectLetter,
         highlightCorrectSelection,
         highlightIncorrectSelection,
-        dragTargetIndex,
+        dragTargetItem,
         selectedLetterIndex,
         highlightSelection,
         isPredefinedIndex,
@@ -181,8 +181,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
                 className={clsx(
                   styles.selectionLetterItem,
                   !editMode && styles.withHover,
-                  dragSelectedIndex === index && styles.dragged,
-                  useArray && styles.wordText
+                  dragSelectedItem === index && styles.dragged
                 )}
                 style={{
                   fontSize: selectionFontSize,

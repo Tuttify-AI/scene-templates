@@ -2,7 +2,7 @@ import React, { CSSProperties, forwardRef, useCallback, useMemo } from 'react';
 import { useActions, useAudios } from '../shared/hooks';
 import useDragNDrop from '../shared/hooks/use-drag-n-drop';
 
-import { SceneProps, SceneValue } from '../shared/types';
+import { DefaultType, SceneProps, SceneValue } from '../shared/types';
 import { clsx, getElementId, getElementValue } from '../shared/utils';
 import defaultImage from './assets/default';
 import useNumbersAction from './hooks/use-numbers-action';
@@ -18,30 +18,22 @@ export type MathBaseSceneProps = SceneProps & {
 };
 
 const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
-  ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick }, ref) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, values, onActiveElementClick }, ref) => {
     const getValue = useMemo(() => getElementValue<CountingElements>(values), [values]);
-    const useArray = true;
     const {
-      totalItemsArray,
-      selectionNumbersWidth,
-      additionalNumbers,
-      answerArray,
+      predefinedValues,
       selectionFontSize,
       selectionContainerHeight,
-      resultNumber,
-      leftNumber,
-      rightNumber,
       wordFontSize,
-      lockCorrectSelection,
       fullScreenTextSize,
       wordPadding,
-      answerValueArray,
+      mathOperand,
+      additionalNumbersArray,
+      showQuestionMark,
     } = useParams({
       values,
       previewMode,
       editMode,
-      onSet,
-      useArray,
     });
     const { renderAudios, handlePauseAll } = useAudios({ values });
     const { handleClick } = useActions({
@@ -54,26 +46,19 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
     const {
       handleSetAnswer,
       handleNumberClick,
-      selectedNumberIndex,
+      selectedNumber,
       answer,
-      checkIsNumberDisabled,
       isFullAnswer,
       handleFullImageClick,
       fullScreen,
     } = useNumbersAction({
-      answerArray,
-      totalItemsArray,
-      additionalNumbers,
-      answerValueArray,
+      predefinedValues,
       editMode,
-      resultNumber,
-      leftNumber,
-      rightNumber,
       values,
-      lockCorrectSelection,
       handleClick,
+      mathOperand,
     });
-    const { onDrop, onDragEnter, onDragLeave, dragTargetIndex, onDragStart, dragSelectedIndex, onDragEnd, onDragOver } =
+    const { onDrop, onDragEnter, onDragLeave, dragTargetItem, onDragStart, dragSelectedItem, onDragEnd, onDragOver } =
       useDragNDrop({ handleDrop: handleSetAnswer });
     const getEditClass = useCallback(
       (type: 'edit' | 'editRoot' = 'edit') => editMode && styles[type as keyof typeof styles],
@@ -81,11 +66,47 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
     );
     const isActive = useCallback((key: keyof CountingElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
-    /*  const highlightSelection = useCallback(
-      (index: number) => (lockCorrectSelection ? !checkIfCorrectNumber(index) : true),
-      [checkIfCorrectNumber, lockCorrectSelection]
-    );*/
-    console.log('answer', answer);
+    const renderNumber = (type: keyof typeof answer, value: DefaultType) => (
+      <div
+        key={type}
+        className={clsx(styles.answerNumberItemWrapper)}
+        style={{
+          padding: wordPadding,
+        }}
+      >
+        <p
+          id={getElementId(type, previewMode)}
+          className={clsx(
+            styles.answerNumberItem,
+            (selectedNumber !== null || dragTargetItem === type) && !predefinedValues[type] && styles.empty
+          )}
+          onDragOver={onDragOver}
+          onDrop={onDrop}
+          onDragEnter={onDragEnter(type)}
+          onDragLeave={onDragLeave}
+          onClick={handleSetAnswer(type)}
+          style={
+            {
+              padding: wordPadding,
+              fontSize: wordFontSize,
+              height: selectionContainerHeight,
+              color: getValue('answer_text', 'text_color') as string,
+            } as CSSProperties
+          }
+        >
+          {value || (showQuestionMark ? <span className={styles.questionMark}>?</span> : '')}
+        </p>
+      </div>
+    );
+
+    const renderOperand = (operand: string) => (
+      <div
+        className={styles.operand}
+        style={{ fontSize: wordFontSize, color: getValue('answer_text', 'text_color') as string }}
+      >
+        {operand}
+      </div>
+    );
 
     return (
       <div
@@ -136,29 +157,22 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
           onClick={handleClick('selection_text')}
           id={getElementId(`selection_text`, previewMode)}
         >
-          {additionalNumbers.map((letter, index) => (
+          {additionalNumbersArray.map((number, index) => (
             <div
               key={index}
-              className={clsx(
-                styles.selectionNumberItemWrapper,
-                selectedNumberIndex === index && styles.selected,
-                checkIsNumberDisabled(index) && styles.disabled
-              )}
-              style={{
-                width: `${selectionNumbersWidth}%`,
-              }}
+              className={clsx(styles.selectionNumberItemWrapper, selectedNumber === number && styles.selected)}
             >
               <p
-                onDragStart={onDragStart(index)}
+                onDragStart={onDragStart(number)}
                 onDragEnd={onDragEnd}
-                draggable={!editMode && !checkIsNumberDisabled(index)}
-                id={getElementId(`text_${letter}`, previewMode)}
-                onClick={handleNumberClick(index)}
+                draggable={!editMode}
+                id={getElementId(`text_${number}`, previewMode)}
+                onClick={handleNumberClick(number)}
                 className={clsx(
                   styles.selectionNumberItem,
                   !editMode && styles.withHover,
-                  dragSelectedIndex === index && styles.dragged,
-                  useArray && styles.wordText
+                  dragSelectedItem === number && styles.dragged,
+                  styles.wordText
                 )}
                 style={{
                   fontSize: selectionFontSize,
@@ -166,7 +180,7 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
                   color: getValue('selection_text', 'text_color') as string,
                 }}
               >
-                {letter}
+                {number}
               </p>
             </div>
           ))}
@@ -180,43 +194,11 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
           />
         </div>
         <div className={clsx(styles.answerTextWrapper, getEditClass(), isPreview)} onClick={handleClick('answer_text')}>
-          {answer?.map((answerIndex, index) => (
-            <div
-              key={index}
-              className={clsx(styles.answerNumberItemWrapper)}
-              style={{
-                padding: wordPadding,
-              }}
-            >
-              <p
-                id={getElementId(`answer_${answerIndex}`, previewMode)}
-                className={clsx(
-                  styles.answerNumberItem,
-                  selectedNumberIndex !== null && styles.empty,
-                  dragTargetIndex === index && styles.empty
-                  /* highlightCorrectSelection && checkIfCorrectNumber(index) && styles.correct,
-                  highlightIncorrectSelection && checkIfCorrectNumber(index) === false && styles.incorrect*/
-                )}
-                onDragOver={onDragOver}
-                onDrop={onDrop}
-                onDragEnter={onDragEnter(index)}
-                onDragLeave={onDragLeave}
-                onClick={handleSetAnswer(index)}
-                style={
-                  {
-                    padding: wordPadding,
-                    fontSize: wordFontSize,
-                    color: getValue('answer_text', 'text_color') as string,
-                    '--highlightSuccessColor': getValue('answer_text', 'success_highlight_color'),
-                    '--highlightErrorColor': getValue('answer_text', 'error_highlight_color'),
-                  } as CSSProperties
-                }
-              >
-                {answerIndex !== null && answerValueArray[answerIndex]}
-                {/*{answerIndex}*/}
-              </p>
-            </div>
-          ))}
+          {renderNumber('leftNumber', answer?.leftNumber)}
+          {renderOperand(mathOperand)}
+          {renderNumber('rightNumber', answer?.rightNumber)}
+          {renderOperand('=')}
+          {renderNumber('resultNumber', answer?.resultNumber)}
         </div>
       </div>
     );

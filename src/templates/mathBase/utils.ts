@@ -1,3 +1,5 @@
+import { getNumber } from '../shared/utils';
+
 export function checkArray(answer_arr: (number | null)[]) {
   if (!answer_arr?.length) {
     return false;
@@ -15,20 +17,22 @@ export function checkCorrectWord(answer_arr: (number | null)[], all_arr: string[
   const answer = [];
   for (let i = 0; i < answer_arr.length; i++) {
     const index = answer_arr[i];
-    if (!index && typeof index != 'number') {
+    if (!index && typeof index !== 'number') {
       return false;
     } else if (typeof index === 'number') answer[i] = all_arr[index];
   }
   return answer.join() === word;
 }
 
-export function checkCorrectResult(answer_arr: (number | null)[], answerValueArray: (number | string | null)[]) {
-  const first = answer_arr[0] && answerValueArray[answer_arr[0]];
-  const second = answer_arr[2] && answerValueArray[answer_arr[2]];
-  const result = answer_arr[4] && answerValueArray[answer_arr[4]];
-  if (first && second && result && answer_arr[1] && answerValueArray[answer_arr[1]] === '+') {
-    return +first + +second === result;
-  } else if (first && second) {
-    return +first - +second === result;
+export function checkCorrectResult(
+  first: number | null,
+  second: number | null,
+  result: number | null,
+  operand: string
+) {
+  if (first !== null && second !== null && result !== null) {
+    return operand === '+'
+      ? getNumber(first) + getNumber(second) === getNumber(result)
+      : getNumber(first) - getNumber(second) === getNumber(result);
   } else return false;
 }

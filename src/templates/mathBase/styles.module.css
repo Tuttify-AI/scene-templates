@@ -176,6 +176,7 @@
 
 .selectionNumberItemWrapper {
     padding: 8px;
+    min-width: 15%;
 }
 
 .selectionNumberItemWrapper.selected {
@@ -195,7 +196,8 @@
     justify-content: center;
     align-items: center;
     font-weight: bold;
-    padding: 8px;
+    padding: 0 8px;
+    width: auto;
     cursor: pointer;
     border-radius: var(--mainBorderRadius);
     color: var(--colorBlack);
@@ -240,6 +242,7 @@
 
 .answerNumberItemWrapper{
     padding: 8px;
+    min-width: 20%;
 }
 
 .answerNumberItem {
@@ -248,14 +251,21 @@
     justify-content: center;
     align-items: center;
     font-size: 60px;
-    height: 70px;
-    width: 70px;
     font-weight: bold;
     padding: 8px;
     cursor: pointer;
     border-radius: var(--mainBorderRadius);
     border: 2px solid rgba(100, 100, 100, 0.5);
     color: var(--colorBlack);
+}
+
+.operand {
+    padding: 8px;
+    font-weight: bold;
+}
+
+.questionMark {
+    opacity: 0.3;
 }
 
 .empty {

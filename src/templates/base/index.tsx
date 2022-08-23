@@ -19,17 +19,12 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, parameters, values, onActiveElementClick }, ref) => {
     const scrollRef = useRef<HTMLDivElement>(null);
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
-    const {
-      getAnimationsStyle,
-      handleMouseMove,
-      resetAnimatedProps,
-      getScale,
-      clearHover,
-      handleHover,
-    } = useAnimation({
-      disabled: editMode || previewMode,
-      element: scrollRef.current,
-    });
+    const { getAnimationsStyle, handleMouseMove, resetAnimatedProps, getScale, clearHover, handleHover } = useAnimation(
+      {
+        disabled: editMode || previewMode,
+        element: scrollRef.current,
+      }
+    );
 
     const getEditClass = useCallback(
       (type: 'edit' | 'editText' | 'editRoot' = 'edit') => editMode && sceneStyles[type],
