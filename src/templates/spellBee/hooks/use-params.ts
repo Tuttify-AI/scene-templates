@@ -20,6 +20,8 @@ const DEFAULTS = {
 export default function useParams({ values, previewMode, editMode, onSet, useArray }: Params) {
   const { isMd, isSm } = useWindowSize();
 
+  const emptyValue = useMemo(() => (useArray ? [] : ''), [useArray]);
+
   const getConfigValue = useCallback(
     (parameter: keyof SpellBeeConfig) => getElementValue(values)('config', parameter),
     [values]
@@ -44,25 +46,25 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
   );
 
   const totalItemsArray = useMemo(() => {
-    const totalItems = getConfigValue('items_total') || getConfigValue('letters_total');
+    const totalItems = getConfigValue('items_total') || getConfigValue('letters_total') || emptyValue;
     return useArray && Array.isArray(totalItems)
       ? (totalItems as string[])?.map(w => w.toUpperCase())
       : `${totalItems}`.toUpperCase().split('');
-  }, [getConfigValue, useArray]);
+  }, [getConfigValue, useArray, emptyValue]);
 
   const additionalLettersArray = useMemo(() => {
-    const additionalItems = getConfigValue('additional_items') || getConfigValue('additional_letters');
+    const additionalItems = getConfigValue('additional_items') || getConfigValue('additional_letters') || emptyValue;
     return useArray && Array.isArray(additionalItems)
       ? (additionalItems as string[])?.map(w => w.toUpperCase())
       : `${additionalItems}`.toUpperCase().split('');
-  }, [getConfigValue, useArray]);
+  }, [getConfigValue, useArray, emptyValue]);
 
   const itemsArray = useMemo(() => {
-    const items = getConfigValue('items') || getConfigValue('word');
+    const items = getConfigValue('items') || getConfigValue('word') || emptyValue;
     return useArray && Array.isArray(items)
       ? (items as string[])?.map(w => w.toUpperCase())
       : `${items}`.toUpperCase().split('');
-  }, [getConfigValue, useArray]);
+  }, [getConfigValue, useArray, emptyValue]);
 
   const answerArray = useMemo(() => Array.from(Array(itemsArray.length).fill(null)), [itemsArray]);
 

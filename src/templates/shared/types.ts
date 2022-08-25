@@ -81,9 +81,12 @@ export type SceneValue = {
   title: string;
   value: DefaultType | DefaultType[];
   length?: number;
+  required?: boolean;
   max_length?: number;
   max_array_length?: number;
   min_length?: number;
+  max?: number;
+  min?: number;
   hidden?: boolean;
   replace_pattern?: string;
   options?: { label: string; value: string }[];

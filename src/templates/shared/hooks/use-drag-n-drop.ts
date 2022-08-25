@@ -1,40 +1,42 @@
 import React, { useCallback, useState } from 'react';
 
-type Params<T> = {
-  handleDrop: (targetIndex: T, selectedIndex: T) => (e?: React.DragEvent<HTMLElement>) => void;
+type Params<TargetItem, SelectedItem> = {
+  handleDrop: (targetItem: TargetItem, selectedItem: SelectedItem) => (e?: React.DragEvent<HTMLElement>) => void;
 };
 
-export default function useDragNDrop<T = number>({ handleDrop }: Params<T>) {
-  const [dragTargetIndex, setDragTargetIndex] = useState<null | T>(null);
-  const [dragSelectedIndex, setDragSelectedIndex] = useState<null | T>(null);
+export default function useDragNDrop<TargetItem = number, SelectedItem = number>({
+  handleDrop,
+}: Params<TargetItem, SelectedItem>) {
+  const [dragTargetItem, setDragTargetItem] = useState<null | TargetItem>(null);
+  const [dragSelectedItem, setDragSelectedItem] = useState<null | SelectedItem>(null);
   const onDrop = useCallback(
     (e?: React.DragEvent<HTMLElement>) => {
       e?.preventDefault();
-      dragTargetIndex !== null && dragSelectedIndex !== null && handleDrop(dragTargetIndex, dragSelectedIndex)(e);
-      setDragSelectedIndex(null);
-      setDragTargetIndex(null);
+      dragTargetItem !== null && dragSelectedItem !== null && handleDrop(dragTargetItem, dragSelectedItem)(e);
+      setDragSelectedItem(null);
+      setDragTargetItem(null);
     },
-    [handleDrop, dragTargetIndex, dragSelectedIndex]
+    [handleDrop, dragTargetItem, dragSelectedItem]
   );
 
-  const onDragEnter = useCallback((index: T) => () => setDragTargetIndex(index), []);
+  const onDragEnter = useCallback((item: TargetItem) => () => setDragTargetItem(item), []);
 
   const onDragOver = useCallback((e?: React.DragEvent<HTMLElement>) => e?.preventDefault(), []);
 
-  const onDragLeave = useCallback(() => setDragTargetIndex(null), []);
+  const onDragLeave = useCallback(() => setDragTargetItem(null), []);
 
-  const onDragStart = useCallback((index: T) => () => setDragSelectedIndex(index), []);
+  const onDragStart = useCallback((item: SelectedItem) => () => setDragSelectedItem(item), []);
 
-  const onDragEnd = useCallback(() => setDragSelectedIndex(null), []);
+  const onDragEnd = useCallback(() => setDragSelectedItem(null), []);
 
   return {
     onDragOver,
     onDragEnter,
     onDragLeave,
     onDrop,
-    dragTargetIndex,
+    dragTargetItem,
     onDragStart,
     onDragEnd,
-    dragSelectedIndex,
+    dragSelectedItem,
   };
 }
