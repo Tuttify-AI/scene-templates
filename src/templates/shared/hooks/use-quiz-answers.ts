@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActiveElementData, Elements, Parameters, SceneProps } from '../types';
 import { deleteElement } from '../utils';
 import useActions from './use-actions';
@@ -32,6 +32,8 @@ export default function useQuizAnswers({
   defaultImages,
 }: Params) {
   const [fullImage, setFullImage] = useState(INITIAL_STATE);
+  const [isCorrect, setIsCorrect] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState();
   useEffect(() => {
     if (editMode || previewMode) {
       setFullImage(INITIAL_STATE);
@@ -56,7 +58,9 @@ export default function useQuizAnswers({
       let isCorrect = getValue(k, 'is_correct');
       if (isCorrect && typeof isCorrect === 'string') {
         isCorrect = isCorrect === 'true';
+        setIsCorrect(isCorrect as boolean);
       }
+      setSelectedAnswer(k);
       return {
         ...(text ? { text } : {}),
         ...(fullScreenText ? { fullScreenText } : {}),
@@ -82,6 +86,7 @@ export default function useQuizAnswers({
   const handleClearFullImageSrc = useCallback(() => setFullImage(INITIAL_STATE), [setFullImage]);
 
   const handleFullImageClick = useCallback(() => {
+    setSelectedAnswer(null);
     onActiveElementClick &&
       onActiveElementClick(fullImage.key, {
         imageUrl: fullImage.src,
@@ -108,5 +113,7 @@ export default function useQuizAnswers({
     handleDelete,
     fullImage,
     getElementData,
+    correct: isCorrect,
+    selectedAnswer,
   };
 }
