@@ -1,4 +1,4 @@
-import React, { CSSProperties, forwardRef, useCallback, useMemo } from 'react';
+import React, { CSSProperties, forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { useActions, useAudios } from '../shared/hooks';
 import useDragNDrop from '../shared/hooks/use-drag-n-drop';
 
@@ -18,8 +18,9 @@ export type MathBaseSceneProps = SceneProps & {
 };
 
 const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
-  ({ editMode, previewMode, classes, activeKey, onClick, values, onActiveElementClick }, ref) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, values, onActiveElementClick, onComplete }, ref) => {
     const getValue = useMemo(() => getElementValue<CountingElements>(values), [values]);
+    const [userAnswerTime, setUserAnswerTime] = useState(0);
     const {
       predefinedValues,
       selectionFontSize,
@@ -36,11 +37,12 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
       editMode,
     });
     const { renderAudios, handlePauseAll } = useAudios({ values });
-    const { handleClick } = useActions({
+    const { handleClick, handleComplete } = useActions({
       onClick,
       handlePauseAll,
       disabled: editMode || previewMode,
       onActiveElementClick,
+      onComplete,
     });
 
     const {
@@ -51,6 +53,7 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
       isFullAnswer,
       handleFullImageClick,
       fullScreen,
+      correct,
     } = useNumbersAction({
       predefinedValues,
       editMode,
@@ -66,6 +69,30 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
     );
     const isActive = useCallback((key: keyof CountingElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
+
+    useEffect(() => {
+      const timer = setInterval(() => {
+        setUserAnswerTime(prevState => ++prevState);
+      }, 1000);
+
+      if (isFullAnswer) {
+        handleComplete &&
+          handleComplete('answers', {
+            data: {
+              isCorrect: correct,
+              answer: answer.resultNumber,
+              leftNumber: answer.leftNumber,
+              rightNumber: answer.resultNumber,
+              answerTime: userAnswerTime,
+            },
+          });
+        setUserAnswerTime(0);
+        clearInterval(timer);
+      }
+      return () => {
+        clearInterval(timer);
+      };
+    }, [answer, correct, isFullAnswer]);
     const renderNumber = (type: keyof typeof answer, value: DefaultType) => (
       <div
         key={type}
