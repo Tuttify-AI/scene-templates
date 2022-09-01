@@ -23,12 +23,3 @@ export function checkCorrectWord(answer_arr: DefaultType[], all_arr: string[], w
   }
   return answer.join() === word;
 }
-
-export function getAnswer(answer_arr: DefaultType[], all_arr: string[]) {
-  const answer = [];
-  for (let i = 0; i < answer_arr.length; i++) {
-    const index = answer_arr[i];
-    if (typeof index === 'number') answer[i] = all_arr[index];
-  }
-  return answer.join('');
-}
