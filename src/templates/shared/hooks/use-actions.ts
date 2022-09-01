@@ -7,7 +7,6 @@ type Params = {
   onClick?: SceneProps['onClick'];
   onActiveElementClick?: SceneProps['onActiveElementClick'];
   handlePauseAll?: ReturnType<typeof useAudios>['handlePauseAll'];
-  onComplete?: SceneProps['onComplete'];
 };
 
 type OnClickData = {
@@ -17,7 +16,7 @@ type OnClickData = {
 
 const DEFAULT_DATA = {};
 
-export default function useActions({ disabled, onClick, onActiveElementClick, handlePauseAll, onComplete }: Params) {
+export default function useActions({ disabled, onClick, onActiveElementClick, handlePauseAll }: Params) {
   const handleClick = useCallback(
     (key: keyof Elements, { data, parameter = 'sound' }: OnClickData = DEFAULT_DATA) =>
       async (e?: React.MouseEvent<HTMLElement>) => {
@@ -32,15 +31,7 @@ export default function useActions({ disabled, onClick, onActiveElementClick, ha
     [disabled, onClick, onActiveElementClick, handlePauseAll]
   );
 
-  const handleComplete = useCallback(
-    (key: keyof Elements, { data }: OnClickData = DEFAULT_DATA) => {
-      onComplete && data && onComplete(`${key}`, data);
-    },
-    [onComplete]
-  );
-
   return {
     handleClick,
-    handleComplete,
   };
 }
