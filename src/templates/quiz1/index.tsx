@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { forwardRef, useCallback, useMemo } from 'react';
 import { useActions, useAudios, useImage } from '../shared/hooks';
 import useQuizAnswers from '../shared/hooks/use-quiz-answers';
 
@@ -11,6 +11,7 @@ import questionImage from './assets/question';
 import styles from './styles.module.css';
 import { Classes, Quiz1SceneElements } from './types';
 import { AddButton, DeleteButton } from '../shared/components';
+import useAnswerTimer from '../shared/hooks/use-answer-timer';
 
 export type QuizOneProps = SceneProps & {
   values?: Quiz1SceneElements<SceneValue>;
@@ -29,7 +30,8 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
     const { renderAudios, handlePauseAll } = useAudios({ values });
     const isActive = useCallback((key: keyof Quiz1SceneElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
-    const [userAnswerTime, setUserAnswerTime] = useState(0);
+    const { getUserAnswerTime } = useAnswerTimer();
+
     const getEditClass = useCallback(
       (type: 'edit' | 'editText' | 'editRoot' = 'edit') => editMode && styles[type],
       [editMode]
@@ -103,20 +105,20 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
       }
     };
 
-    const { handleFullImageClick, handleImageClick, handleDelete, fullImage, correct, selectedAnswer } = useQuizAnswers(
-      {
-        elements: answers,
-        onSet,
-        handleAdd: handleAddAnswer,
-        values,
-        getValue,
-        handleClick,
-        defaultImages: [answerImage],
-        onActiveElementClick,
-        previewMode,
-        editMode,
-      }
-    );
+    const { handleFullImageClick, handleImageClick, handleDelete, fullImage } = useQuizAnswers({
+      elements: answers,
+      onSet,
+      handleAdd: handleAddAnswer,
+      values,
+      getValue,
+      handleClick,
+      defaultImages: [answerImage],
+      onActiveElementClick,
+      previewMode,
+      editMode,
+      getUserAnswerTime,
+      handleComplete,
+    });
 
     const answerStyles = useMemo(
       () =>
@@ -127,28 +129,6 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
           : { width: '100%', height: '50%' },
       [answers]
     );
-
-    useEffect(() => {
-      const timer = setInterval(() => {
-        setUserAnswerTime(prevState => ++prevState);
-      }, 1000);
-      if (selectedAnswer) {
-        handleComplete &&
-          handleComplete('answer', {
-            data: {
-              isCorrect: correct,
-              answer: selectedAnswer,
-              answerTime: userAnswerTime,
-            },
-          });
-
-        setUserAnswerTime(0);
-        clearInterval(timer);
-      }
-      return () => {
-        clearInterval(timer);
-      };
-    }, [correct, selectedAnswer]);
 
     return (
       <div

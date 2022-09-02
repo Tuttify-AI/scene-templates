@@ -10,7 +10,7 @@ type Params = {
   onComplete?: SceneProps['onComplete'];
 };
 
-type OnClickData = {
+export type OnClickData = {
   data?: ActiveElementData;
   parameter?: keyof Parameters;
 };

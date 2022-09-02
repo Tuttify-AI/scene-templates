@@ -1,4 +1,4 @@
-import React, { CSSProperties, forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { CSSProperties, forwardRef, useCallback, useMemo } from 'react';
 import { useActions, useAudios } from '../shared/hooks';
 
 import { SceneProps, SceneValue } from '../shared/types';
@@ -10,6 +10,7 @@ import useParams from './hooks/use-params';
 import styles from './styles.module.css';
 import { Classes, CountingElements } from './types';
 import useDragNDrop from '../shared/hooks/use-drag-n-drop';
+import useAnswerTimer from '../shared/hooks/use-answer-timer';
 
 export type CountingSceneProps = SceneProps & {
   values?: CountingElements<SceneValue>;
@@ -42,6 +43,7 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
       onSet,
     });
     const { renderAudios, handlePauseAll } = useAudios({ values });
+    const { getUserAnswerTime } = useAnswerTimer();
     const { handleClick, handleComplete } = useActions({
       onClick,
       handlePauseAll,
@@ -60,7 +62,6 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
       handleFullImageClick,
       fullScreen,
       checkIfCorrectNumber,
-      correct,
     } = useNumbersAction({
       answerArray,
       totalItemsArray,
@@ -69,6 +70,8 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
       values,
       lockCorrectSelection,
       handleClick,
+      handleComplete,
+      getUserAnswerTime,
     });
     const { onDrop, onDragEnter, onDragLeave, dragTargetItem, onDragStart, dragSelectedItem, onDragEnd, onDragOver } =
       useDragNDrop({ handleDrop: handleSetAnswer });
@@ -82,29 +85,6 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
       (index: number) => (lockCorrectSelection ? !checkIfCorrectNumber(index) : true),
       [checkIfCorrectNumber, lockCorrectSelection]
     );
-    const [userAnswerTime, setUserAnswerTime] = useState(0);
-    useEffect(() => {
-      const timer = setInterval(() => {
-        setUserAnswerTime(prevState => ++prevState);
-      }, 1000);
-
-      if (isFullAnswer) {
-        handleComplete &&
-          handleComplete('answers', {
-            data: {
-              isCorrect: correct,
-              number: itemsArray.join(''),
-              answer: totalItemsArray[answer[0]],
-              answerTime: userAnswerTime,
-            },
-          });
-        setUserAnswerTime(0);
-        clearInterval(timer);
-      }
-      return () => {
-        clearInterval(timer);
-      };
-    }, [answer, correct, isFullAnswer]);
 
     return (
       <div
