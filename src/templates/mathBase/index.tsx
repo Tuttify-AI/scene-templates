@@ -18,7 +18,7 @@ export type MathBaseSceneProps = SceneProps & {
 };
 
 const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
-  ({ editMode, previewMode, classes, activeKey, onClick, values, onActiveElementClick }, ref) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, onComplete, values, onActiveElementClick }, ref) => {
     const getValue = useMemo(() => getElementValue<CountingElements>(values), [values]);
     const {
       predefinedValues,
@@ -36,11 +36,12 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
       editMode,
     });
     const { renderAudios, handlePauseAll } = useAudios({ values });
-    const { handleClick } = useActions({
+    const { handleClick, handleComplete } = useActions({
       onClick,
       handlePauseAll,
       disabled: editMode || previewMode,
       onActiveElementClick,
+      onComplete,
     });
 
     const {

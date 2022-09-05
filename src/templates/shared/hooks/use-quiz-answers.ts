@@ -12,7 +12,7 @@ type Params = Pick<SceneProps, 'editMode' | 'previewMode' | 'onSet' | 'values'> 
   handleClick: ReturnType<typeof useActions>['handleClick'];
   defaultImages: string[];
   getUserAnswerTime: () => number;
-  handleComplete: (key: keyof Elements, { data }: OnClickData) => void;
+  handleComplete?: (key: keyof Elements, { data }: OnClickData) => void;
 };
 
 const INITIAL_STATE = {
@@ -97,13 +97,14 @@ export default function useQuizAnswers({
     (k: string, index: number) => (e: React.MouseEvent<HTMLElement>) => {
       handleClick(k, { data: getElementData(k) })(e);
       const { isCorrect } = getElementData(k);
-      handleComplete('answer', {
-        data: {
-          isCorrect,
-          answer: k,
-          answerTime: getUserAnswerTime(),
-        },
-      });
+      handleComplete &&
+        handleComplete('answer', {
+          data: {
+            isCorrect,
+            answer: k,
+            answerTime: getUserAnswerTime(),
+          },
+        });
 
       handleSetFullImageSrc({
         key: `full_image_${k}`,
