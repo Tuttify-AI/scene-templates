@@ -18,7 +18,7 @@ export type CountingSceneProps = SceneProps & {
 };
 
 const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
-  ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick, onComplete }, ref) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick }, ref) => {
     const getValue = useMemo(() => getElementValue<CountingElements>(values), [values]);
     const {
       totalItemsArray,
@@ -49,7 +49,6 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
       handlePauseAll,
       disabled: editMode || previewMode,
       onActiveElementClick,
-      onComplete,
     });
 
     const {

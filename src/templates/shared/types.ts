@@ -144,13 +144,6 @@ export type SceneProps = {
    * @param data - interactive element data
    */
   onActiveElementClick?: (key: string, data?: ActiveElementData) => void;
-
-  /**
-   * onCompleted function that is executed at the end of the scene
-   * @param key
-   * @param data
-   */
-  onComplete?: (key: string, data?: ActiveElementData) => void;
   /**
    * Ref to access child component
    */

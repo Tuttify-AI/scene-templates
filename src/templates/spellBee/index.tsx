@@ -20,10 +20,7 @@ export type SpellBeeSceneProps = SceneProps & {
 };
 
 const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
-  (
-    { editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick, useArray, onComplete },
-    ref
-  ) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick, useArray }, ref) => {
     const getValue = useMemo(() => getElementValue<SpellBeeElements>(values), [values]);
     const { getUserAnswerTime } = useAnswerTimer();
     const {
@@ -53,12 +50,11 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       useArray,
     });
     const { renderAudios, handlePauseAll } = useAudios({ values });
-    const { handleClick, handleComplete } = useActions({
+    const { handleClick } = useActions({
       onClick,
       handlePauseAll,
       disabled: editMode || previewMode,
       onActiveElementClick,
-      onComplete,
     });
 
     const {
