@@ -96,6 +96,7 @@ const FullImageWithButton = forwardRef<HTMLDivElement, FullImageWithButtonProps>
           onClick={handleClick('image', { data: { imageUrl: getValue('image', 'url') as string } })}
         />
         <button
+          type="button"
           id={getElementId(`button`, previewMode)}
           onMouseEnter={handleHover('button')}
           onMouseLeave={clearHover}
