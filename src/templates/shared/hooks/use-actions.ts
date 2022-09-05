@@ -9,7 +9,7 @@ type Params = {
   handlePauseAll?: ReturnType<typeof useAudios>['handlePauseAll'];
 };
 
-type OnClickData = {
+export type OnClickData = {
   data?: ActiveElementData;
   parameter?: keyof Parameters;
 };

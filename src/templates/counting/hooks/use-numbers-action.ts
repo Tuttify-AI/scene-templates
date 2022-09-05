@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActiveElementData, SceneValue } from '../../shared/types';
+import { ActiveElementData, Elements, SceneValue } from '../../shared/types';
 import { getElementValue } from '../../shared/utils';
 import { CountingElements } from '../types';
 import { checkArray, checkCorrectWord } from '../utils';
 import { useActions } from '../../shared/hooks';
+import { OnClickData } from '../../shared/hooks/use-actions';
 
 const INITIAL_STATE = {
   src: '',
@@ -21,6 +22,8 @@ type UseNumbersActionParams = {
   lockCorrectSelection?: boolean;
   values?: CountingElements<SceneValue>;
   handleClick?: ReturnType<typeof useActions>['handleClick'];
+  handleComplete?: (key: keyof Elements, { data }: OnClickData) => void;
+  getUserAnswerTime: () => number;
 };
 const useNumbersAction = ({
   answerArray,
@@ -30,6 +33,8 @@ const useNumbersAction = ({
   values,
   lockCorrectSelection,
   handleClick,
+  handleComplete,
+  getUserAnswerTime,
 }: UseNumbersActionParams) => {
   const [selectedNumberIndex, setSelectedNumberIndex] = useState<number | null>(null);
   const [answer, setAnswer] = useState(answerArray);
@@ -119,12 +124,34 @@ const useNumbersAction = ({
           setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? null : a)));
         } else {
           handleClick && handleClick('answer', { data: getAnswerData(index, numberIndex) })(e);
+          handleComplete &&
+            handleComplete('answer', {
+              data: {
+                isCorrect: correct,
+                number: itemsArray.join(''),
+                answer: totalItemsArray[numberIndex],
+                answerTime: getUserAnswerTime(),
+              },
+            });
           setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? numberIndex : a)));
           setSelectedNumberIndex(null);
         }
       }
     },
-    [selectedNumberIndex, editMode, lockCorrectSelection, checkIfCorrectNumber, handleClick, getAnswerData]
+    [
+      selectedNumberIndex,
+      lockCorrectSelection,
+      checkIfCorrectNumber,
+      editMode,
+      handleClick,
+      getAnswerData,
+      isFullAnswer,
+      handleComplete,
+      correct,
+      itemsArray,
+      totalItemsArray,
+      getUserAnswerTime,
+    ]
   );
 
   const handleClearFullImageSrc = useCallback(() => setAnswer(answer.map(() => null)), [answer, setAnswer]);

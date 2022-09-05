@@ -11,6 +11,7 @@ import questionImage from './assets/question';
 import styles from './styles.module.css';
 import { Classes, Quiz1SceneElements } from './types';
 import { AddButton, DeleteButton } from '../shared/components';
+import useAnswerTimer from '../shared/hooks/use-answer-timer';
 
 export type QuizOneProps = SceneProps & {
   values?: Quiz1SceneElements<SceneValue>;
@@ -26,6 +27,8 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
     const { renderAudios, handlePauseAll } = useAudios({ values });
     const isActive = useCallback((key: keyof Quiz1SceneElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
+    const { getUserAnswerTime } = useAnswerTimer();
+
     const getEditClass = useCallback(
       (type: 'edit' | 'editText' | 'editRoot' = 'edit') => editMode && styles[type],
       [editMode]
@@ -109,6 +112,8 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
       onActiveElementClick,
       previewMode,
       editMode,
+      getUserAnswerTime,
+      handleComplete,
     });
 
     const answerStyles = useMemo(

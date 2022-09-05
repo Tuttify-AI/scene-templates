@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActiveElementData, SceneValue } from '../../shared/types';
+import { ActiveElementData, Elements, SceneValue } from '../../shared/types';
 import { getElementValue } from '../../shared/utils';
 import { CountingElements } from '../types';
 import { useActions } from '../../shared/hooks';
 import useParams from './use-params';
 import { checkCorrectResult } from '../utils';
+import { OnClickData } from '../../shared/hooks/use-actions';
 
 const INITIAL_STATE = {
   src: '',
@@ -20,8 +21,18 @@ type UseNumbersActionParams = {
   editMode?: boolean;
   values?: CountingElements<SceneValue>;
   handleClick?: ReturnType<typeof useActions>['handleClick'];
+  handleComplete?: (key: keyof Elements, { data }: OnClickData) => void;
+  getUserAnswerTime: () => number;
 };
-const useNumbersAction = ({ predefinedValues, editMode, values, handleClick, mathOperand }: UseNumbersActionParams) => {
+const useNumbersAction = ({
+  predefinedValues,
+  editMode,
+  values,
+  handleClick,
+  mathOperand,
+  handleComplete,
+  getUserAnswerTime,
+}: UseNumbersActionParams) => {
   const [selectedNumber, setSelectedNumber] = useState<number | null>(null);
   const [answer, setAnswer] = useState(predefinedValues);
   const getValue = useMemo(() => getElementValue<CountingElements>(values), [values]);
@@ -88,11 +99,31 @@ const useNumbersAction = ({ predefinedValues, editMode, values, handleClick, mat
         if ((answer[type] && !predefinedValues[type]) || !answer[type]) {
           handleClick && handleClick(type, { data: getAnswerData(type, selectedValue) })(e);
           setAnswer(prev => ({ ...prev, [type]: selectedValue }));
+          handleComplete &&
+            handleComplete('answers', {
+              data: {
+                isCorrect,
+                answer: selectedValue,
+                leftNumber: answer.leftNumber,
+                rightNumber: answer.rightNumber,
+                answerTime: getUserAnswerTime(),
+              },
+            });
           setSelectedNumber(null);
         }
       }
     },
-    [predefinedValues, selectedNumber, answer, editMode, handleClick, getAnswerData]
+    [
+      selectedNumber,
+      editMode,
+      answer,
+      predefinedValues,
+      handleClick,
+      getAnswerData,
+      handleComplete,
+      isCorrect,
+      getUserAnswerTime,
+    ]
   );
 
   const handleFullImageClick = useCallback(() => {
