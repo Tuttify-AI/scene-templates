@@ -50,10 +50,15 @@ export const getElementId = (id: string, previewMode?: boolean) => `${id}${previ
 export const getNumber = (value: unknown, defaultValue = 1) =>
   !Number.isNaN(Number(value)) ? Number(value) : defaultValue;
 
+export const getElement =
+  <T>(values?: Elements<T>) =>
+  (element: keyof Elements<T>, parameter: keyof Parameters<T>) =>
+    values?.[element]?.[parameter];
+
 export const getElementValue =
   <T>(values?: Elements, parameters?: Elements<TemplateParameter>): GetValue<T> =>
   (element: keyof Elements<T>, parameter: keyof Parameters<T>) =>
-    values?.[element]?.[parameter]?.value ?? parameters?.[element]?.[parameter]?.default_value;
+    getElement(values)(element, parameter)?.value ?? getElement(parameters)(element, parameter)?.default_value;
 
 export function range(start: number, end: number) {
   return Array(end - start + 1)
