@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, forwardRef } from 'react';
+import React, { useCallback, useMemo, forwardRef } from 'react';
 import { animated } from '@react-spring/web';
 import sceneStyles from './styles.module.css';
 import { IMAGES, SHAPES } from './constants';
@@ -16,15 +16,14 @@ export type Base2SceneProps = SceneProps & {
 
 const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, parameters, values, onActiveElementClick }, ref) => {
-    const scrollRef = useRef<HTMLDivElement>(null);
     const { handlePauseAll, renderAudios } = useAudios({ values });
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
 
-    const { translateY, getAnimationsStyle, handleMouseMove, resetAnimatedProps, getScale, clearHover, handleHover } =
-      useAnimation({
+    const { getAnimationsStyle, handleMouseMove, resetAnimatedProps, getScale, clearHover, handleHover } = useAnimation(
+      {
         disabled: editMode || previewMode,
-        element: scrollRef.current,
-      });
+      }
+    );
 
     const getEditClass = useCallback(
       (type: 'edit' | 'editText' | 'editRoot' = 'edit') => editMode && sceneStyles[type as keyof typeof sceneStyles],
@@ -51,6 +50,14 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
 
     const isPreview = useMemo(() => previewMode && sceneStyles.preview, [previewMode]);
 
+    const getImageSrc = useCallback(
+      (k: string) => {
+        const src = getValue(k, 'url') as string;
+        return src !== '' && !Number.isNaN(Number(src)) ? IMAGES[Number(src)]?.defaultImage : src;
+      },
+      [getValue]
+    );
+
     return (
       <animated.div
         id={getElementId('background', previewMode)}
@@ -64,38 +71,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
         ref={ref}
       >
         {renderAudios()}
-        <div ref={scrollRef} className={sceneStyles.scroll} />
-        <div className={sceneStyles.view}>
-          {IMAGES.filter(el => el.isPreviewImage).map(({ name, defaultImage }) => (
-            <animated.img
-              id={getElementId(name, previewMode)}
-              onMouseEnter={handleHover(name)}
-              onMouseLeave={clearHover}
-              onClick={handleClick(name, { data: { imageUrl: getValue(name, 'url') as string } })}
-              onLoad={() => onImageLoad(name)}
-              onError={() => onImageError(name)}
-              key={name}
-              alt={name}
-              src={`${getValue(name, 'url')}` || defaultImage}
-              className={clsx(
-                sceneStyles.previewImage,
-                sceneStyles[name as keyof typeof sceneStyles],
-                isImageHidden(name),
-                isActive(name),
-                getEditClass(),
-                isPreview,
-                classes?.[name as keyof Classes]
-              )}
-              style={{
-                translateY,
-                ...getScale(name),
-                ...getAnimationsStyle(transition({ modX: 20, modY: 20 })),
-              }}
-            />
-          ))}
-        </div>
-
-        {IMAGES.filter(el => !el.isPreviewImage).map(({ name, defaultImage }) => (
+        {IMAGES.filter(el => el.isPreviewImage).map(({ name, transform }) => (
           <animated.img
             id={getElementId(name, previewMode)}
             onMouseEnter={handleHover(name)}
@@ -105,7 +81,35 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
             onError={() => onImageError(name)}
             key={name}
             alt={name}
-            src={`${getValue(name, 'url')}` || defaultImage}
+            src={getImageSrc(name)}
+            className={clsx(
+              sceneStyles.previewImage,
+              sceneStyles[name as keyof typeof sceneStyles],
+              isImageHidden(name),
+              isActive(name),
+              getEditClass(),
+              isPreview,
+              classes?.[name as keyof Classes]
+            )}
+            style={{
+              ...transform,
+              ...getScale(name),
+              ...getAnimationsStyle(transition({ modX: 20, modY: 20 })),
+            }}
+          />
+        ))}
+
+        {IMAGES.filter(el => !el.isPreviewImage).map(({ name, transform }) => (
+          <animated.img
+            id={getElementId(name, previewMode)}
+            onMouseEnter={handleHover(name)}
+            onMouseLeave={clearHover}
+            onClick={handleClick(name, { data: { imageUrl: getValue(name, 'url') as string } })}
+            onLoad={() => onImageLoad(name)}
+            onError={() => onImageError(name)}
+            key={name}
+            alt={name}
+            src={getImageSrc(name)}
             className={clsx(
               sceneStyles.cloudImage,
               sceneStyles[name as keyof typeof sceneStyles],
@@ -116,7 +120,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
               classes?.[name as keyof Classes]
             )}
             style={{
-              translateY,
+              ...transform,
               ...getScale(name),
               ...getAnimationsStyle(transition({ modX: 20, modY: 20 })),
             }}

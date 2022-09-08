@@ -1,7 +1,14 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { usePrevious, useWindowSize } from '../../shared/hooks';
 import { SceneProps, SceneValue } from '../../shared/types';
-import { arrayIsEqual, getElementValue, getNumber, randomizeArray, randomizeString } from '../../shared/utils';
+import {
+  arrayIsEqual,
+  getElement,
+  getElementValue,
+  getNumber,
+  randomizeArray,
+  randomizeString,
+} from '../../shared/utils';
 import { AnswerType, SpellBeeConfig } from '../types';
 
 type Params = Pick<SceneProps, 'values' | 'previewMode' | 'editMode' | 'onSet'> & {
@@ -27,8 +34,10 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
     [values]
   );
   const onSetConfig = useCallback(
-    (key: keyof SpellBeeConfig, value: SceneValue['value']) => {
-      onSet && values && onSet({ ...values, config: { ...values.config, [key]: { ...values.config[key], value } } });
+    (key: keyof SpellBeeConfig, value: SceneValue['value'], parameter: keyof SceneValue = 'value') => {
+      onSet &&
+        values &&
+        onSet({ ...values, config: { ...values.config, [key]: { ...values.config[key], [parameter]: value } } });
     },
     [onSet, values]
   );
@@ -43,6 +52,11 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
   const highlightIncorrectSelection = useMemo(
     () => getNumber(getConfigValue('highlight_incorrect_selection')) === 1,
     [getConfigValue]
+  );
+
+  const items = useMemo(
+    () => getConfigValue('items') || getConfigValue('word') || emptyValue,
+    [emptyValue, getConfigValue]
   );
 
   const totalItemsArray = useMemo(() => {
@@ -60,11 +74,10 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
   }, [getConfigValue, useArray, emptyValue]);
 
   const itemsArray = useMemo(() => {
-    const items = getConfigValue('items') || getConfigValue('word') || emptyValue;
     return useArray && Array.isArray(items)
       ? (items as string[])?.map(w => w.toUpperCase())
       : `${items}`.toUpperCase().split('');
-  }, [getConfigValue, useArray, emptyValue]);
+  }, [items, useArray]);
 
   const answerArray = useMemo(() => Array.from(Array(itemsArray.length).fill(null)), [itemsArray]);
 
@@ -112,6 +125,14 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
     },
     [totalItemsArray, itemsArray, setPredefinedTotalItemIndexes, predefinedTotalItemIndexes]
   );
+
+  useEffect(() => {
+    const valueLength = getElement(values)('config', 'items')?.value_length;
+    const itemsLength = Array.isArray(items) ? items.length : `${items}`.length;
+    if (valueLength !== itemsLength) {
+      onSetConfig('items', itemsLength, 'value_length');
+    }
+  }, [items, onSetConfig, values]);
 
   useEffect(() => {
     if (!arrayIsEqual(totalItemsArray, [...itemsArray, ...additionalLettersArray])) {

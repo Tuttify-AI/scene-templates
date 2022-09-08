@@ -36,11 +36,14 @@ export type Mods = {
   modY: number;
 };
 
+export type Transform = { translateX: string | number; translateY: string | number };
+
 export type Image = {
   name: string;
   defaultImage: string;
   isPreviewImage: boolean;
   mods: Mods;
+  transform?: Transform;
 };
 
 export type Animation = {
@@ -81,6 +84,7 @@ export type SceneValue = {
   title: string;
   value: DefaultType | DefaultType[];
   length?: number;
+  value_length?: number;
   required?: boolean;
   max_length?: number;
   max_array_length?: number;

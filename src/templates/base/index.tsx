@@ -1,13 +1,12 @@
-import React, { useCallback, useMemo, useRef, forwardRef } from 'react';
+import React, { useCallback, useMemo, forwardRef } from 'react';
 import { animated } from '@react-spring/web';
 import sceneStyles from './styles.module.css';
-import { ANIMATIONS } from './constants';
+import { ANIMATIONS, IMAGES } from './constants';
 import { BaseSceneElements, Classes } from './types';
 import { TemplateParameter, SceneProps, SceneValue } from '../shared/types';
 import { useImage, useActions, useAudios } from '../shared/hooks';
 import { useAnimation } from './hooks';
 import { transition, clsx, getElementId, getElementValue } from '../shared/utils';
-import defaultImage from './assets/defaultImage';
 
 export type BaseSceneProps = SceneProps & {
   parameters?: BaseSceneElements<TemplateParameter>;
@@ -17,12 +16,10 @@ export type BaseSceneProps = SceneProps & {
 
 const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, parameters, values, onActiveElementClick }, ref) => {
-    const scrollRef = useRef<HTMLDivElement>(null);
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
     const { getAnimationsStyle, handleMouseMove, resetAnimatedProps, getScale, clearHover, handleHover } = useAnimation(
       {
         disabled: editMode || previewMode,
-        element: scrollRef.current,
       }
     );
 
@@ -52,6 +49,14 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
     );
     const isPreview = useMemo(() => previewMode && sceneStyles.preview, [previewMode]);
 
+    const getImageSrc = useCallback(
+      (k: string) => {
+        const src = getValue(k, 'url') as string;
+        return src !== '' && !Number.isNaN(Number(src)) ? IMAGES[Number(src)]?.defaultImage : src;
+      },
+      [getValue]
+    );
+
     return (
       <animated.div
         id={getElementId('background', previewMode)}
@@ -65,7 +70,6 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
         ref={ref}
       >
         {renderAudios()}
-        <div ref={scrollRef} className={sceneStyles.scroll} />
         <animated.h1
           id={getElementId('title', previewMode)}
           onMouseEnter={handleHover('title')}
@@ -103,7 +107,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
           onMouseEnter={handleHover('image')}
           onMouseLeave={clearHover}
           alt="image"
-          src={`${getValue('image', 'url')}` || defaultImage}
+          src={getImageSrc('image')}
           className={clsx(
             sceneStyles.image,
             isImageHidden('image'),

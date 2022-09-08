@@ -44,41 +44,28 @@
 
 /* Preview Images */
 
-.view {
-    position: relative;
-    display: inline-block;
-    margin-top: 162px;
-    margin-right: -108px;
-    z-index: 4;
-}
-
 .previewImage {
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    display: flex;
     object-fit: contain;
     border-radius: 4px;
     user-select: none;
     cursor: pointer;
+    z-index: 4;
 }
 
 .previewImage1 {
     max-width: 324px;
 }
 
-.previewImage2,
-.previewImage3 {
-    position: absolute;
-    z-index: 2;
-}
-
 .previewImage2 {
     max-width: 200px;
-    top: -48px;
-    right: -26px;
 }
 
 .previewImage3 {
     max-width: 142px;
-    top: 116px;
-    left: -66px;
 }
 
 /* Circles */
@@ -112,6 +99,8 @@
 /* Cloud Images */
 
 .cloudImage {
+    top: 50%;
+    left: 50%;
     position: absolute;
     object-fit: contain;
     border-radius: 4px;
@@ -122,14 +111,10 @@
 
 .cloudImage1 {
     max-width: 116px;
-    top: 160px;
-    left: calc(50% - 286px);
 }
 
 .cloudImage2 {
     max-width: 76px;
-    bottom: 184px;
-    right: calc(50% - 270px);
 }
 
 /* Balls */
@@ -252,25 +237,16 @@
 }
 
 @media (max-width: 767px) {
-    .view:not(.preview) {
-        margin-top: 184px;
-        margin-right: -90px;
-    }
-
     .previewImage1:not(.preview) {
         max-width: 270px;
     }
 
     .previewImage2:not(.preview) {
         max-width: 166px;
-        top: -40px;
-        right: -22px;
     }
 
     .previewImage3:not(.preview) {
         max-width: 118px;
-        top: 96px;
-        left: -52px;
     }
 
     .circle1:not(.preview) {
@@ -296,14 +272,10 @@
 
     .cloudImage1:not(.preview) {
         max-width: 96px;
-        top: 170px;
-        left: calc(50% - 224px);
     }
 
     .cloudImage2:not(.preview) {
         max-width: 76px;
-        bottom: 190px;
-        right: calc(50% - 236px);
     }
 
     .ball1:not(.preview) {
@@ -340,25 +312,16 @@
         height: 535px;
     }
 
-    .view:not(.preview) {
-        margin-top: 171px;
-        margin-right: -74px;
-    }
-
     .previewImage1:not(.preview) {
         max-width: 225px;
     }
 
     .previewImage2:not(.preview) {
         max-width: 138px;
-        top: -30px;
-        right: -18px;
     }
 
     .previewImage3:not(.preview) {
         max-width: 98px;
-        top: 80px;
-        left: -44px;
     }
 
     .circle1:not(.preview) {
@@ -384,14 +347,10 @@
 
     .cloudImage1:not(.preview) {
         max-width: 80px;
-        top: 188px;
-        left: calc(50% - 190px);
     }
 
     .cloudImage2:not(.preview) {
         max-width: 63px;
-        right: calc(50% - 190px);
-        bottom: 200px;
     }
 
     .ball1:not(.preview) {
@@ -431,25 +390,16 @@
 }
 
 @media (max-width: 479px) {
-    .view:not(.preview) {
-        margin-top: 194px;
-        margin-right: -60px;
-    }
-
     .previewImage1:not(.preview) {
         max-width: 169px;
     }
 
     .previewImage2:not(.preview) {
         max-width: 104px;
-        top: -26px;
-        right: -12px;
     }
 
     .previewImage3:not(.preview) {
         max-width: 74px;
-        top: 60px;
-        left: -34px;
     }
 
     .circle1:not(.preview) {
@@ -475,14 +425,10 @@
 
     .cloudImage1:not(.preview) {
         max-width: 60px;
-        top: 162px;
-        left: calc(50% - 126px);
     }
 
     .cloudImage2:not(.preview) {
         max-width: 47px;
-        right: calc(50% - 124px);
-        bottom: 126px;
     }
 
     .ball1:not(.preview) {

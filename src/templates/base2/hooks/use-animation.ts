@@ -2,15 +2,12 @@ import React, { useCallback, useState } from 'react';
 import { to, useSpring } from '@react-spring/web';
 import { BaseSceneElements } from '../types';
 import { calc } from '../../shared/utils';
-import { useScroll } from '../../shared/hooks';
 
 type Params = {
-  element: HTMLElement | null;
   disabled?: boolean;
 };
 
-export default function useAnimation({ element, disabled }: Params) {
-  const { isVisible } = useScroll(element);
+export default function useAnimation({ disabled }: Params) {
   const [hovered, setHovered] = useState<keyof BaseSceneElements | ''>('');
 
   const [{ x, y }, api] = useSpring(
@@ -20,15 +17,6 @@ export default function useAnimation({ element, disabled }: Params) {
       config: { mass: 20, tension: 400, friction: 100 },
     },
     []
-  );
-
-  const [{ opacity, translateY }] = useSpring(
-    {
-      translateY: isVisible ? 0 : 25,
-      opacity: isVisible ? 1 : 0,
-      config: { mass: 1, tension: 1000, friction: 200 },
-    },
-    [isVisible, hovered]
   );
 
   const createScale = useCallback(
@@ -66,8 +54,6 @@ export default function useAnimation({ element, disabled }: Params) {
   const getScale = (key: keyof BaseSceneElements) => useSpring(createScale(key));
 
   return {
-    opacity: disabled ? undefined : opacity,
-    translateY: disabled ? undefined : translateY,
     handleMouseMove,
     resetAnimatedProps,
     getAnimationsStyle,
