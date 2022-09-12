@@ -115,7 +115,8 @@ const useLetterAction = ({
           answerTime: getUserAnswerTime(),
         },
       });
-  }, [answer, correct, getUserAnswerTime, handleComplete, isFullAnswer, itemsArray, totalItemsArray]);
+    //eslint-disable-next-line
+  }, [answer, correct, isFullAnswer, itemsArray, totalItemsArray]);
 
   const getAnswerData = useCallback(
     (index: number, totalLetterIndex: number | null) => {
