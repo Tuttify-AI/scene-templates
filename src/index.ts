@@ -1,4 +1,5 @@
 import * as Types from './templates/shared/types';
+import { SceneNames } from './templates/shared/enums';
 import Base, { BaseSceneProps } from './templates/base';
 import Base2, { Base2SceneProps } from './templates/base2';
 import Base3, { Base3SceneProps } from './templates/base3';
@@ -40,32 +41,6 @@ import parallax1 from './templates/parallax1/assets/preview';
 import twocando from './templates/twocando/assets/preview';
 import wordGuess from './templates/wordGuess/assets/preview';
 import mathBase from './templates/mathBase/assets/preview';
-
-export enum SceneNames {
-  Base = 'base',
-  Base2 = 'base2',
-  Base3 = 'base3',
-  Quiz1 = 'quiz1',
-  FullImage = 'fullImage',
-  FullVideo = 'fullVideo',
-  MultipleTiles = 'multipletiles',
-  MultipleTiles4 = 'multipletiles4',
-  MultipleTiles4FullImage = 'multipletiles4FullImg',
-  MultipleTiles6FullImage = 'multipletiles6FullImg',
-  MultipleTiles8FullImage = 'multipletiles8FullImg',
-  MultipleTiles6 = 'multipletiles6',
-  MultipleTiles8 = 'multipletiles8',
-  FullImageWithButton = 'fullImageWithButton',
-  Tiles = 'tiles',
-  Spellbee = 'spellbee',
-  Parallax1 = 'parallax1',
-  Scene15 = 'scene15',
-  Atomi = 'atomi',
-  Twocando = 'twocando',
-  WordGuess = 'wordGuess',
-  Counting = 'counting',
-  MathBase = 'mathBase',
-}
 
 const previews = {
   base,

@@ -82,6 +82,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       predefinedTotalItemIndexes,
       handleComplete,
       getUserAnswerTime,
+      useArray,
     });
     const { onDrop, onDragEnter, onDragLeave, dragTargetItem, onDragStart, dragSelectedItem, onDragEnd, onDragOver } =
       useDragNDrop({ handleDrop: handleSetAnswer });

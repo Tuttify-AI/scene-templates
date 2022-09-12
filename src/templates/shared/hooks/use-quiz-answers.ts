@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ActiveElementData, Elements, Parameters, SceneProps } from '../types';
 import { deleteElement } from '../utils';
 import useActions, { OnClickData } from './use-actions';
-import { SceneNames } from '../../../index';
+import { SceneNames } from '../enums';
 
 type Params = Pick<SceneProps, 'editMode' | 'previewMode' | 'onSet' | 'values'> & {
   onActiveElementClick?: SceneProps['onActiveElementClick'];

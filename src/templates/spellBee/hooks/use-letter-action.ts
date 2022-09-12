@@ -23,6 +23,7 @@ type UseLetterActionParams = {
   itemsArray: ReturnType<typeof useParams>['itemsArray'];
   answerArray: (null | number)[];
   editMode?: boolean;
+  useArray?: boolean;
   lockCorrectSelection?: boolean;
   values?: SpellBeeElements<SceneValue>;
   handleClick?: ReturnType<typeof useActions>['handleClick'];
@@ -32,6 +33,7 @@ type UseLetterActionParams = {
 const useLetterAction = ({
   answerArray,
   editMode,
+  useArray,
   totalItemsArray,
   itemsArray,
   values,
@@ -78,6 +80,21 @@ const useLetterAction = ({
     return checkCorrectWord(answer, totalItemsArray, itemsArray.join());
   }, [answer, totalItemsArray, itemsArray]);
 
+  const onComplete = useCallback(
+    (answer: AnswerType[]) =>
+      checkArray(answer) &&
+      handleComplete &&
+      handleComplete('answers', {
+        data: {
+          isCorrect: checkCorrectWord(answer, totalItemsArray, itemsArray.join()),
+          value: itemsArray.join(useArray ? ' ' : ''),
+          answer: getAnswer(answer, totalItemsArray, useArray),
+          answerTime: getUserAnswerTime(),
+        },
+      }),
+    [itemsArray, totalItemsArray, getUserAnswerTime, handleComplete, useArray]
+  );
+
   const isFullAnswer = useMemo(() => {
     const result = checkArray(answer);
     if (result) {
@@ -104,32 +121,19 @@ const useLetterAction = ({
     [itemsArray, totalItemsArray, answer]
   );
 
-  useEffect(() => {
-    isFullAnswer &&
-      handleComplete &&
-      handleComplete('answers', {
-        data: {
-          isCorrect: correct,
-          word: itemsArray.join(''),
-          answer: getAnswer(answer, totalItemsArray),
-          answerTime: getUserAnswerTime(),
-        },
-      });
-  }, [answer, correct, getUserAnswerTime, handleComplete, isFullAnswer, itemsArray, totalItemsArray]);
-
   const getAnswerData = useCallback(
     (index: number, totalLetterIndex: number | null) => {
       const isCorrect = totalLetterIndex !== null && totalItemsArray[totalLetterIndex] === itemsArray[index];
-      const letter = totalLetterIndex !== null && totalItemsArray[totalLetterIndex];
-      const word = itemsArray.join('');
+      const value = totalLetterIndex !== null && totalItemsArray[totalLetterIndex];
+      const answer = itemsArray.join(useArray ? ' ' : '');
       return {
         ...(isCorrect !== null ? { isCorrect } : {}),
-        ...(letter ? { letter } : {}),
-        ...(word ? { word } : {}),
+        ...(answer ? { answer } : {}),
+        ...(value ? { value } : {}),
         ...(index !== null ? { index } : {}),
       } as ActiveElementData;
     },
-    [itemsArray, totalItemsArray]
+    [itemsArray, totalItemsArray, useArray]
   );
 
   const handleSetAnswer = useCallback(
@@ -141,13 +145,24 @@ const useLetterAction = ({
         if (letterIndex === null) {
           setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? null : a)));
         } else {
+          const newAnswer = answer.map((a, i) => (i === index ? letterIndex : a));
           handleClick && handleClick('answer', { data: getAnswerData(index, letterIndex) })(e);
-          setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? letterIndex : a)));
+          onComplete(newAnswer);
+          setAnswer(newAnswer);
           setSelectedLetterIndex(null);
         }
       }
     },
-    [selectedLetterIndex, lockCorrectSelection, checkIfCorrectLetter, editMode, handleClick, getAnswerData]
+    [
+      selectedLetterIndex,
+      lockCorrectSelection,
+      checkIfCorrectLetter,
+      editMode,
+      handleClick,
+      getAnswerData,
+      answer,
+      onComplete,
+    ]
   );
 
   const handleClearFullImageSrc = useCallback(
