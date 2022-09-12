@@ -108,6 +108,10 @@ export type ActiveElementData = {
   videoUrl?: string;
   background?: string;
   templateName?: string;
+  isCorrect?: boolean;
+  answer?: string | number;
+  value?: string;
+  answerTime?: number;
   [key: string]: string | undefined | boolean | number | null;
 };
 

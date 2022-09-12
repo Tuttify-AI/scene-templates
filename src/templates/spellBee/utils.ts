@@ -1,11 +1,11 @@
 import { DefaultType } from '../shared/types';
 
-export function checkArray(answer_arr: DefaultType[]) {
-  if (!answer_arr?.length) {
+export function checkArray(answerArr: DefaultType[]) {
+  if (!answerArr?.length) {
     return false;
   }
-  for (let i = 0; i < answer_arr.length; i++) {
-    const index = answer_arr[i];
+  for (let i = 0; i < answerArr.length; i++) {
+    const index = answerArr[i];
     if (!index && typeof index != 'number') {
       return false;
     }
@@ -13,22 +13,22 @@ export function checkArray(answer_arr: DefaultType[]) {
   return true;
 }
 
-export function checkCorrectWord(answer_arr: DefaultType[], all_arr: string[], word: string) {
+export function checkCorrectWord(answerArr: DefaultType[], allArr: string[], word: string) {
   const answer = [];
-  for (let i = 0; i < answer_arr.length; i++) {
-    const index = answer_arr[i];
+  for (let i = 0; i < answerArr.length; i++) {
+    const index = answerArr[i];
     if (!index && typeof index != 'number') {
       return false;
-    } else if (typeof index === 'number') answer[i] = all_arr[index];
+    } else if (typeof index === 'number') answer[i] = allArr[index];
   }
   return answer.join() === word;
 }
 
-export function getAnswer(answer_arr: DefaultType[], all_arr: string[]) {
+export function getAnswer(answerArr: DefaultType[], allArr: string[], useArray = false) {
   const answer = [];
-  for (let i = 0; i < answer_arr.length; i++) {
-    const index = answer_arr[i];
-    if (typeof index === 'number') answer[i] = all_arr[index];
+  for (let i = 0; i < answerArr.length; i++) {
+    const index = answerArr[i];
+    if (typeof index === 'number') answer[i] = allArr[index];
   }
-  return answer.join('');
+  return answer.join(useArray ? ' ' : '');
 }
