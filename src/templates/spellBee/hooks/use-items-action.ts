@@ -17,7 +17,7 @@ const INITIAL_STATE = {
 
 const EMPTY_ARRAY: AnswerType[] = [];
 
-type UseLetterActionParams = {
+type UseItemsActionParams = {
   totalItemsArray: ReturnType<typeof useParams>['totalItemsArray'];
   predefinedTotalItemIndexes?: ReturnType<typeof useParams>['predefinedTotalItemIndexes'];
   itemsArray: ReturnType<typeof useParams>['itemsArray'];
@@ -30,7 +30,7 @@ type UseLetterActionParams = {
   handleComplete?: (key: keyof Elements, { data }: OnClickData) => void;
   getUserAnswerTime: () => number;
 };
-const useLetterAction = ({
+const useItemsAction = ({
   answerArray,
   editMode,
   useArray,
@@ -42,7 +42,7 @@ const useLetterAction = ({
   predefinedTotalItemIndexes = EMPTY_ARRAY,
   handleComplete,
   getUserAnswerTime,
-}: UseLetterActionParams) => {
+}: UseItemsActionParams) => {
   const [selectedLetterIndex, setSelectedLetterIndex] = useState<AnswerType>(null);
   const [answer, setAnswer] = useState(predefinedTotalItemIndexes);
   const getValue = useMemo(() => getElementValue<SpellBeeElements>(values), [values]);
@@ -189,4 +189,4 @@ const useLetterAction = ({
   };
 };
 
-export default useLetterAction;
+export default useItemsAction;
