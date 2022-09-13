@@ -89,7 +89,7 @@ const useItemsAction = ({
           data: {
             isCorrect: checkCorrectWord(answer, totalItemsArray, itemsArray.join()),
             value,
-            valueLength: value?.length,
+            valueLength: itemsArray?.length,
             answer: getAnswer(answer, totalItemsArray, useArray),
             answerTime: getUserAnswerTime(),
           },
@@ -131,7 +131,7 @@ const useItemsAction = ({
       const answer = itemsArray.join(useArray ? ' ' : '');
       return {
         ...(isCorrect !== null ? { isCorrect } : {}),
-        ...(answer ? { answer, valueLength: answer?.length } : {}),
+        ...(answer ? { answer, valueLength: itemsArray?.length } : {}),
         ...(value ? { value } : {}),
         ...(index !== null ? { index } : {}),
       } as ActiveElementData;
