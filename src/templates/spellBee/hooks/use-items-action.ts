@@ -131,8 +131,8 @@ const useItemsAction = ({
       const answer = itemsArray.join(useArray ? ' ' : '');
       return {
         ...(isCorrect !== null ? { isCorrect } : {}),
-        ...(answer ? { answer } : {}),
-        ...(value ? { value, valueLength: value?.length } : {}),
+        ...(answer ? { answer, valueLength: answer?.length } : {}),
+        ...(value ? { value } : {}),
         ...(index !== null ? { index } : {}),
       } as ActiveElementData;
     },
