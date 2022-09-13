@@ -81,17 +81,20 @@ const useItemsAction = ({
   }, [answer, totalItemsArray, itemsArray]);
 
   const onComplete = useCallback(
-    (answer: AnswerType[]) =>
+    (answer: AnswerType[]) => {
+      const value = itemsArray.join(useArray ? ' ' : '');
       checkArray(answer) &&
-      handleComplete &&
-      handleComplete('answers', {
-        data: {
-          isCorrect: checkCorrectWord(answer, totalItemsArray, itemsArray.join()),
-          value: itemsArray.join(useArray ? ' ' : ''),
-          answer: getAnswer(answer, totalItemsArray, useArray),
-          answerTime: getUserAnswerTime(),
-        },
-      }),
+        handleComplete &&
+        handleComplete('answers', {
+          data: {
+            isCorrect: checkCorrectWord(answer, totalItemsArray, itemsArray.join()),
+            value,
+            valueLength: itemsArray?.length,
+            answer: getAnswer(answer, totalItemsArray, useArray),
+            answerTime: getUserAnswerTime(),
+          },
+        });
+    },
     [itemsArray, totalItemsArray, getUserAnswerTime, handleComplete, useArray]
   );
 
@@ -128,7 +131,7 @@ const useItemsAction = ({
       const answer = itemsArray.join(useArray ? ' ' : '');
       return {
         ...(isCorrect !== null ? { isCorrect } : {}),
-        ...(answer ? { answer } : {}),
+        ...(answer ? { answer, valueLength: itemsArray?.length } : {}),
         ...(value ? { value } : {}),
         ...(index !== null ? { index } : {}),
       } as ActiveElementData;
