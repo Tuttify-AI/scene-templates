@@ -2,12 +2,12 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from 'rollup-plugin-typescript2';
-import postcss from 'rollup-plugin-postcss-modules';
 import url from '@rollup/plugin-url';
 import image from '@rollup/plugin-image';
 import files from 'rollup-plugin-import-file';
 import autoprefixer from 'autoprefixer';
-import svgr from '@svgr/rollup'
+import svgr from '@svgr/rollup';
+import styles from "rollup-plugin-styles";
 
 const packageJson = require('./package.json');
 
@@ -24,7 +24,9 @@ export default {
     peerDepsExternal(),
     resolve(),
     commonjs(),
-    postcss(),
+    styles({
+      modules: true,
+    }),
     typescript({ useTsconfigDeclarationDir: true }),
     url(),
     image(),
@@ -35,5 +37,5 @@ export default {
       extensions: /\.(mp3)$/,
     }),
   ],
-  external: ['react', 'react-dom', '@types/react', '@types/react-dom']
+  external: ['react', 'react-dom']
 };
