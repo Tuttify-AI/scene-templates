@@ -14,20 +14,20 @@ export default function useAnimation({ element, disabled }: Params) {
   const [hovered, setHovered] = useState<keyof ParallaxSceneElements | ''>('');
 
   const [{ x, y }, api] = useSpring(
-    {
+    () => ({
       x: 0,
       y: 0,
       config: { mass: 20, tension: 400, friction: 100 },
-    },
+    }),
     []
   );
 
   const [{ opacity, translateY }] = useSpring(
-    {
+    () => ({
       translateY: isVisible ? 0 : 25,
       opacity: isVisible ? 1 : 0,
       config: { mass: 1, tension: 1000, friction: 200 },
-    },
+    }),
     [isVisible, hovered]
   );
 

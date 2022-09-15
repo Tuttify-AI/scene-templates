@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActiveElementData, Elements, SceneValue } from '../../shared/types';
+import { ActiveElementData, SceneValue } from '../../shared/types';
 import { getElementValue } from '../../shared/utils';
 import { CountingElements } from '../types';
 import { checkArray, checkCorrectWord } from '../utils';
 import { useActions } from '../../shared/hooks';
-import { OnClickData } from '../../shared/hooks/use-actions';
+import useAnswerTimer from '../../shared/hooks/use-answer-timer';
 
 const INITIAL_STATE = {
   src: '',
@@ -22,8 +22,9 @@ type UseNumbersActionParams = {
   lockCorrectSelection?: boolean;
   values?: CountingElements<SceneValue>;
   handleClick?: ReturnType<typeof useActions>['handleClick'];
-  handleComplete?: (key: keyof Elements, { data }: OnClickData) => void;
-  getUserAnswerTime: () => number;
+  handleComplete?: ReturnType<typeof useActions>['handleComplete'];
+  handleSceneSolved?: ReturnType<typeof useActions>['handleSceneSolved'];
+  getUserAnswerTime: ReturnType<typeof useAnswerTimer>['getUserAnswerTime'];
 };
 const useNumbersAction = ({
   answerArray,
@@ -35,6 +36,7 @@ const useNumbersAction = ({
   handleClick,
   handleComplete,
   getUserAnswerTime,
+  handleSceneSolved,
 }: UseNumbersActionParams) => {
   const [selectedNumberIndex, setSelectedNumberIndex] = useState<number | null>(null);
   const [answer, setAnswer] = useState(answerArray);
@@ -124,13 +126,14 @@ const useNumbersAction = ({
           setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? null : a)));
         } else {
           handleClick && handleClick('answer', { data: getAnswerData(index, numberIndex) })(e);
-          handleComplete &&
-            handleComplete('answer', {
+          handleSceneSolved &&
+            handleSceneSolved('answer', {
               data: {
                 isCorrect: correct,
                 number: itemsArray.join(''),
                 answer: totalItemsArray[numberIndex],
-                answerTime: getUserAnswerTime(),
+                answerTime: getUserAnswerTime().time,
+                sceneTime: getUserAnswerTime().total,
               },
             });
           setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? numberIndex : a)));
@@ -145,8 +148,7 @@ const useNumbersAction = ({
       editMode,
       handleClick,
       getAnswerData,
-      isFullAnswer,
-      handleComplete,
+      handleSceneSolved,
       correct,
       itemsArray,
       totalItemsArray,
@@ -159,7 +161,8 @@ const useNumbersAction = ({
   const handleFullImageClick = useCallback(() => {
     handleClearFullImageSrc();
     setFullScreen(INITIAL_STATE);
-  }, [handleClearFullImageSrc]);
+    handleComplete && handleComplete('answer');
+  }, [handleClearFullImageSrc, handleComplete]);
 
   return {
     checkIsNumberDisabled,

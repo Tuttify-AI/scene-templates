@@ -18,7 +18,21 @@ export type CountingSceneProps = SceneProps & {
 };
 
 const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
-  ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick }, ref) => {
+  (
+    {
+      editMode,
+      previewMode,
+      classes,
+      activeKey,
+      onClick,
+      values,
+      onSet,
+      onActiveElementClick,
+      onSceneSolved,
+      onComplete,
+    },
+    ref
+  ) => {
     const getValue = useMemo(() => getElementValue<CountingElements>(values), [values]);
     const {
       totalItemsArray,
@@ -42,13 +56,16 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
       editMode,
       onSet,
     });
-    const { renderAudios, handlePauseAll } = useAudios({ values });
-    const { getUserAnswerTime } = useAnswerTimer();
-    const { handleClick, handleComplete } = useActions({
+    const { renderAudios, handleElementAudio } = useAudios({ values, previewMode });
+    const { getUserAnswerTime, clearTimer } = useAnswerTimer();
+    const { handleClick, handleComplete, handleSceneSolved } = useActions({
       onClick,
-      handlePauseAll,
+      handlePauseAll: handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
+      onComplete,
+      onSceneSolved,
+      clearTimer,
     });
 
     const {
@@ -71,6 +88,7 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
       handleClick,
       handleComplete,
       getUserAnswerTime,
+      handleSceneSolved,
     });
     const { onDrop, onDragEnter, onDragLeave, dragTargetItem, onDragStart, dragSelectedItem, onDragEnd, onDragOver } =
       useDragNDrop({ handleDrop: handleSetAnswer });

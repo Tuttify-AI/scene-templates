@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActiveElementData, Elements, SceneValue } from '../../shared/types';
+import { ActiveElementData, SceneValue } from '../../shared/types';
 import { getElementValue } from '../../shared/utils';
 import { AnswerType, SpellBeeElements } from '../types';
 import { checkArray, checkCorrectWord, getAnswer } from '../utils';
-import { useActions } from '../../shared/hooks';
+import { useActions, useAudios } from '../../shared/hooks';
 import useParams from './use-params';
-import { OnClickData } from '../../shared/hooks/use-actions';
+import useAnswerTimer from '../../shared/hooks/use-answer-timer';
 
 const INITIAL_STATE = {
   src: '',
@@ -27,8 +27,11 @@ type UseItemsActionParams = {
   lockCorrectSelection?: boolean;
   values?: SpellBeeElements<SceneValue>;
   handleClick?: ReturnType<typeof useActions>['handleClick'];
-  handleComplete?: (key: keyof Elements, { data }: OnClickData) => void;
-  getUserAnswerTime: () => number;
+  handleComplete?: ReturnType<typeof useActions>['handleComplete'];
+  handleSceneSolved?: ReturnType<typeof useActions>['handleSceneSolved'];
+  getUserAnswerTime: ReturnType<typeof useAnswerTimer>['getUserAnswerTime'];
+  handleElementAudio?: ReturnType<typeof useAudios>['handleElementAudio'];
+  pauseAudios?: ReturnType<typeof useAudios>['pauseAudios'];
 };
 const useItemsAction = ({
   answerArray,
@@ -42,6 +45,9 @@ const useItemsAction = ({
   predefinedTotalItemIndexes = EMPTY_ARRAY,
   handleComplete,
   getUserAnswerTime,
+  handleElementAudio,
+  handleSceneSolved,
+  pauseAudios,
 }: UseItemsActionParams) => {
   const [selectedLetterIndex, setSelectedLetterIndex] = useState<AnswerType>(null);
   const [answer, setAnswer] = useState(predefinedTotalItemIndexes);
@@ -80,22 +86,45 @@ const useItemsAction = ({
     return checkCorrectWord(answer, totalItemsArray, itemsArray.join());
   }, [answer, totalItemsArray, itemsArray]);
 
-  const onComplete = useCallback(
-    (answer: AnswerType[]) => {
+  const getSceneData = useCallback(
+    (answer: AnswerType[], extraData: ActiveElementData = {}) => {
       const value = itemsArray.join(useArray ? ' ' : '');
-      checkArray(answer) &&
-        handleComplete &&
-        handleComplete('answers', {
-          data: {
-            isCorrect: checkCorrectWord(answer, totalItemsArray, itemsArray.join()),
-            value,
-            valueLength: itemsArray?.length,
-            answer: getAnswer(answer, totalItemsArray, useArray),
-            answerTime: getUserAnswerTime(),
-          },
-        });
+      const isCorrect = checkCorrectWord(answer, totalItemsArray, itemsArray.join());
+      return {
+        isCorrect,
+        value,
+        valueLength: itemsArray?.length,
+        answer: getAnswer(answer, totalItemsArray, useArray),
+        answerTime: getUserAnswerTime().time,
+        sceneTime: getUserAnswerTime().total,
+        ...extraData,
+      } as ActiveElementData;
     },
-    [itemsArray, totalItemsArray, getUserAnswerTime, handleComplete, useArray]
+    [itemsArray, totalItemsArray, getUserAnswerTime, useArray]
+  );
+
+  const onSceneSolved = useCallback(
+    (answer: AnswerType[]) => {
+      const data = getSceneData(answer);
+      if (checkArray(answer)) {
+        handleSceneSolved && handleSceneSolved('answer', { data });
+        handleElementAudio && handleElementAudio('image', data?.isCorrect ? 'success_sound' : `error_sound`);
+      }
+    },
+    [getSceneData, handleSceneSolved, handleElementAudio]
+  );
+
+  const onComplete = useCallback(
+    async (answer: AnswerType[]) => {
+      if (checkArray(answer)) {
+        handleComplete &&
+          handleComplete('answer', {
+            data: getSceneData(answer),
+          });
+        pauseAudios && (await pauseAudios());
+      }
+    },
+    [getSceneData, handleComplete, pauseAudios]
   );
 
   const isFullAnswer = useMemo(() => {
@@ -125,18 +154,12 @@ const useItemsAction = ({
   );
 
   const getAnswerData = useCallback(
-    (index: number, totalLetterIndex: number | null) => {
+    (answer: AnswerType[], index: number, totalLetterIndex: number | null) => {
       const isCorrect = totalLetterIndex !== null && totalItemsArray[totalLetterIndex] === itemsArray[index];
-      const value = totalLetterIndex !== null && totalItemsArray[totalLetterIndex];
-      const answer = itemsArray.join(useArray ? ' ' : '');
-      return {
-        ...(isCorrect !== null ? { isCorrect } : {}),
-        ...(answer ? { answer, valueLength: itemsArray?.length } : {}),
-        ...(value ? { value } : {}),
-        ...(index !== null ? { index } : {}),
-      } as ActiveElementData;
+      const value = totalLetterIndex !== null ? totalItemsArray[totalLetterIndex] : undefined;
+      return getSceneData(answer, { isCorrect, value });
     },
-    [itemsArray, totalItemsArray, useArray]
+    [itemsArray, totalItemsArray, getSceneData]
   );
 
   const handleSetAnswer = useCallback(
@@ -149,8 +172,8 @@ const useItemsAction = ({
           setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? null : a)));
         } else {
           const newAnswer = answer.map((a, i) => (i === index ? letterIndex : a));
-          handleClick && handleClick('answer', { data: getAnswerData(index, letterIndex) })(e);
-          onComplete(newAnswer);
+          handleClick && handleClick('answer', { data: getAnswerData(newAnswer, index, letterIndex) })(e);
+          onSceneSolved(newAnswer);
           setAnswer(newAnswer);
           setSelectedLetterIndex(null);
         }
@@ -164,7 +187,7 @@ const useItemsAction = ({
       handleClick,
       getAnswerData,
       answer,
-      onComplete,
+      onSceneSolved,
     ]
   );
 
@@ -173,10 +196,15 @@ const useItemsAction = ({
     [setAnswer, predefinedTotalItemIndexes]
   );
 
-  const handleFullImageClick = useCallback(() => {
-    handleClearFullImageSrc();
-    setFullScreen(INITIAL_STATE);
-  }, [handleClearFullImageSrc]);
+  const handleFullImageClick = useCallback(
+    async (e?: React.MouseEvent) => {
+      e?.stopPropagation();
+      onComplete(answer);
+      handleClearFullImageSrc();
+      setFullScreen(INITIAL_STATE);
+    },
+    [handleClearFullImageSrc, answer, onComplete]
+  );
 
   return {
     checkIsLetterDisabled,

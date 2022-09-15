@@ -23,14 +23,26 @@ const MIN_ANSWERS = 2;
 
 const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
   (
-    { editMode, previewMode, classes, activeKey, onClick, onComplete, values, onAdd, onSet, onActiveElementClick },
+    {
+      editMode,
+      previewMode,
+      classes,
+      activeKey,
+      onClick,
+      onComplete,
+      values,
+      onAdd,
+      onSet,
+      onActiveElementClick,
+      onSceneSolved,
+    },
     ref
   ) => {
-    const { hiddenImageList, onImageError, onImageLoad } = useImage();
-    const { renderAudios, handlePauseAll } = useAudios({ values });
+    const { hiddenImageList } = useImage();
+    const { renderAudios, handleElementAudio } = useAudios({ values, previewMode });
     const isActive = useCallback((key: keyof Quiz1SceneElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
-    const { getUserAnswerTime } = useAnswerTimer();
+    const { getUserAnswerTime, clearTimer } = useAnswerTimer();
 
     const getEditClass = useCallback(
       (type: 'edit' | 'editText' | 'editRoot' = 'edit') => editMode && styles[type],
@@ -39,12 +51,14 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
 
     const getValue = useMemo(() => getElementValue(values), [values]);
 
-    const { handleClick, handleComplete } = useActions({
+    const { handleClick, handleSceneSolved, handleComplete } = useActions({
       onClick,
-      handlePauseAll,
+      handlePauseAll: handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
       onComplete,
+      onSceneSolved,
+      clearTimer,
     });
 
     const answers = useMemo(() => Object.keys(values || {}).filter(k => k.startsWith('answer')), [values]);
@@ -117,6 +131,7 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
       previewMode,
       editMode,
       getUserAnswerTime,
+      handleSceneSolved,
       handleComplete,
     });
 
@@ -181,8 +196,6 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
               id={getElementId(`question_image`, previewMode)}
               style={{ backgroundImage: `url(${getValue('question', 'url') || questionImage})` }}
               className={clsx(styles.element, styles.image, isPreview, classes?.questionImage)}
-              onLoad={() => onImageLoad('question_image')}
-              onError={() => onImageError('question_image')}
             />
           </div>
         </div>
@@ -208,8 +221,6 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
                   <div
                     id={getElementId(`image_${k}`, previewMode)}
                     style={{ backgroundImage: `url(${getValue(k, 'url') || answerImage})` }}
-                    onLoad={() => onImageLoad(`image_${k}`)}
-                    onError={() => onImageError(`image_${k}`)}
                     className={clsx(styles.image, isImageHidden(`image_${k}`), isPreview, classes?.answerImage)}
                   />
                 </div>

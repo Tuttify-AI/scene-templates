@@ -22,13 +22,13 @@ const FullImage = forwardRef<HTMLDivElement, FullImageSceneProps>(
     });
 
     const getEditClass = useCallback((type: 'edit' | 'editRoot' = 'edit') => editMode && sceneStyles[type], [editMode]);
-    const { handlePauseAll, renderAudios } = useAudios({ values });
+    const { handleElementAudio, renderAudios } = useAudios({ values, previewMode });
     const getValue = useMemo(() => getElementValue(values, parameters), [values, parameters]);
 
     const { handleClick } = useActions({
       onClick,
       disabled: editMode || previewMode,
-      handlePauseAll,
+      handlePauseAll: handleElementAudio,
       onActiveElementClick,
     });
 

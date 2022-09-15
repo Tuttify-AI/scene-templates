@@ -37,5 +37,4 @@ export default {
       extensions: /\.(mp3)$/,
     }),
   ],
-  external: ['react', 'react-dom']
 };

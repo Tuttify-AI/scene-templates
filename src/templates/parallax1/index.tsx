@@ -34,25 +34,17 @@ const Parallax1 = forwardRef<HTMLDivElement, Parallax1SceneProps>(
       [hiddenImageList]
     );
 
-    const {
-      opacity,
-      translateY,
-      getAnimationsStyle,
-      handleMouseMove,
-      resetAnimatedProps,
-      getScale,
-      clearHover,
-      handleHover,
-    } = useAnimation({
-      disabled: editMode || previewMode,
-      element: scrollRef.current,
-    });
-    const { renderAudios, handlePauseAll } = useAudios({ values });
+    const { translateY, getAnimationsStyle, handleMouseMove, resetAnimatedProps, getScale, clearHover, handleHover } =
+      useAnimation({
+        disabled: editMode || previewMode,
+        element: scrollRef.current,
+      });
+    const { renderAudios, handleElementAudio } = useAudios({ values, previewMode });
     const { handleClick } = useActions({
       onClick,
       disabled: editMode || previewMode,
       onActiveElementClick,
-      handlePauseAll,
+      handlePauseAll: handleElementAudio,
     });
 
     const getImageSrc = useCallback(

@@ -32,11 +32,11 @@ const MultipleTiles8Fullimg = forwardRef<HTMLDivElement, MultipleTiles8FullImage
       (type: 'edit' | 'editText' | 'editRoot' = 'edit') => editMode && styles[type],
       [editMode]
     );
-    const { renderAudios, handlePauseAll } = useAudios({ values });
+    const { renderAudios, handleElementAudio } = useAudios({ values, previewMode });
     const getValue = useMemo(() => getElementValue(values), [values]);
     const { handleClick } = useActions({
       onClick,
-      handlePauseAll,
+      handlePauseAll: handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
     });
@@ -173,7 +173,11 @@ const MultipleTiles8Fullimg = forwardRef<HTMLDivElement, MultipleTiles8FullImage
             className={clsx(styles.activeImage, isPreview, getEditClass())}
           />
         </div>
-        <button className={clsx(styles.btn, styles.btnAddTile, getEditClass('edit'))} onClick={handleAddTile}>
+        <button
+          type="button"
+          className={clsx(styles.btn, styles.btnAddTile, getEditClass('edit'))}
+          onClick={handleAddTile}
+        >
           <img className={styles.addTileIcon} src={iconPlus} alt="" />
         </button>
         <span className={clsx(styles.totalTiles, getEditClass('edit'))}>Total tiles: {tiles.length}</span>
@@ -207,6 +211,7 @@ const MultipleTiles8Fullimg = forwardRef<HTMLDivElement, MultipleTiles8FullImage
               >
                 {index > IMAGES.length - 1 && (
                   <button
+                    type="button"
                     className={clsx(styles.btn, styles.btnDeleteTile, getEditClass('edit'))}
                     onClick={e => handleDeleteTile(k, e)}
                   >

@@ -19,9 +19,12 @@ export type MathBaseSceneProps = SceneProps & {
 };
 
 const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
-  ({ editMode, previewMode, classes, activeKey, onClick, onComplete, values, onActiveElementClick }, ref) => {
+  (
+    { editMode, previewMode, classes, activeKey, onClick, onComplete, values, onActiveElementClick, onSceneSolved },
+    ref
+  ) => {
     const getValue = useMemo(() => getElementValue<CountingElements>(values), [values]);
-    const { getUserAnswerTime } = useAnswerTimer();
+    const { getUserAnswerTime, clearTimer } = useAnswerTimer();
     const {
       predefinedValues,
       selectionFontSize,
@@ -37,13 +40,15 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
       previewMode,
       editMode,
     });
-    const { renderAudios, handlePauseAll } = useAudios({ values });
-    const { handleClick, handleComplete } = useActions({
+    const { renderAudios, handleElementAudio } = useAudios({ values, previewMode });
+    const { handleClick, handleComplete, handleSceneSolved } = useActions({
       onClick,
-      handlePauseAll,
+      handlePauseAll: handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
       onComplete,
+      onSceneSolved,
+      clearTimer,
     });
 
     const {
@@ -61,6 +66,7 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
       handleClick,
       mathOperand,
       getUserAnswerTime,
+      handleSceneSolved,
       handleComplete,
     });
     const { onDrop, onDragEnter, onDragLeave, dragTargetItem, onDragStart, dragSelectedItem, onDragEnd, onDragOver } =
@@ -100,7 +106,7 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
             } as CSSProperties
           }
         >
-          {value || (showQuestionMark ? <span className={styles.questionMark}>?</span> : '')}
+          {value ?? (showQuestionMark ? <span className={styles.questionMark}>?</span> : '')}
         </p>
       </div>
     );

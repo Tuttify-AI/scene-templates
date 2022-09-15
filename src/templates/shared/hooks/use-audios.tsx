@@ -4,6 +4,7 @@ import { getElementValue } from '../utils';
 
 type Params = {
   values: SceneProps['values'];
+  previewMode: SceneProps['previewMode'];
 };
 
 const parseKey = (audioKey: string) => ({
@@ -11,11 +12,11 @@ const parseKey = (audioKey: string) => ({
   parameter: audioKey.split(':')[1] || '',
 });
 
-export default function useAudios({ values }: Params) {
+export default function useAudios({ values, previewMode }: Params) {
   const [audios, setAudios] = useState({} as AudioElements);
 
   useEffect(() => {
-    if (values) {
+    if (values && !previewMode) {
       setAudios(
         Object.keys(values).reduce((res, key) => {
           Object.keys(values[key]).forEach(parameter => {
@@ -27,9 +28,9 @@ export default function useAudios({ values }: Params) {
         }, {} as AudioElements)
       );
     }
-  }, [values]);
+  }, [values, previewMode]);
 
-  const pauseOtherAudios = async (ignoreEl: HTMLAudioElement) => {
+  const pauseAudios = useCallback(async (ignoreEl?: HTMLAudioElement) => {
     const allAudios = Array.from(document.getElementsByTagName('audio'));
     await Promise.all(
       allAudios.map(async el => {
@@ -39,11 +40,11 @@ export default function useAudios({ values }: Params) {
         }
       })
     );
-  };
+  }, []);
 
   const renderAudios = useCallback(
     () =>
-      audios ? (
+      audios && !previewMode ? (
         <Fragment>
           {Object.keys(audios)
             .filter(audioKey => !!getElementValue(values)(parseKey(audioKey).key, parseKey(audioKey).parameter))
@@ -57,40 +58,41 @@ export default function useAudios({ values }: Params) {
             ))}
         </Fragment>
       ) : null,
-    [audios, values]
+    [audios, values, previewMode]
   );
 
-  const handlePauseAll = useCallback(
+  const handleElementAudio = useCallback(
     async (key: keyof Elements, parameter: keyof Parameters = 'sound') => {
-      if (audios && getElementValue(values)(key, parameter)) {
+      if (audios && getElementValue(values)(key, parameter) && !previewMode) {
         await Promise.all(
           Object.keys(audios).map(async audio => {
             const currentAudio = audios?.[audio]?.current;
             if (currentAudio) {
-              if (parseKey(audio).key === key) {
+              if (parseKey(audio).parameter === parameter && parseKey(audio).key === key) {
                 if (!currentAudio.paused) {
-                  currentAudio.currentTime = 0;
                   await currentAudio.pause();
+                  currentAudio.currentTime = 0;
                 } else {
                   currentAudio.currentTime = 0;
                   await currentAudio.play();
-                  await pauseOtherAudios(currentAudio);
+                  await pauseAudios(currentAudio);
                 }
               } else {
-                currentAudio.currentTime = 0;
                 await currentAudio.pause();
+                currentAudio.currentTime = 0;
               }
             }
           })
         );
       }
     },
-    [audios, values]
+    [audios, values, previewMode, pauseAudios]
   );
 
   return {
     audios,
     renderAudios,
-    handlePauseAll,
+    handleElementAudio,
+    pauseAudios,
   };
 }

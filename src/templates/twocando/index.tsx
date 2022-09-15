@@ -39,12 +39,12 @@ const Twocando = forwardRef<HTMLDivElement, TwocandoSceneProps>(
         disabled: editMode || previewMode,
         element: scrollRef.current,
       });
-    const { renderAudios, handlePauseAll } = useAudios({ values });
+    const { renderAudios, handleElementAudio } = useAudios({ values, previewMode });
     const { handleClick } = useActions({
       onClick,
       disabled: editMode || previewMode,
       onActiveElementClick,
-      handlePauseAll,
+      handlePauseAll: handleElementAudio,
     });
 
     const getImageSrc = useCallback(

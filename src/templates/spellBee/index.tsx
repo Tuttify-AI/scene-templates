@@ -21,11 +21,23 @@ export type SpellBeeSceneProps = SceneProps & {
 
 const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
   (
-    { editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick, onComplete, useArray },
+    {
+      editMode,
+      previewMode,
+      classes,
+      activeKey,
+      onClick,
+      values,
+      onSet,
+      onActiveElementClick,
+      onComplete,
+      useArray,
+      onSceneSolved,
+    },
     ref
   ) => {
     const getValue = useMemo(() => getElementValue<SpellBeeElements>(values), [values]);
-    const { getUserAnswerTime } = useAnswerTimer();
+    const { getUserAnswerTime, clearTimer } = useAnswerTimer(previewMode || editMode);
     const {
       totalItemsArray,
       selectionItemsWidth,
@@ -52,13 +64,15 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       onSet,
       useArray,
     });
-    const { renderAudios, handlePauseAll } = useAudios({ values });
-    const { handleClick, handleComplete } = useActions({
+    const { renderAudios, handleElementAudio, pauseAudios } = useAudios({ values, previewMode });
+    const { handleClick, handleComplete, handleSceneSolved } = useActions({
       onClick,
-      handlePauseAll,
+      handlePauseAll: handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
       onComplete,
+      onSceneSolved,
+      clearTimer,
     });
 
     const {
@@ -81,8 +95,11 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       handleClick,
       predefinedTotalItemIndexes,
       handleComplete,
+      handleSceneSolved,
       getUserAnswerTime,
       useArray,
+      handleElementAudio,
+      pauseAudios,
     });
     const { onDrop, onDragEnter, onDragLeave, dragTargetItem, onDragStart, dragSelectedItem, onDragEnd, onDragOver } =
       useDragNDrop({ handleDrop: handleSetAnswer });

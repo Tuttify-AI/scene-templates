@@ -1,18 +1,25 @@
 {
   "name": "@blipiqlabs/scene-templates",
-  "version": "1.1.122",
+  "version": "1.1.124",
   "main": "build/index.js",
   "module": "build/index.es.js",
   "files": [
     "build"
   ],
   "peerDependencies": {
+    "@react-spring/web": "^9.5.4",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-player": "^2.10.1",
     "swiper": "^8.1.6"
   },
   "dependencies": {
     "@react-spring/web": "^9.5.4",
+    "@types/react": "^17.0.48",
+    "@types/react-dom": "^17.0.17",
+    "postcss": "^8.4.14",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
     "react-player": "^2.10.1",
     "swiper": "^8.1.6"
   },
@@ -69,7 +76,7 @@
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.37.0",
     "autoprefixer": "^10.4.10",
-    "eslint": "^8.23.1",
+    "eslint": "8.22.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.6.1",
