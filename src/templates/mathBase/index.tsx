@@ -40,15 +40,16 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
       previewMode,
       editMode,
     });
-    const { renderAudios, handleElementAudio } = useAudios({ values, previewMode });
+    const { renderAudios, handleElementAudio, pauseAudios } = useAudios({ values, previewMode });
     const { handleClick, handleComplete, handleSceneSolved } = useActions({
       onClick,
-      handlePauseAll: handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
       onComplete,
       onSceneSolved,
       clearTimer,
+      pauseAudios,
+      handleElementAudio,
     });
 
     const {

@@ -44,7 +44,7 @@ const Parallax1 = forwardRef<HTMLDivElement, Parallax1SceneProps>(
       onClick,
       disabled: editMode || previewMode,
       onActiveElementClick,
-      handlePauseAll: handleElementAudio,
+      handleElementAudio,
     });
 
     const getImageSrc = useCallback(

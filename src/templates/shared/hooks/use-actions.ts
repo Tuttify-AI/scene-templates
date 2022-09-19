@@ -7,14 +7,20 @@ type Params = {
   disabled?: boolean;
   onClick?: SceneProps['onClick'];
   onActiveElementClick?: SceneProps['onActiveElementClick'];
-  handlePauseAll?: ReturnType<typeof useAudios>['handleElementAudio'];
   clearTimer?: ReturnType<typeof useAnswerTimer>['clearTimer'];
   onComplete?: SceneProps['onComplete'];
   onSceneSolved?: SceneProps['onSceneSolved'];
+  pauseAudios?: ReturnType<typeof useAudios>['pauseAudios'];
+  handleElementAudio?: ReturnType<typeof useAudios>['handleElementAudio'];
 };
 
 export type OnClickData = {
   data?: ActiveElementData;
+  parameter?: keyof Parameters;
+};
+
+export type SoundData = {
+  key?: keyof Elements;
   parameter?: keyof Parameters;
 };
 
@@ -24,10 +30,11 @@ export default function useActions({
   disabled,
   onClick,
   onActiveElementClick,
-  handlePauseAll,
   onComplete,
   onSceneSolved,
   clearTimer,
+  pauseAudios,
+  handleElementAudio,
 }: Params) {
   const handleClick = useCallback(
     (key: keyof Elements, { data, parameter = 'sound' }: OnClickData = DEFAULT_DATA) =>
@@ -36,26 +43,28 @@ export default function useActions({
         // if data is passed - implementing onActiveElementClick
         onActiveElementClick && data && onActiveElementClick(`${key}`, data);
         onClick && e?.currentTarget && onClick(`${key}`, e?.currentTarget);
-        if (!disabled && handlePauseAll) {
-          await handlePauseAll(key, parameter);
+        if (!disabled && handleElementAudio) {
+          await handleElementAudio(key, parameter);
         }
       },
-    [disabled, onClick, onActiveElementClick, handlePauseAll]
+    [disabled, onClick, onActiveElementClick, handleElementAudio]
   );
 
   const handleComplete = useCallback(
-    (key: keyof Elements, { data }: OnClickData = DEFAULT_DATA) => {
+    async (key: keyof Elements, { data }: OnClickData = DEFAULT_DATA) => {
       onComplete && data && onComplete(`${key}`, data);
       clearTimer && clearTimer();
+      pauseAudios && (await pauseAudios());
     },
-    [onComplete, clearTimer]
+    [onComplete, clearTimer, pauseAudios]
   );
 
   const handleSceneSolved = useCallback(
-    (key: keyof Elements, { data }: OnClickData = DEFAULT_DATA) => {
+    async (key: keyof Elements, { data }: OnClickData = DEFAULT_DATA, soundData: SoundData = DEFAULT_DATA) => {
       onSceneSolved && data && onSceneSolved(`${key}`, data);
+      handleElementAudio && soundData?.key && (await handleElementAudio(soundData.key, soundData.parameter));
     },
-    [onSceneSolved]
+    [onSceneSolved, handleElementAudio]
   );
 
   return {

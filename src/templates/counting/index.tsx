@@ -56,16 +56,17 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
       editMode,
       onSet,
     });
-    const { renderAudios, handleElementAudio } = useAudios({ values, previewMode });
+    const { renderAudios, handleElementAudio, pauseAudios } = useAudios({ values, previewMode });
     const { getUserAnswerTime, clearTimer } = useAnswerTimer();
     const { handleClick, handleComplete, handleSceneSolved } = useActions({
       onClick,
-      handlePauseAll: handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
       onComplete,
       onSceneSolved,
       clearTimer,
+      pauseAudios,
+      handleElementAudio,
     });
 
     const {

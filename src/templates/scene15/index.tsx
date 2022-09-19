@@ -31,7 +31,7 @@ const FullImageWithButton = forwardRef<HTMLDivElement, FullImageWithButtonProps>
 
     const { handleClick } = useActions({
       onClick,
-      handlePauseAll: handleElementAudio,
+      handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
     });

@@ -28,7 +28,7 @@ const FullImage = forwardRef<HTMLDivElement, FullImageSceneProps>(
     const { handleClick } = useActions({
       onClick,
       disabled: editMode || previewMode,
-      handlePauseAll: handleElementAudio,
+      handleElementAudio,
       onActiveElementClick,
     });
 

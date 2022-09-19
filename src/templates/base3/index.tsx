@@ -32,7 +32,7 @@ const Base3 = forwardRef<HTMLDivElement, Base3SceneProps>(
       onClick,
       disabled: editMode || previewMode,
       onActiveElementClick,
-      handlePauseAll: handleElementAudio,
+      handleElementAudio,
     });
 
     const isActive = useCallback(
