@@ -3,7 +3,7 @@ import { ActiveElementData, SceneValue } from '../../shared/types';
 import { getElementValue } from '../../shared/utils';
 import { AnswerType, SpellBeeElements } from '../types';
 import { checkArray, checkCorrectWord, getAnswer } from '../utils';
-import { useActions, useAudios } from '../../shared/hooks';
+import { useActions } from '../../shared/hooks';
 import useParams from './use-params';
 import useAnswerTimer from '../../shared/hooks/use-answer-timer';
 
@@ -30,8 +30,6 @@ type UseItemsActionParams = {
   handleComplete?: ReturnType<typeof useActions>['handleComplete'];
   handleSceneSolved?: ReturnType<typeof useActions>['handleSceneSolved'];
   getUserAnswerTime: ReturnType<typeof useAnswerTimer>['getUserAnswerTime'];
-  handleElementAudio?: ReturnType<typeof useAudios>['handleElementAudio'];
-  pauseAudios?: ReturnType<typeof useAudios>['pauseAudios'];
 };
 const useItemsAction = ({
   answerArray,
@@ -45,9 +43,7 @@ const useItemsAction = ({
   predefinedTotalItemIndexes = EMPTY_ARRAY,
   handleComplete,
   getUserAnswerTime,
-  handleElementAudio,
   handleSceneSolved,
-  pauseAudios,
 }: UseItemsActionParams) => {
   const [selectedLetterIndex, setSelectedLetterIndex] = useState<AnswerType>(null);
   const [answer, setAnswer] = useState(predefinedTotalItemIndexes);
@@ -107,11 +103,18 @@ const useItemsAction = ({
     (answer: AnswerType[]) => {
       const data = getSceneData(answer);
       if (checkArray(answer)) {
-        handleSceneSolved && handleSceneSolved('answer', { data });
-        handleElementAudio && handleElementAudio('image', data?.isCorrect ? 'success_sound' : `error_sound`);
+        handleSceneSolved &&
+          handleSceneSolved(
+            'answer',
+            { data },
+            {
+              key: 'image',
+              parameter: data?.isCorrect ? 'success_sound' : `error_sound`,
+            }
+          );
       }
     },
-    [getSceneData, handleSceneSolved, handleElementAudio]
+    [getSceneData, handleSceneSolved]
   );
 
   const onComplete = useCallback(
@@ -121,10 +124,9 @@ const useItemsAction = ({
           handleComplete('answer', {
             data: getSceneData(answer),
           });
-        pauseAudios && (await pauseAudios());
       }
     },
-    [getSceneData, handleComplete, pauseAudios]
+    [getSceneData, handleComplete]
   );
 
   const isFullAnswer = useMemo(() => {

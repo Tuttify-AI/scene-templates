@@ -100,23 +100,40 @@ const useNumbersAction = ({
       if (!editMode && selectedValue !== null) {
         if ((answer[type] && !predefinedValues[type]) || !answer[type]) {
           handleClick && handleClick(type, { data: getAnswerData(type, selectedValue) })(e);
-          setAnswer(prev => ({ ...prev, [type]: selectedValue }));
-          handleSceneSolved &&
-            handleSceneSolved('answers', {
-              data: {
-                isCorrect,
-                answer: selectedValue,
-                leftNumber: answer.leftNumber,
-                rightNumber: answer.rightNumber,
-                answerTime: getUserAnswerTime().time,
-                sceneTime: getUserAnswerTime().total,
+          const newAnswer = { ...answer, [type]: selectedValue };
+          const result = Object.values(newAnswer).every(val => val !== null);
+          const isCorrect = checkCorrectResult(
+            newAnswer.leftNumber,
+            newAnswer.rightNumber,
+            newAnswer.resultNumber,
+            mathOperand
+          );
+          setAnswer(newAnswer);
+          result &&
+            handleSceneSolved &&
+            handleSceneSolved(
+              'answers',
+              {
+                data: {
+                  isCorrect,
+                  answer: selectedValue,
+                  leftNumber: newAnswer.leftNumber,
+                  rightNumber: newAnswer.rightNumber,
+                  answerTime: getUserAnswerTime().time,
+                  sceneTime: getUserAnswerTime().total,
+                },
               },
-            });
+              {
+                key: 'image',
+                parameter: isCorrect ? 'success_sound' : 'error_sound',
+              }
+            );
           setSelectedNumber(null);
         }
       }
     },
     [
+      mathOperand,
       selectedNumber,
       editMode,
       answer,
@@ -124,7 +141,6 @@ const useNumbersAction = ({
       handleClick,
       getAnswerData,
       handleSceneSolved,
-      isCorrect,
       getUserAnswerTime,
     ]
   );

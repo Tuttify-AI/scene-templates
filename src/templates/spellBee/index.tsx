@@ -67,12 +67,13 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
     const { renderAudios, handleElementAudio, pauseAudios } = useAudios({ values, previewMode });
     const { handleClick, handleComplete, handleSceneSolved } = useActions({
       onClick,
-      handlePauseAll: handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
       onComplete,
       onSceneSolved,
       clearTimer,
+      pauseAudios,
+      handleElementAudio,
     });
 
     const {
@@ -98,8 +99,6 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       handleSceneSolved,
       getUserAnswerTime,
       useArray,
-      handleElementAudio,
-      pauseAudios,
     });
     const { onDrop, onDragEnter, onDragLeave, dragTargetItem, onDragStart, dragSelectedItem, onDragEnd, onDragOver } =
       useDragNDrop({ handleDrop: handleSetAnswer });

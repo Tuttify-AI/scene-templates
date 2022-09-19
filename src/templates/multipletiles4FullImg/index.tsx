@@ -40,7 +40,7 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
 
     const { handleClick } = useActions({
       onClick,
-      handlePauseAll: handleElementAudio,
+      handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
     });

@@ -27,7 +27,7 @@ const FullVideo = forwardRef<HTMLDivElement, FullVideoSceneProps>(
 
     const { handleClick } = useActions({
       onClick,
-      handlePauseAll: handleElementAudio,
+      handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
     });

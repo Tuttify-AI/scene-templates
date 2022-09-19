@@ -44,7 +44,7 @@ const Twocando = forwardRef<HTMLDivElement, TwocandoSceneProps>(
       onClick,
       disabled: editMode || previewMode,
       onActiveElementClick,
-      handlePauseAll: handleElementAudio,
+      handleElementAudio,
     });
 
     const getImageSrc = useCallback(

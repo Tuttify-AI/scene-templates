@@ -38,7 +38,7 @@ const MultipleTiles8 = forwardRef<HTMLDivElement, MultipleTiles8SceneProps>(
 
     const { handleClick } = useActions({
       onClick,
-      handlePauseAll: handleElementAudio,
+      handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
     });

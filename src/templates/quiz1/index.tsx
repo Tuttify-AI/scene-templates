@@ -39,7 +39,7 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
     ref
   ) => {
     const { hiddenImageList } = useImage();
-    const { renderAudios, handleElementAudio } = useAudios({ values, previewMode });
+    const { renderAudios, handleElementAudio, pauseAudios } = useAudios({ values, previewMode });
     const isActive = useCallback((key: keyof Quiz1SceneElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
     const { getUserAnswerTime, clearTimer } = useAnswerTimer();
@@ -53,12 +53,13 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
 
     const { handleClick, handleSceneSolved, handleComplete } = useActions({
       onClick,
-      handlePauseAll: handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
       onComplete,
       onSceneSolved,
       clearTimer,
+      pauseAudios,
+      handleElementAudio,
     });
 
     const answers = useMemo(() => Object.keys(values || {}).filter(k => k.startsWith('answer')), [values]);

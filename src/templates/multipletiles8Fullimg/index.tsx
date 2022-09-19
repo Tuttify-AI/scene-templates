@@ -36,7 +36,7 @@ const MultipleTiles8Fullimg = forwardRef<HTMLDivElement, MultipleTiles8FullImage
     const getValue = useMemo(() => getElementValue(values), [values]);
     const { handleClick } = useActions({
       onClick,
-      handlePauseAll: handleElementAudio,
+      handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
     });

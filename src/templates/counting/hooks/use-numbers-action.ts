@@ -125,18 +125,27 @@ const useNumbersAction = ({
         if (numberIndex === null) {
           setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? null : a)));
         } else {
+          const newAnswer = answer.map((a, i) => (i === index ? numberIndex : a));
+          const isCorrect = checkCorrectWord(newAnswer, totalItemsArray, itemsArray.join());
           handleClick && handleClick('answer', { data: getAnswerData(index, numberIndex) })(e);
           handleSceneSolved &&
-            handleSceneSolved('answer', {
-              data: {
-                isCorrect: correct,
-                number: itemsArray.join(''),
-                answer: totalItemsArray[numberIndex],
-                answerTime: getUserAnswerTime().time,
-                sceneTime: getUserAnswerTime().total,
+            handleSceneSolved(
+              'answer',
+              {
+                data: {
+                  isCorrect,
+                  number: itemsArray.join(''),
+                  answer: totalItemsArray[numberIndex],
+                  answerTime: getUserAnswerTime().time,
+                  sceneTime: getUserAnswerTime().total,
+                },
               },
-            });
-          setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? numberIndex : a)));
+              {
+                key: 'image',
+                parameter: isCorrect ? 'success_sound' : 'error_sound',
+              }
+            );
+          setAnswer(newAnswer);
           setSelectedNumberIndex(null);
         }
       }
@@ -149,10 +158,10 @@ const useNumbersAction = ({
       handleClick,
       getAnswerData,
       handleSceneSolved,
-      correct,
       itemsArray,
       totalItemsArray,
       getUserAnswerTime,
+      answer,
     ]
   );
 
