@@ -14,7 +14,7 @@ export function checkArray(answerArr: DefaultType[]) {
 }
 
 export function checkCorrectWord(answerArr: DefaultType[], allArr: string[], word: string) {
-  const answer = [];
+  const answer = [] as string[];
   for (let i = 0; i < answerArr.length; i++) {
     const index = answerArr[i];
     if (!index && typeof index != 'number') {
@@ -25,7 +25,7 @@ export function checkCorrectWord(answerArr: DefaultType[], allArr: string[], wor
 }
 
 export function getAnswer(answerArr: DefaultType[], allArr: string[], useArray = false) {
-  const answer = [];
+  const answer = [] as string[];
   for (let i = 0; i < answerArr.length; i++) {
     const index = answerArr[i];
     if (typeof index === 'number') answer[i] = allArr[index];
