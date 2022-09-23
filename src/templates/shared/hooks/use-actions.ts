@@ -52,7 +52,7 @@ export default function useActions({
 
   const handleComplete = useCallback(
     async (key: keyof Elements, { data }: OnClickData = DEFAULT_DATA) => {
-      onComplete && data && onComplete(`${key}`, data);
+      onComplete && onComplete(`${key}`, data);
       clearTimer && clearTimer();
       pauseAudios && (await pauseAudios());
     },

@@ -7,7 +7,7 @@ import image from '@rollup/plugin-image';
 import files from 'rollup-plugin-import-file';
 import autoprefixer from 'autoprefixer';
 import svgr from '@svgr/rollup';
-import styles from "rollup-plugin-styles";
+import styles from 'rollup-plugin-styles';
 
 const packageJson = require('./package.json');
 
