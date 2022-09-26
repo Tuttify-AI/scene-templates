@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useWindowSize } from '../../shared/hooks';
-import { SceneProps } from '../../shared/types';
+import { DefaultType, SceneProps } from '../../shared/types';
 import { getElementValue, getNumber } from '../../shared/utils';
 import { MathBaseConfig } from '../types';
 
@@ -57,6 +57,13 @@ export default function useParams({ values, previewMode, editMode }: Params) {
     [isSm]
   );
   const wordFontSize = useMemo(() => Math.floor(isSm ? DEFAULTS.wordTextSize * 0.55 : DEFAULTS.wordTextSize), [isSm]);
+  const getFontSize = useCallback(
+    (originalFontSize: number, value?: DefaultType) =>
+      Math.floor(
+        !Number.isNaN(value) && Number(value)?.toString().length > 2 ? originalFontSize * 0.65 : originalFontSize
+      ),
+    []
+  );
 
   const wordPadding = useMemo(() => (isSm ? DEFAULTS.textPadding * 0.4 : DEFAULTS.textPadding * 0.8), [isSm]);
   const selectionContainerHeight = useMemo(() => selectionFontSize + wordPadding * 2, [selectionFontSize, wordPadding]);
@@ -72,6 +79,7 @@ export default function useParams({ values, previewMode, editMode }: Params) {
     selectionContainerHeight,
     wordContainerHeight,
     wordFontSize,
+    getFontSize,
     rightNumber,
     leftNumber,
     resultNumber,

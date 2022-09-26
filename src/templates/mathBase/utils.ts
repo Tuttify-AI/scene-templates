@@ -19,7 +19,7 @@ export function checkCorrectWord(answer_arr: (number | null)[], all_arr: string[
     const index = answer_arr[i];
     if (!index && typeof index !== 'number') {
       return false;
-    } else if (typeof index === 'number') answer[i] = all_arr[index];
+    } else if (typeof (index as number | null) === 'number') answer[i] = all_arr[index];
   }
   return answer.join() === word;
 }
@@ -31,7 +31,9 @@ export function checkCorrectResult(
   operand: string
 ) {
   if (first !== null && second !== null && result !== null) {
-    return operand === '+'
+    return operand === '×'
+      ? getNumber(first) * getNumber(second) === getNumber(result)
+      : operand === '+'
       ? getNumber(first) + getNumber(second) === getNumber(result)
       : getNumber(first) - getNumber(second) === getNumber(result);
   } else return false;
