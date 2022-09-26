@@ -287,6 +287,10 @@
     .root:not(.preview) {
         height: 500px;
     }
+
+    .operand:not(.preview) {
+        padding: 8px 4px;
+    }
 }
 
 

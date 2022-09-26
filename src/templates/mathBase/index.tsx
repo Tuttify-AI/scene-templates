@@ -30,6 +30,7 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
       selectionFontSize,
       selectionContainerHeight,
       wordFontSize,
+      getFontSize,
       fullScreenTextSize,
       wordPadding,
       mathOperand,
@@ -101,7 +102,7 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
           style={
             {
               padding: wordPadding,
-              fontSize: wordFontSize,
+              fontSize: getFontSize(wordFontSize, value),
               height: selectionContainerHeight,
               color: getValue('answer_text', 'text_color') as string,
             } as CSSProperties
@@ -188,7 +189,7 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
                   styles.wordText
                 )}
                 style={{
-                  fontSize: selectionFontSize,
+                  fontSize: getFontSize(selectionFontSize, number),
                   height: selectionContainerHeight,
                   color: getValue('selection_text', 'text_color') as string,
                 }}
