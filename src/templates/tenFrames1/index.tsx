@@ -205,7 +205,7 @@ const TenFrames1 = forwardRef<HTMLDivElement, TenFrames1SceneProps>(
           ))}
         </div>
         <div className={clsx(styles.wrapper)}>
-          <Bubbles arrLength={operationNumbersArray?.length} isPreview={previewMode} />
+          <Bubbles arrLength={operationNumbersArray?.length} editMode={editMode} />
         </div>
         <div className={clsx(styles.answerTextWrapper, getEditClass(), isPreview)} onClick={handleClick('answer_text')}>
           {renderNumber('number', operationNumbersArray[0])}
