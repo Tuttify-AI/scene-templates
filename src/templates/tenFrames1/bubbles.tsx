@@ -9,11 +9,6 @@ type BubbleItem = {
   count: string[];
 };
 
-type Props = {
-  arrLength: number;
-  isPreview?: boolean;
-};
-
 const COUNT_ARRAY: BubbleItem[] = [
   {
     index: 0,
@@ -37,12 +32,18 @@ const COUNT_ARRAY: BubbleItem[] = [
   },
 ];
 
-const Bubbles: React.FC<Props> = ({ arrLength = 4, isPreview }) => {
+type Props = {
+  arrLength: number;
+  editMode?: boolean;
+};
+
+const Bubbles: React.FC<Props> = ({ arrLength = 4, editMode }) => {
   const arr: BubbleItem[] = COUNT_ARRAY.slice(0, arrLength);
   const [stateArr, setStateArr] = useState<BubbleItem[]>(arr as BubbleItem[]);
+
   const handleBubbleClick = useCallback(
     (i: number, isAdd?: boolean) => () => {
-      if (isPreview) {
+      if (!editMode) {
         const current = stateArr.find((a: BubbleItem) => a.index === i);
         if (isAdd && current) {
           if (current.count.length < 10)
@@ -56,10 +57,11 @@ const Bubbles: React.FC<Props> = ({ arrLength = 4, isPreview }) => {
         }
       } else return;
     },
-    [isPreview, stateArr]
+    [editMode, stateArr]
   );
+
   return (
-    <div className={clsx(styles.bubbleContainer, isPreview)}>
+    <div className={clsx(styles.bubbleContainer, editMode)}>
       <div className={styles.mainBubble}>
         {arr?.map(item => (
           <div key={item.index} className={styles.bubbleWrapper}>

@@ -143,17 +143,17 @@ const useNumbersAction = ({
       }
     },
     [
+      mathOperand,
       selectedNumber,
       editMode,
       answer,
       predefinedValues,
       handleClick,
       getAnswerData,
-      mathOperand,
-      mathSecondOperand,
-      mathThirdOperand,
       handleSceneSolved,
       getUserAnswerTime,
+      mathSecondOperand,
+      mathThirdOperand,
     ]
   );
 

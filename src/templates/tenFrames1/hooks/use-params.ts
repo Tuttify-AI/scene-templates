@@ -35,10 +35,7 @@ export default function useParams({ values, previewMode, editMode }: Params) {
 
   const showQuestionMark = useMemo(() => getNumber(getConfigValue('show_question_mark')) === 1, [getConfigValue]);
 
-  const resultNumber = useMemo(
-    () => (getConfigValue('result') === '' ? null : getNumber(getConfigValue('result'))),
-    [getConfigValue]
-  );
+  const resultNumber = null;
 
   const mathOperand = useMemo(() => getConfigValue('math_operand') as string, [getConfigValue]);
   const mathSecondOperand = useMemo(() => getConfigValue('math_second_operand') as string, [getConfigValue]);
