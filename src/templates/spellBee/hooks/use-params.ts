@@ -61,22 +61,16 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
 
   const totalItemsArray = useMemo(() => {
     const totalItems = getConfigValue('items_total') || getConfigValue('letters_total') || emptyValue;
-    return useArray && Array.isArray(totalItems)
-      ? (totalItems as string[])?.map(w => w.toUpperCase())
-      : `${totalItems}`.toUpperCase().split('');
+    return useArray && Array.isArray(totalItems) ? (totalItems as string[]) : `${totalItems}`.split('');
   }, [getConfigValue, useArray, emptyValue]);
 
   const additionalLettersArray = useMemo(() => {
     const additionalItems = getConfigValue('additional_items') || getConfigValue('additional_letters') || emptyValue;
-    return useArray && Array.isArray(additionalItems)
-      ? (additionalItems as string[])?.map(w => w.toUpperCase())
-      : `${additionalItems}`.toUpperCase().split('');
+    return useArray && Array.isArray(additionalItems) ? (additionalItems as string[]) : `${additionalItems}`.split('');
   }, [getConfigValue, useArray, emptyValue]);
 
   const itemsArray = useMemo(() => {
-    return useArray && Array.isArray(items)
-      ? (items as string[])?.map(w => w.toUpperCase())
-      : `${items}`.toUpperCase().split('');
+    return useArray && Array.isArray(items) ? (items as string[]) : `${items}`.split('');
   }, [items, useArray]);
 
   const answerArray = useMemo(() => Array.from(Array(itemsArray.length).fill(null)), [itemsArray]);
@@ -108,8 +102,7 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
       e?.preventDefault();
       e?.stopPropagation();
       const totalItemsIndexes = totalItemsArray.reduce(
-        (acc, item, i) =>
-          answerIndex !== null && item?.toUpperCase() === itemsArray?.[answerIndex]?.toUpperCase() ? [...acc, i] : acc,
+        (acc, item, i) => (answerIndex !== null && item === itemsArray?.[answerIndex] ? [...acc, i] : acc),
         [] as number[]
       );
       setPredefinedTotalItemIndexes(

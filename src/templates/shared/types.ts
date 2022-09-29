@@ -70,7 +70,7 @@ export enum TemplateParameterType {
   select = 'select',
 }
 
-export type DefaultType = number | null | string;
+export type DefaultType = number | null | string | boolean;
 
 export type TemplateParameter = {
   type: TemplateParameterType;

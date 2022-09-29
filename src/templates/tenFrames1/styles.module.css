@@ -5,6 +5,7 @@
     --text-shadow: 0 0 12px rgba(100, 100, 100, 0.8);
     --colorWhite: #fff;
     --colorBlack: #000;
+    --colorGray: rgba(100, 100, 100, 0.5);
     --centerTransform: translate(-50%, -50%);
     --mainBorderRadius: 16px;
     --highlightSuccessColor: green;
@@ -49,8 +50,6 @@
     border-radius: 0;
     opacity: 0;
 }
-
-.btnDeleteTile {}
 
 .activeDiv {
     position: absolute;
@@ -220,12 +219,17 @@
 .wrapper {
     width: 100%;
     display: flex;
-    padding: 8px 40px;
+    padding: 8px 16px;
     flex: 1;
     flex-direction: row;
     align-items: center;
     flex-wrap: wrap;
     justify-content: center;
+}
+
+.wrapper.edit {
+    cursor: pointer;
+    border-radius: var(--mainBorderRadius);
 }
 
 .answerTextWrapper{
@@ -275,17 +279,23 @@
 .bubbleContainer{
     width: 100%;
     height: 100%;
-    border: 1px solid var(--colorBlack);
+    border: 2px solid var(--colorGray);
     display: flex;
     justify-content: flex-start;
-    padding: 0 30px;
+    padding: 8px 0;
     z-index: 5;
+    border-radius: var(--mainBorderRadius);
 }
 .mainBubble{
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-right: 20px;
+    width: 9%;
+    height: 100%;
+}
+
+.mainBubble .bubbleWrapper {
+    flex: 1;
 }
 
 .countBubble{
@@ -297,20 +307,29 @@
 }
 .countContainer{
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    flex: 1;
+    justify-content: flex-start;
+    align-items: center;
 }
 .bubbleWrapper{
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 12px;
-    border-right: 1px solid var(--colorBlack);
+    padding: 8px;
+    flex: 1;
+    border-right: 2px solid var(--colorGray);
 }
 .bubble{
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
+    transition: transform 0.25s ease-in-out;
     cursor: pointer;
+}
+
+.bubbleHidden {
+    transform: scale(0);
 }
 .answerNumberItem.correct {
     transform: scale(1);
@@ -326,8 +345,31 @@
     .root:not(.preview) {
         height: 500px;
     }
-    .wrapper{
+    .wrapper:not(.preview){
         padding: 8px;
+    }
+}
+
+@media screen and (max-width: 1100px) {
+    .wrapper:not(.preview) .bubbleWrapper {
+       padding: 4px;
+    }
+    .wrapper:not(.preview) .bubble {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .wrapper:not(.preview) .bubbleWrapper {
+        padding: 4px;
+    }
+    .wrapper:not(.preview) .bubble {
+        width: 20px;
+        height: 20px;
+    }
+    .operand {
+        padding: 4px;
     }
 }
 

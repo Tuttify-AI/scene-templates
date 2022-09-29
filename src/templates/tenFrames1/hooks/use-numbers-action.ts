@@ -66,13 +66,13 @@ const useNumbersAction = ({
 
   const isCorrect = useMemo(() => {
     return checkMultiCorrectResult(
-      answer.number,
+      answer.numbers as number[],
       answer.resultNumber,
       mathOperand,
       mathSecondOperand,
       mathThirdOperand
     );
-  }, [answer.number, answer.resultNumber, mathOperand, mathSecondOperand, mathThirdOperand]);
+  }, [answer.numbers, answer.resultNumber, mathOperand, mathSecondOperand, mathThirdOperand]);
 
   const isFullAnswer = useMemo(() => {
     const result = Object.values(answer).every(val => val !== null);
@@ -113,7 +113,7 @@ const useNumbersAction = ({
           const newAnswer = { ...answer, [type]: selectedValue };
           const result = Object.values(newAnswer).every(val => val !== null);
           const isCorrect = checkMultiCorrectResult(
-            newAnswer.number,
+            newAnswer.numbers as number[],
             newAnswer.resultNumber,
             mathOperand,
             mathSecondOperand,
@@ -128,7 +128,7 @@ const useNumbersAction = ({
                 data: {
                   isCorrect,
                   answer: selectedValue,
-                  number: newAnswer.number,
+                  number: newAnswer.numbers as number[],
                   answerTime: getUserAnswerTime().time,
                   sceneTime: getUserAnswerTime().total,
                 },
@@ -165,7 +165,7 @@ const useNumbersAction = ({
         data: {
           isCorrect,
           answer: selectedNumber as number,
-          number: answer.number,
+          number: answer.numbers as number[],
           answerTime: getUserAnswerTime().time,
           sceneTime: getUserAnswerTime().total,
         },

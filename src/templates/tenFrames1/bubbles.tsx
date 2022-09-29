@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { clsx } from '../shared/utils';
 import Bubble from './bubble';
 import styles from './styles.module.css';
@@ -12,22 +12,22 @@ type BubbleItem = {
 const COUNT_ARRAY: BubbleItem[] = [
   {
     index: 0,
-    color: 'yellow',
+    color: '#f1c40f',
     count: [],
   },
   {
     index: 1,
-    color: 'red',
+    color: '#e74c3c',
     count: [],
   },
   {
     index: 2,
-    color: 'blue',
+    color: '#2980b9',
     count: [],
   },
   {
     index: 3,
-    color: 'green',
+    color: '#27ae60',
     count: [],
   },
 ];
@@ -38,15 +38,22 @@ type Props = {
 };
 
 const Bubbles: React.FC<Props> = ({ arrLength = 4, editMode }) => {
-  const arr: BubbleItem[] = COUNT_ARRAY.slice(0, arrLength);
+  const totalBubbles = useMemo(() => Array.from(Array(10).keys()), []);
+  const arr = useMemo(() => COUNT_ARRAY.slice(0, arrLength), [arrLength]);
   const [stateArr, setStateArr] = useState<BubbleItem[]>(arr as BubbleItem[]);
+
+  useEffect(() => {
+    if (editMode) {
+      setStateArr(arr);
+    }
+  }, [editMode, arr]);
 
   const handleBubbleClick = useCallback(
     (i: number, isAdd?: boolean) => () => {
       if (!editMode) {
         const current = stateArr.find((a: BubbleItem) => a.index === i);
         if (isAdd && current) {
-          if (current.count.length < 10)
+          if (current.count.length < totalBubbles.length)
             setStateArr(stateArr.map((a: BubbleItem) => (a.index === i ? { ...a, count: [...a.count, '+'] } : a)));
           else return;
         } else {
@@ -57,7 +64,7 @@ const Bubbles: React.FC<Props> = ({ arrLength = 4, editMode }) => {
         }
       } else return;
     },
-    [editMode, stateArr]
+    [editMode, stateArr, totalBubbles]
   );
 
   return (
@@ -72,15 +79,11 @@ const Bubbles: React.FC<Props> = ({ arrLength = 4, editMode }) => {
       <div className={styles.countBubble}>
         {stateArr?.map((item: BubbleItem) => (
           <div key={item.index} className={styles.countContainer}>
-            {item?.count.length ? (
-              item?.count.map((c, index) => (
-                <div key={index + c} className={styles.bubbleWrapper} style={{ borderRight: 'none' }}>
-                  <Bubble color={item.color} onClick={handleBubbleClick(item.index)} />
-                </div>
-              ))
-            ) : (
-              <div className={styles.bubbleWrapper} style={{ borderRight: 'none', minHeight: '74px' }} />
-            )}
+            {totalBubbles.map((c, index) => (
+              <div key={index + c} className={styles.bubbleWrapper} style={{ borderRight: 'none' }}>
+                <Bubble color={item.color} onClick={handleBubbleClick(item.index)} hidden={!item.count[index]} />
+              </div>
+            ))}
           </div>
         ))}
       </div>

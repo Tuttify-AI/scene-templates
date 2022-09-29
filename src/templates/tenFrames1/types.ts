@@ -1,10 +1,11 @@
 import { Parameters, Elements, SceneValue } from '../shared/types';
 
 export type TenFramesBaseConfig<T = SceneValue> = {
-  operation_numbers: T;
-  right_number: T;
-  left_number: T;
-  result: T;
+  number_1: T;
+  number_2: T;
+  number_3: T;
+  number_4: T;
+  total_digits: T;
   math_operand: T;
   math_second_operand: T;
   math_third_operand: T;
