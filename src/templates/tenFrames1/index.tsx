@@ -20,11 +20,22 @@ export type TenFrames1SceneProps = SceneProps & {
 
 const TenFrames1 = forwardRef<HTMLDivElement, TenFrames1SceneProps>(
   (
-    { editMode, previewMode, classes, activeKey, onClick, onComplete, values, onActiveElementClick, onSceneSolved },
+    {
+      editMode,
+      previewMode,
+      classes,
+      activeKey,
+      onClick,
+      onComplete,
+      values,
+      onActiveElementClick,
+      onSceneSolved,
+      onSet,
+    },
     ref
   ) => {
     const getValue = useMemo(() => getElementValue<CountingElements>(values), [values]);
-    const { getUserAnswerTime, clearTimer } = useAnswerTimer();
+    const { getUserAnswerTime, clearTimer } = useAnswerTimer(editMode || previewMode);
 
     const {
       predefinedValues,
@@ -40,6 +51,7 @@ const TenFrames1 = forwardRef<HTMLDivElement, TenFrames1SceneProps>(
       showQuestionMark,
       operationNumbersArray,
     } = useParams({
+      onSet,
       values,
       previewMode,
       editMode,
@@ -87,7 +99,6 @@ const TenFrames1 = forwardRef<HTMLDivElement, TenFrames1SceneProps>(
 
     const renderNumber = (type: keyof typeof answer, value: DefaultType) => (
       <div
-        key={type}
         className={clsx(styles.answerNumberItemWrapper)}
         style={{
           padding: wordPadding,
@@ -204,17 +215,17 @@ const TenFrames1 = forwardRef<HTMLDivElement, TenFrames1SceneProps>(
             </div>
           ))}
         </div>
-        <div className={clsx(styles.wrapper)}>
+        <div className={clsx(styles.wrapper, isPreview, getEditClass())} onClick={handleClick('image')}>
           <Bubbles arrLength={operationNumbersArray?.length} editMode={editMode} />
         </div>
         <div className={clsx(styles.answerTextWrapper, getEditClass(), isPreview)} onClick={handleClick('answer_text')}>
-          {renderNumber('number', operationNumbersArray[0])}
+          {renderNumber('numbers', operationNumbersArray[0])}
           {renderOperand(mathOperand)}
-          {renderNumber('number', operationNumbersArray[1])}
+          {renderNumber('numbers', operationNumbersArray[1])}
           {operationNumbersArray?.length > 2 ? renderOperand(mathSecondOperand) : null}
-          {operationNumbersArray?.length > 2 ? renderNumber('number', operationNumbersArray[2]) : null}
+          {operationNumbersArray?.length > 2 ? renderNumber('numbers', operationNumbersArray[2]) : null}
           {operationNumbersArray?.length > 3 ? renderOperand(mathThirdOperand) : null}
-          {operationNumbersArray?.length > 3 ? renderNumber('number', operationNumbersArray[3]) : null}
+          {operationNumbersArray?.length > 3 ? renderNumber('numbers', operationNumbersArray[3]) : null}
           {renderOperand('=')}
           {renderNumber('resultNumber', answer?.resultNumber)}
         </div>

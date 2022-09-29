@@ -149,7 +149,7 @@ const useItemsAction = ({
     (answerIndex: number | null) => {
       const wordIndexInAnswer = answerIndex !== null ? answer[answerIndex] : null;
       return answerIndex !== null && itemsArray[answerIndex] !== null && wordIndexInAnswer !== null
-        ? itemsArray[answerIndex].toUpperCase() === totalItemsArray[wordIndexInAnswer].toUpperCase()
+        ? itemsArray[answerIndex] === totalItemsArray[wordIndexInAnswer]
         : null;
     },
     [itemsArray, totalItemsArray, answer]
