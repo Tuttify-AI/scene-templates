@@ -1,7 +1,9 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
-import { clsx } from '../shared/utils';
+import { SceneValue } from '../shared/types';
+import { clsx, getElementValue } from '../shared/utils';
 import Bubble from './bubble';
 import styles from './styles.module.css';
+import { CountingElements } from './types';
 
 type BubbleItem = {
   index: number;
@@ -9,37 +11,42 @@ type BubbleItem = {
   count: string[];
 };
 
-const COUNT_ARRAY: BubbleItem[] = [
-  {
-    index: 0,
-    color: '#f1c40f',
-    count: [],
-  },
-  {
-    index: 1,
-    color: '#e74c3c',
-    count: [],
-  },
-  {
-    index: 2,
-    color: '#2980b9',
-    count: [],
-  },
-  {
-    index: 3,
-    color: '#27ae60',
-    count: [],
-  },
-];
-
 type Props = {
+  values?: CountingElements<SceneValue>;
   arrLength: number;
   editMode?: boolean;
 };
 
-const Bubbles: React.FC<Props> = ({ arrLength = 4, editMode }) => {
+const Bubbles: React.FC<Props> = ({ values, arrLength = 4, editMode }) => {
+  const getValue = useMemo(() => getElementValue<CountingElements>(values), [values]);
+  const COUNT_ARRAY: BubbleItem[] = useMemo(
+    () => [
+      {
+        index: 0,
+        color: `bubble_1_background`,
+        count: [],
+      },
+      {
+        index: 1,
+        color: 'bubble_2_background',
+        count: [],
+      },
+      {
+        index: 2,
+        color: 'bubble_3_background',
+        count: [],
+      },
+      {
+        index: 3,
+        color: 'bubble_4_background',
+        count: [],
+      },
+    ],
+    []
+  );
+
   const totalBubbles = useMemo(() => Array.from(Array(10).keys()), []);
-  const arr = useMemo(() => COUNT_ARRAY.slice(0, arrLength), [arrLength]);
+  const arr = useMemo(() => COUNT_ARRAY.slice(0, arrLength), [COUNT_ARRAY, arrLength]);
   const [stateArr, setStateArr] = useState<BubbleItem[]>(arr as BubbleItem[]);
 
   useEffect(() => {
@@ -72,7 +79,7 @@ const Bubbles: React.FC<Props> = ({ arrLength = 4, editMode }) => {
       <div className={styles.mainBubble}>
         {arr?.map(item => (
           <div key={item.index} className={styles.bubbleWrapper}>
-            <Bubble color={item.color} onClick={handleBubbleClick(item.index, true)} />
+            <Bubble getValue={getValue} color={item.color} onClick={handleBubbleClick(item.index, true)} />
           </div>
         ))}
       </div>
@@ -81,7 +88,12 @@ const Bubbles: React.FC<Props> = ({ arrLength = 4, editMode }) => {
           <div key={item.index} className={styles.countContainer}>
             {totalBubbles.map((c, index) => (
               <div key={index + c} className={styles.bubbleWrapper} style={{ borderRight: 'none' }}>
-                <Bubble color={item.color} onClick={handleBubbleClick(item.index)} hidden={!item.count[index]} />
+                <Bubble
+                  getValue={getValue}
+                  color={item.color}
+                  onClick={handleBubbleClick(item.index)}
+                  hidden={!item.count[index]}
+                />
               </div>
             ))}
           </div>
