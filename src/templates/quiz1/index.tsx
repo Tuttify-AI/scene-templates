@@ -42,7 +42,7 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
     const { renderAudios, handleElementAudio, pauseAudios } = useAudios({ values, previewMode });
     const isActive = useCallback((key: keyof Quiz1SceneElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
-    const { getUserAnswerTime, clearTimer } = useAnswerTimer();
+    const { getUserAnswerTime, clearTimer } = useAnswerTimer(editMode || previewMode);
 
     const getEditClass = useCallback(
       (type: 'edit' | 'editText' | 'editRoot' = 'edit') => editMode && styles[type],
