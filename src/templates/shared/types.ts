@@ -70,7 +70,7 @@ export enum TemplateParameterType {
   select = 'select',
 }
 
-export type DefaultType = number | null | string;
+export type DefaultType = number | null | string | boolean;
 
 export type TemplateParameter = {
   type: TemplateParameterType;
@@ -112,7 +112,7 @@ export type ActiveElementData = {
   answer?: string | number;
   value?: string;
   answerTime?: number;
-  [key: string]: string | undefined | boolean | number | null;
+  [key: string]: string | undefined | boolean | number | null | number[];
 };
 
 export type Translations = {

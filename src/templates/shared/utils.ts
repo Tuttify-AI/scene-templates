@@ -1,4 +1,4 @@
-import { Elements, GetValue, Mods, Parameters, TemplateParameter } from './types';
+import { DefaultType, Elements, GetValue, Mods, Parameters, TemplateParameter } from './types';
 
 export const isInViewport = (el: HTMLElement | null) => {
   const rect = el?.getBoundingClientRect();
@@ -76,3 +76,27 @@ export const randomizeArray = (arr: string[]) => arr.sort(() => Math.random() - 
 
 export const arrayIsEqual = (arr1?: unknown[], arr2?: unknown[]) =>
   arr1?.slice().sort().join('') === arr2?.slice().sort().join('');
+
+export function checkArray(answer_arr: DefaultType[]) {
+  if (!answer_arr?.length) {
+    return false;
+  }
+  for (let i = 0; i < answer_arr.length; i++) {
+    const index = answer_arr[i];
+    if (!index && typeof index != 'number') {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function checkCorrectWord(answerArr: DefaultType[], allArr: string[], word: string) {
+  const answer = [] as string[];
+  for (let i = 0; i < answerArr.length; i++) {
+    const index = answerArr[i];
+    if (!index && typeof index != 'number') {
+      return false;
+    } else if (typeof index === 'number') answer[i] = allArr[index];
+  }
+  return answer.join() === word;
+}
