@@ -109,7 +109,7 @@ const TenFrames1 = forwardRef<HTMLDivElement, TenFrames1SceneProps>(
           className={clsx(
             styles.answerNumberItem,
             (selectedNumber !== null || dragTargetItem === type) && !predefinedValues[type] && styles.empty,
-            !value && showQuestionMark && styles.questionMark
+            typeof value !== 'number' && !value && showQuestionMark && styles.questionMark
           )}
           onDragOver={onDragOver}
           onDrop={onDrop}
