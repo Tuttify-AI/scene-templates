@@ -1,4 +1,4 @@
-import { getNumber } from '../shared/utils';
+import { getNumber, getOperandResult } from '../shared/utils';
 
 export function checkArray(answer_arr: (number | null)[]) {
   if (!answer_arr?.length) {
@@ -31,10 +31,6 @@ export function checkCorrectResult(
   operand: string
 ) {
   if (first !== null && second !== null && result !== null) {
-    return operand === '×'
-      ? getNumber(first) * getNumber(second) === getNumber(result)
-      : operand === '+'
-      ? getNumber(first) + getNumber(second) === getNumber(result)
-      : getNumber(first) - getNumber(second) === getNumber(result);
+    return getOperandResult(getNumber(first), getNumber(second), operand) === getNumber(result);
   } else return false;
 }

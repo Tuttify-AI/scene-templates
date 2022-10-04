@@ -100,3 +100,17 @@ export function checkCorrectWord(answerArr: DefaultType[], allArr: string[], wor
   }
   return answer.join() === word;
 }
+
+export const getOperandResult = (number1: number, number2: number, operand: '+' | '-' | '×' | string) => {
+  switch (operand) {
+    case '×': {
+      return number1 * number2;
+    }
+    case '-': {
+      return number1 - number2;
+    }
+    default: {
+      return number1 + number2;
+    }
+  }
+};

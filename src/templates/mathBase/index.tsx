@@ -92,7 +92,7 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
           className={clsx(
             styles.answerNumberItem,
             (selectedNumber !== null || dragTargetItem === type) && !predefinedValues[type] && styles.empty,
-            !value && showQuestionMark && styles.questionMark
+            typeof value !== 'number' && !value && showQuestionMark && styles.questionMark
           )}
           onDragOver={onDragOver}
           onDrop={onDrop}
