@@ -24,7 +24,7 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
     ref
   ) => {
     const getValue = useMemo(() => getElementValue<CountingElements>(values), [values]);
-    const { getUserAnswerTime, clearTimer } = useAnswerTimer();
+    const { getUserAnswerTime, clearTimer } = useAnswerTimer(editMode || previewMode);
     const {
       predefinedValues,
       selectionFontSize,
@@ -79,7 +79,6 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
     );
     const isActive = useCallback((key: keyof CountingElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
-
     const renderNumber = (type: keyof typeof answer, value: DefaultType) => (
       <div
         key={type}
@@ -92,7 +91,8 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
           id={getElementId(type, previewMode)}
           className={clsx(
             styles.answerNumberItem,
-            (selectedNumber !== null || dragTargetItem === type) && !predefinedValues[type] && styles.empty
+            (selectedNumber !== null || dragTargetItem === type) && !predefinedValues[type] && styles.empty,
+            !value && showQuestionMark && styles.questionMark
           )}
           onDragOver={onDragOver}
           onDrop={onDrop}
@@ -108,7 +108,7 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
             } as CSSProperties
           }
         >
-          {value ?? (showQuestionMark ? <span className={styles.questionMark}>?</span> : '')}
+          {value ?? (showQuestionMark ? '?' : '')}
         </p>
       </div>
     );
