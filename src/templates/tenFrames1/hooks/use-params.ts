@@ -54,21 +54,17 @@ export default function useParams({ values, previewMode, editMode, onSet }: Para
     const hideNumber4 = totalNumbers < 4;
     if (getConfig('number_3')?.hidden && showNumber3) {
       onSetConfig('number_3', false, 'hidden');
-      getConfig('math_second_operand')?.hidden && onSetConfig('math_second_operand', false, 'hidden');
     }
     if (!getConfig('number_3')?.hidden && hideNumber3) {
       onSetConfig('number_3', true, 'hidden');
       getConfig('number_3')?.value && onSetConfig('number_3', '', 'value');
-      !getConfig('math_second_operand')?.hidden && onSetConfig('math_second_operand', true, 'hidden');
     }
     if (getConfig('number_4')?.hidden && showNumber4) {
       onSetConfig('number_4', false, 'hidden');
-      getConfig('math_third_operand')?.hidden && onSetConfig('math_third_operand', false, 'hidden');
     }
     if (!getConfig('number_4')?.hidden && hideNumber4) {
       onSetConfig('number_4', true, 'hidden');
       getConfig('number_4')?.value && onSetConfig('number_4', '', 'value');
-      !getConfig('math_third_operand')?.hidden && onSetConfig('math_third_operand', true, 'hidden');
     }
   }, [totalNumbers, onSetConfig, getConfig]);
 
