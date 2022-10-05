@@ -3,7 +3,7 @@ import { SceneValue } from '../shared/types';
 import { clsx, getElementValue } from '../shared/utils';
 import Bubble from './bubble';
 import styles from './styles.module.css';
-import { CountingElements } from './types';
+import { TenFramesElements } from './types';
 
 type BubbleItem = {
   index: number;
@@ -12,13 +12,13 @@ type BubbleItem = {
 };
 
 type Props = {
-  values?: CountingElements<SceneValue>;
+  values?: TenFramesElements<SceneValue>;
   arrLength: number;
   editMode?: boolean;
 };
 
 const Bubbles: React.FC<Props> = ({ values, arrLength = 4, editMode }) => {
-  const getValue = useMemo(() => getElementValue<CountingElements>(values), [values]);
+  const getValue = useMemo(() => getElementValue<TenFramesElements>(values), [values]);
   const COUNT_ARRAY: BubbleItem[] = useMemo(
     () => [
       {

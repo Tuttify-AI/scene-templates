@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActiveElementData, SceneValue } from '../../shared/types';
 import { getElementValue } from '../../shared/utils';
-import { CountingElements } from '../types';
+import { TenFramesElements } from '../types';
 import { useActions } from '../../shared/hooks';
 import useParams from './use-params';
 import { checkMultiCorrectResult } from '../utils';
@@ -21,7 +21,7 @@ type UseNumbersActionParams = {
   mathSecondOperand: ReturnType<typeof useParams>['mathSecondOperand'];
   mathThirdOperand: ReturnType<typeof useParams>['mathThirdOperand'];
   editMode?: boolean;
-  values?: CountingElements<SceneValue>;
+  values?: TenFramesElements<SceneValue>;
   handleClick?: ReturnType<typeof useActions>['handleClick'];
   handleComplete?: ReturnType<typeof useActions>['handleComplete'];
   handleSceneSolved?: ReturnType<typeof useActions>['handleSceneSolved'];
@@ -41,7 +41,7 @@ const useNumbersAction = ({
 }: UseNumbersActionParams) => {
   const [selectedNumber, setSelectedNumber] = useState<number | null>(null);
   const [answer, setAnswer] = useState(predefinedValues);
-  const getValue = useMemo(() => getElementValue<CountingElements>(values), [values]);
+  const getValue = useMemo(() => getElementValue<TenFramesElements>(values), [values]);
   const [fullScreen, setFullScreen] = useState(INITIAL_STATE);
 
   const onClearAnswer = useCallback(() => setAnswer(predefinedValues), [predefinedValues]);

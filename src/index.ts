@@ -22,6 +22,7 @@ import Twocando, { TwocandoSceneProps } from './templates/twocando';
 import Counting, { CountingSceneProps } from './templates/counting';
 import MathBase, { MathBaseSceneProps } from './templates/mathBase';
 import TenFrames1, { TenFrames1SceneProps } from './templates/tenFrames1';
+import TenFrames2, { TenFrames2SceneProps } from './templates/tenFrames2';
 
 import base from './templates/base/assets/preview';
 import base2 from './templates/base2/assets/preview';
@@ -42,7 +43,6 @@ import parallax1 from './templates/parallax1/assets/preview';
 import twocando from './templates/twocando/assets/preview';
 import wordGuess from './templates/wordGuess/assets/preview';
 import mathBase from './templates/mathBase/assets/preview';
-import tenFrames1 from './templates/tenFrames1/assets/preview';
 
 const previews = {
   base,
@@ -64,7 +64,6 @@ const previews = {
   wordGuess,
   twocando,
   mathBase,
-  tenFrames1,
 };
 
 export {
@@ -112,6 +111,7 @@ export type {
   CountingSceneProps,
   MathBaseSceneProps,
   TenFrames1SceneProps,
+  TenFrames2SceneProps,
 };
 
 export const AVAILABLE_SCENES = {
@@ -201,6 +201,10 @@ export const AVAILABLE_SCENES = {
   },
   [SceneNames.TenFrames1]: {
     component: TenFrames1,
-    previewImage: previews.tenFrames1,
+    previewImage: null,
+  },
+  [SceneNames.TenFrames2]: {
+    component: TenFrames2,
+    previewImage: null,
   },
 };

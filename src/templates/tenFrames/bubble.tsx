@@ -2,10 +2,10 @@ import React from 'react';
 import { DefaultType, GetValue } from '../shared/types';
 import { clsx } from '../shared/utils';
 import styles from './styles.module.css';
-import { CountingElements } from './types';
+import { TenFramesElements } from './types';
 
 type Props = {
-  getValue: GetValue<CountingElements<string | number>, DefaultType | DefaultType[] | undefined>;
+  getValue: GetValue<TenFramesElements<string | number>, DefaultType | DefaultType[] | undefined>;
   hidden?: boolean;
   color: string;
   onClick: () => void;

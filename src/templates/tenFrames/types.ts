@@ -13,7 +13,7 @@ export type TenFramesBaseConfig<T = SceneValue> = {
   show_question_mark: T;
 };
 
-export type CountingElements<T = string | number> = Elements<T> & {
+export type TenFramesElements<T = string | number> = Elements<T> & {
   title?: Parameters<T>;
   config?: TenFramesBaseConfig<T>;
   image?: Parameters<T>;
