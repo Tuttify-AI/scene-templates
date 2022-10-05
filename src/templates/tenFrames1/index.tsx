@@ -10,7 +10,7 @@ export type TenFrames1SceneProps = SceneProps & {
 };
 
 const TenFrames1 = forwardRef<HTMLDivElement, TenFrames1SceneProps>((props, ref) => {
-  return <TenFrames {...props} ref={ref} />;
+  return <TenFrames {...props} ref={ref} showBubbles />;
 });
 
 export default TenFrames1;
