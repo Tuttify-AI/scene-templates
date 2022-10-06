@@ -222,7 +222,6 @@ const TenFrames = forwardRef<HTMLDivElement, TenFrames1SceneProps>(
             showBubbles={showBubbles}
             operationNumbersArray={operationNumbersArray}
             values={values}
-            arrLength={operationNumbersArray?.length}
             editMode={editMode}
           />
         </div>
