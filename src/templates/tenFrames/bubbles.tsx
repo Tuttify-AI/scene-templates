@@ -75,7 +75,7 @@ const Bubbles: React.FC<Props> = ({ values, arrLength = 4, editMode, showBubbles
 
   const handleBubbleClick = useCallback(
     (i: number, isAdd?: boolean) => () => {
-      if (!editMode) {
+      if (!editMode && !showBubbles) {
         const current = stateArr.find((a: BubbleItem) => a.index === i);
         if (isAdd && current) {
           if (current.count.length < totalBubbles.length)
@@ -89,7 +89,7 @@ const Bubbles: React.FC<Props> = ({ values, arrLength = 4, editMode, showBubbles
         }
       } else return;
     },
-    [editMode, stateArr, totalBubbles]
+    [editMode, showBubbles, stateArr, totalBubbles.length]
   );
 
   return (
