@@ -89,6 +89,7 @@ export type SceneValue = {
   max_length?: number;
   max_array_length?: number;
   min_length?: number;
+  hidden_helper_text?: boolean;
   max?: number;
   min?: number;
   hidden?: boolean;
