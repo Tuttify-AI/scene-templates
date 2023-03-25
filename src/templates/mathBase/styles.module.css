@@ -14,7 +14,7 @@
 .root {
     z-index: 1;
     width: 100%;
-    height: 600px;
+    height: 60vh;
     position: relative;
     border-radius: var(--mainBorderRadius);
     background: var(--colorWhite);
@@ -41,7 +41,7 @@
 
 .preview.root {
     width: 1200px;
-    height: 600px;
+    height: 60vh;
     position: fixed;
     top: 0;
     left: 0;
