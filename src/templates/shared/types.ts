@@ -113,6 +113,7 @@ export type ActiveElementData = {
   answer?: string | number;
   value?: string;
   answerTime?: number;
+  answerPosition?: number;
   [key: string]: string | undefined | boolean | number | null | number[];
 };
 

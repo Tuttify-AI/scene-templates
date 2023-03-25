@@ -159,7 +159,7 @@ const useItemsAction = ({
     (answer: AnswerType[], index: number, totalLetterIndex: number | null) => {
       const isCorrect = totalLetterIndex !== null && totalItemsArray[totalLetterIndex] === itemsArray[index];
       const value = totalLetterIndex !== null ? totalItemsArray[totalLetterIndex] : undefined;
-      return getSceneData(answer, { isCorrect, value });
+      return getSceneData(answer, { isCorrect, value, answerPosition: index });
     },
     [itemsArray, totalItemsArray, getSceneData]
   );
