@@ -6,6 +6,16 @@
   "files": [
     "build"
   ],
+  "scripts": {
+    "build": "rollup -c",
+    "start": "rollup -c -w",
+    "install-dev": "npm install && rm -rf ./node_modules/react  && rm -rf ./node_modules/react-dom && rm -rf ./node_modules/@types/react",
+    "format": "prettier --write \"**/*.+(ts|tsx)\"",
+    "prepublishOnly": "rm -rf /build && npm run build",
+    "type-check": "tsc --pretty --noEmit --skipLibCheck",
+    "lint": "eslint . --ext ts --ext tsx",
+    "prepare": "husky install"
+  },
   "peerDependencies": {
     "@react-spring/web": "^9.5.4",
     "react": "^17.0.1",
@@ -22,16 +32,6 @@
     "react-dom": "^17.0.1",
     "react-player": "^2.10.1",
     "swiper": "^8.1.6"
-  },
-  "scripts": {
-    "build": "rollup -c",
-    "start": "rollup -c -w",
-    "install-dev": "npm install && rm -rf ./node_modules/react  && rm -rf ./node_modules/react-dom && rm -rf ./node_modules/@types/react",
-    "format": "prettier --write \"**/*.+(ts|tsx)\"",
-    "prepublishOnly": "rm -rf /build && npm run build",
-    "type-check": "tsc --pretty --noEmit --skipLibCheck",
-    "lint": "eslint . --ext ts --ext tsx",
-    "prepare": "husky install"
   },
   "eslintConfig": {
     "extends": [
