@@ -240,6 +240,8 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
               >
                 <p
                   id={getElementId(`answer_${answerIndex}`, previewMode)}
+                  data-answer-position={index}
+                  data-answer-value={answerIndex !== null && totalItemsArray[answerIndex]}
                   className={clsx(styles.answerLetterItem, ...answerLetterClasses(answerIndex, index))}
                   onDragOver={onDragOver}
                   onDrop={onDrop}
