@@ -1,0 +1,97 @@
+{
+  "name": "@blipiqlabs/scene-templates",
+  "version": "1.2.1",
+  "main": "build/index.js",
+  "module": "build/index.es.js",
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "start": "rollup -c -w",
+    "install-dev": "npm install && rm -rf ./node_modules/react  && rm -rf ./node_modules/react-dom && rm -rf ./node_modules/@types/react",
+    "format": "prettier --write \"**/*.+(ts|tsx)\"",
+    "prepublishOnly": "rm -rf /build && npm run build",
+    "type-check": "tsc --pretty --noEmit --skipLibCheck",
+    "lint": "eslint . --ext ts --ext tsx",
+    "prepare": "husky install"
+  },
+  "peerDependencies": {
+    "@react-spring/web": "^9.5.4",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-player": "^2.10.1",
+    "swiper": "^8.1.6"
+  },
+  "dependencies": {
+    "@react-spring/web": "^9.5.4",
+    "@types/react": "^17.0.48",
+    "@types/react-dom": "^17.0.17",
+    "postcss": "^8.4.14",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-player": "^2.10.1",
+    "swiper": "^8.1.6"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BlipIQSciences/scene-templates.git"
+  },
+  "author": "blipiq",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/BlipIQSciences/scene-templates/issues"
+  },
+  "homepage": "https://github.com/BlipIQSciences/scene-templates#readme",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "lint-staged": {
+    "*.@(ts|tsx)": [
+      "npm run lint",
+      "npm run format"
+    ]
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^22.0.2",
+    "@rollup/plugin-image": "^2.0.6",
+    "@rollup/plugin-node-resolve": "^14.1.0",
+    "@rollup/plugin-url": "^7.0.0",
+    "@svgr/rollup": "^6.3.1",
+    "@typescript-eslint/eslint-plugin": "^5.37.0",
+    "@typescript-eslint/parser": "^5.37.0",
+    "autoprefixer": "^10.4.10",
+    "eslint": "8.22.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.6.1",
+    "eslint-plugin-react": "^7.31.8",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "postcss": "^8.4.16",
+    "prettier": "^2.7.1",
+    "rollup": "^2.79.0",
+    "rollup-plugin-import-file": "^1.0.1",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-styles": "^4.0.0",
+    "rollup-plugin-typescript2": "^0.34.0",
+    "tslib": "^2.4.0",
+    "typescript": "^4.8.3"
+  }
+}

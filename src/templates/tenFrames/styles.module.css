@@ -1,0 +1,435 @@
+@value bounceZoom from "../shared/shared.css";
+
+:root {
+    --shape-box-shadow: 1px 1px 12px 1px rgba(100, 100, 100, 0.8);
+    --text-shadow: 0 0 12px rgba(100, 100, 100, 0.8);
+    --colorWhite: #fff;
+    --colorBlack: #000;
+    --colorGray: rgba(100, 100, 100, 0.5);
+    --centerTransform: translate(-50%, -50%);
+    --mainBorderRadius: 16px;
+    --highlightSuccessColor: green;
+    --highlightErrorColor: red;
+}
+
+.root {
+    z-index: 1;
+    width: 100%;
+    height: 60vh;
+    position: relative;
+    border-radius: var(--mainBorderRadius);
+    background: var(--colorWhite);
+    font-family: 'Lato', sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+.root > *.edit {
+    transition: all 0.25s ease-in-out;
+}
+
+.root.editRoot {
+    transition: box-shadow 1s ease-in-out;
+}
+
+.root > * {
+    box-sizing: border-box;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.preview.root {
+    width: 1200px;
+    height: 60vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    border-radius: 0;
+    opacity: 0;
+}
+
+.activeDiv {
+    position: absolute;
+    z-index: 10;
+    border-radius: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transition: all 0.20s ease-in-out;
+    padding: 8px;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.activeDiv.showActiveDiv {
+    animation: bounceZoom 0.25s;
+}
+
+.activeDiv.hideActiveDiv {
+    transform: scale(0);
+    z-index: -1;
+}
+
+.fullScreenText {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    z-index: 6;
+    font-size: 40px;
+    text-align: center;
+}
+
+
+.activeImage {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 8px;
+    background-repeat: no-repeat;
+}
+
+.activeDiv.edit, .activeDiv.preview {
+    display: none;
+}
+
+.activeDiv.hideActiveDiv > .activeImage,  .activeDiv.hideActiveDiv > .activeText {
+    display: none;
+}
+
+.edit:hover {
+    box-shadow: var(--shape-box-shadow);
+}
+
+.active {
+    box-shadow: var(--shape-box-shadow);
+}
+
+.activeImageWrap {
+    position: relative;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 100%;
+}
+
+.image {
+    width: 100%;
+    height: 100%;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    margin-bottom: 8px;
+}
+
+.image.edit:hover {
+    border-radius: var(--mainBorderRadius);
+}
+
+.activeImage {
+    background-position: center center;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    padding: 8px;
+    border-radius: var(--mainBorderRadius);
+}
+
+.activeText {
+    width: 100%;
+    padding: 16px;
+    text-align: center;
+    font-weight: bold;
+    word-break: break-word;
+    --fullscreen-text-color: var(--colorWhite);
+    color: var(--fullscreen-text-color);
+}
+
+.selectionNumbers {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    z-index: 2;
+    flex-wrap: wrap;
+    border-radius: var(--mainBorderRadius);
+}
+
+.selectionNumbers.edit {
+    cursor: pointer;
+}
+
+.selectionNumberItemWrapper {
+    padding: 8px;
+    min-width: 15%;
+}
+
+.selectionNumberItemWrapper.selected {
+    animation: bounce 0.3s;
+    animation-direction: alternate;
+    animation-timing-function: cubic-bezier(.5, 0.05, 1, .5);
+    animation-iteration-count: infinite;
+}
+
+.selectionNumberItemWrapper.disabled {
+    opacity: 0.3;
+}
+
+.selectionNumberItem {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    padding: 0 8px;
+    width: auto;
+    cursor: pointer;
+    border-radius: var(--mainBorderRadius);
+    color: var(--colorBlack);
+    z-index: 2;
+}
+
+.selectionNumberItem.edit:hover {
+    box-shadow: none;
+}
+
+.selectionNumberItem.withHover:hover {
+    box-shadow: var(--shape-box-shadow);
+}
+
+.selectionNumberItem.withHover.dragged:hover {
+    box-shadow: none;
+    background-color: rgba(100, 100, 100, 0.2);
+}
+
+.wrapper {
+    width: 100%;
+    display: flex;
+    padding: 8px 16px;
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.wrapper.edit {
+    cursor: pointer;
+    border-radius: var(--mainBorderRadius);
+}
+
+.answerTextWrapper{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--mainBorderRadius);
+}
+
+.answerTextWrapper.edit {
+    cursor: pointer;
+}
+
+.answerNumberItemWrapper{
+    padding: 8px;
+    min-width: 13%;
+}
+
+.answerNumberItem {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    font-weight: bold;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: var(--mainBorderRadius);
+    border: 2px solid rgba(100, 100, 100, 0.5);
+    color: var(--colorBlack);
+}
+
+.operand {
+    padding: 8px;
+    font-weight: bold;
+}
+
+.questionMark {
+    opacity: 0.3;
+}
+
+.empty {
+    transform: scale(1);
+    animation: pulseSelect 1s infinite;
+}
+.bubbleContainer{
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--colorGray);
+    display: flex;
+    justify-content: flex-start;
+    padding: 8px 0;
+    z-index: 5;
+    border-radius: var(--mainBorderRadius);
+}
+.mainBubble{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 9%;
+    height: 100%;
+}
+
+.mainBubble .bubbleWrapper {
+    flex: 1;
+}
+
+.countBubble{
+    width: 100%;
+    flex: 1 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.countContainer{
+    display: flex;
+    flex-wrap: nowrap;
+    flex: 1;
+    justify-content: flex-start;
+    align-items: center;
+}
+.bubbleWrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    flex: 1;
+    border-right: 2px solid var(--colorGray);
+}
+.bubble{
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    transition: transform 0.25s ease-in-out;
+    cursor: pointer;
+}
+
+.bubbleHidden {
+    transform: scale(0);
+}
+.answerNumberItem.correct {
+    transform: scale(1);
+    animation: pulseSuccess 1s infinite;
+}
+
+.answerNumberItem.incorrect {
+    transform: scale(1);
+    animation: pulseError 1s infinite;
+}
+
+@media screen and (max-width: 600px) {
+    .root:not(.preview) {
+        height: 500px;
+    }
+    .wrapper:not(.preview){
+        padding: 8px;
+    }
+}
+
+@media screen and (max-width: 1100px) {
+    .wrapper:not(.preview) .bubbleWrapper {
+       padding: 4px;
+    }
+    .wrapper:not(.preview) .bubble {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .wrapper:not(.preview) .bubbleWrapper {
+        padding: 4px;
+    }
+    .wrapper:not(.preview) .bubble {
+        width: 20px;
+        height: 20px;
+    }
+    .operand {
+        padding: 4px;
+    }
+}
+
+
+@keyframes pulseSuccess {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 var(--highlightSuccessColor);
+    }
+
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(51, 217, 178, 0);
+    }
+
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(51, 217, 178, 0);
+    }
+}
+
+@keyframes pulseError {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 var(--highlightErrorColor);
+    }
+
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(51, 217, 178, 0);
+    }
+
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(51, 217, 178, 0);
+    }
+}
+
+@keyframes pulseSelect {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 gray;
+    }
+
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(51, 217, 178, 0);
+    }
+
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(51, 217, 178, 0);
+    }
+}
+
+@keyframes bounce {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(0, -10%, 0);
+    }
+}

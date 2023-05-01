@@ -1,0 +1,475 @@
+:root {
+    --shape-box-shadow: 1px 1px 12px 1px rgba(100, 100, 100, 0.8);
+    --text-shadow: 0 0 12px rgba(100, 100, 100, 0.8);
+    --colorWhite: #fff;
+    --colorLightGray: #ecf2f6;
+    --colorMediumGray: rgba(255, 255, 255, 0.3);
+    --colorYellow: #ffdc60;
+    --colorViolet: #5956e9;
+    --colorCoral: #fab8c4;
+}
+
+.scroll {
+    position: absolute;
+    top: 0;
+}
+
+.root {
+    position: relative;
+    width: 100%;
+    height: 60vh;
+    background: var(--colorLightGray);
+    border-radius: 16px;
+    text-align: center;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.root.editRoot {
+    transition: all 1s ease-in-out;
+}
+
+.root *.edit {
+    transition: all 0.25s ease-in-out;
+}
+
+.active,
+.edit:hover {
+    box-shadow: var(--shape-box-shadow);
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+/* Preview Images */
+
+.previewImage {
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    display: flex;
+    object-fit: contain;
+    border-radius: 4px;
+    user-select: none;
+    cursor: pointer;
+    z-index: 4;
+}
+
+.previewImage1 {
+    max-width: 324px;
+    max-height: 480px;
+}
+
+.previewImage2 {
+    max-width: 200px;
+    max-height: 280px;
+}
+
+.previewImage3 {
+    max-width: 142px;
+    max-height: 250px;
+}
+
+/* Circles */
+
+.circle1 {
+    background: var(--colorViolet);
+    width: 316px;
+    height: 316px;
+    left: calc(50% - 158px);
+    top: calc(50% - 158px);
+    z-index: 3;
+}
+
+.circle2 {
+    background: var(--colorMediumGray);
+    width: 400px;
+    height: 400px;
+    left: calc(50% - 200px);
+    top: calc(50% - 200px);
+    z-index: 2;
+}
+
+.circle3 {
+    background: var(--colorMediumGray);
+    width: 480px;
+    height: 480px;
+    left: calc(50% - 240px);
+    top: calc(50% - 240px);
+}
+
+/* Cloud Images */
+
+.cloudImage {
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    object-fit: contain;
+    border-radius: 4px;
+    user-select: none;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.cloudImage1 {
+    max-width: 116px;
+    max-height: 170px;
+}
+
+.cloudImage2 {
+    max-width: 76px;
+    max-height: 120px;
+}
+
+/* Balls */
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.ball1 {
+    background: var(--colorWhite);
+    width: 12px;
+    height: 12px;
+    top: 180px;
+    left: calc(50% - 408px);
+}
+
+.ball2 {
+    background: var(--colorWhite);
+    width: 22px;
+    height: 22px;
+    left: calc(50% - 264px);
+    bottom: 68px;
+}
+
+.ball3 {
+    background: var(--colorWhite);
+    width: 22px;
+    height: 22px;
+    top: 98px;
+    left: calc(50% - 246px);
+}
+
+.ball4 {
+    background: var(--colorWhite);
+    width: 12px;
+    height: 12px;
+    right: calc(50% - 360px);
+    bottom: 116px;
+}
+
+.ball5 {
+    background: var(--colorYellow);
+    width: 60px;
+    height: 60px;
+    left: calc(50% - 372px);
+    bottom: 23%;
+}
+
+.ball6 {
+    background: var(--colorViolet);
+    width: 32px;
+    height: 32px;
+    top: 140px;
+    right: calc(50% - 312px);
+}
+
+.ball7 {
+    background: var(--colorCoral);
+    width: 53px;
+    height: 53px;
+    top: 45%;
+    right: calc(50% - 486px);
+}
+
+.preview.root {
+    width: 1200px;
+    height: 60vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    border-radius: 0;
+    opacity: 0;
+}
+
+@media (max-width: 1439px) {
+    .ball1:not(.preview) {
+        left: calc(50% - 380px);
+    }
+
+    .ball4:not(.preview) {
+        right: calc(50% - 320px);
+    }
+
+    .ball5:not(.preview) {
+        left: calc(50% - 360px);
+    }
+
+    .ball7:not(.preview) {
+        right: calc(50% - 405px);
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+    .ball1:not(.preview) {
+        left: calc(50% - 308px);
+    }
+
+    .ball2:not(.preview) {
+        left: calc(50% - 252px);
+    }
+
+    .ball4:not(.preview) {
+        right: calc(50% - 265px);
+    }
+
+    .ball5:not(.preview) {
+        left: calc(50% - 306px);
+    }
+
+    .ball6:not(.preview) {
+        right: calc(50% - 280px);
+    }
+
+    .ball7:not(.preview) {
+        right: calc(50% - 306px);
+    }
+}
+
+@media (max-width: 767px) {
+    .previewImage1:not(.preview) {
+        max-width: 270px;
+    }
+
+    .previewImage2:not(.preview) {
+        max-width: 166px;
+    }
+
+    .previewImage3:not(.preview) {
+        max-width: 118px;
+    }
+
+    .circle1:not(.preview) {
+        width: 262px;
+        height: 262px;
+        left: calc(50% - 131px);
+        top: calc(50% - 131px);
+    }
+
+    .circle2:not(.preview) {
+        width: 332px;
+        height: 332px;
+        left: calc(50% - 166px);
+        top: calc(50% - 166px);
+    }
+
+    .circle3:not(.preview) {
+        width: 400px;
+        height: 400px;
+        left: calc(50% - 200px);
+        top: calc(50% - 200px);
+    }
+
+    .cloudImage1:not(.preview) {
+        max-width: 96px;
+    }
+
+    .cloudImage2:not(.preview) {
+        max-width: 76px;
+    }
+
+    .ball1:not(.preview) {
+        left: calc(50% - 266px);
+    }
+
+    .ball2:not(.preview) {
+        left: calc(50% - 200px);
+    }
+
+    .ball3:not(.preview) {
+        left: calc(50% - 206px);
+    }
+
+    .ball4:not(.preview) {
+        right: calc(50% - 220px);
+    }
+
+    .ball5:not(.preview) {
+        left: calc(50% - 260px);
+    }
+
+    .ball6:not(.preview) {
+        right: calc(50% - 230px);
+    }
+
+    .ball7:not(.preview) {
+        right: calc(50% - 266px);
+    }
+}
+
+@media (max-width: 639px) {
+    .root:not(.preview) {
+        height: 535px;
+    }
+
+    .previewImage1:not(.preview) {
+        max-width: 225px;
+    }
+
+    .previewImage2:not(.preview) {
+        max-width: 138px;
+    }
+
+    .previewImage3:not(.preview) {
+        max-width: 98px;
+    }
+
+    .circle1:not(.preview) {
+        width: 218px;
+        height: 218px;
+        left: calc(50% - 109px);
+        top: calc(50% - 109px);
+    }
+
+    .circle2:not(.preview) {
+        width: 276px;
+        height: 276px;
+        left: calc(50% - 138px);
+        top: calc(50% - 138px);
+    }
+
+    .circle3:not(.preview) {
+        width: 332px;
+        height: 332px;
+        left: calc(50% - 166px);
+        top: calc(50% - 166px);
+    }
+
+    .cloudImage1:not(.preview) {
+        max-width: 80px;
+    }
+
+    .cloudImage2:not(.preview) {
+        max-width: 63px;
+    }
+
+    .ball1:not(.preview) {
+        top: 150px;
+        left: calc(50% - 186px);
+    }
+
+    .ball2:not(.preview) {
+        left: calc(50% - 104px);
+    }
+
+    .ball3:not(.preview) {
+        top: 70px;
+        left: calc(50% - 130px);
+    }
+
+    .ball4:not(.preview) {
+        right: calc(50% - 186px);
+        bottom: 132px;
+    }
+
+    .ball5:not(.preview) {
+        left: calc(50% - 202px);
+        bottom: 21%;
+    }
+
+    .ball6:not(.preview) {
+        top: 100px;
+        right: calc(50% - 192px);
+    }
+
+    .ball7:not(.preview) {
+        top: auto;
+        right: calc(50% - 145px);
+        bottom: 10%;
+    }
+}
+
+@media (max-width: 479px) {
+    .previewImage1:not(.preview) {
+        max-width: 169px;
+    }
+
+    .previewImage2:not(.preview) {
+        max-width: 104px;
+    }
+
+    .previewImage3:not(.preview) {
+        max-width: 74px;
+    }
+
+    .circle1:not(.preview) {
+        width: 164px;
+        height: 164px;
+        left: calc(50% - 82px);
+        top: calc(50% - 82px);
+    }
+
+    .circle2:not(.preview) {
+        width: 208px;
+        height: 208px;
+        left: calc(50% - 104px);
+        top: calc(50% - 104px);
+    }
+
+    .circle3:not(.preview) {
+        width: 250px;
+        height: 250px;
+        left: calc(50% - 125px);
+        top: calc(50% - 125px);
+    }
+
+    .cloudImage1:not(.preview) {
+        max-width: 60px;
+    }
+
+    .cloudImage2:not(.preview) {
+        max-width: 44px;
+    }
+
+    .ball1:not(.preview) {
+        top: 100px;
+        left: calc(50% - 100px);
+    }
+
+    .ball2:not(.preview) {
+        left: calc(50% - 62px);
+        bottom: 36px;
+    }
+
+    .ball3:not(.preview) {
+        top: 50px;
+        left: calc(50% - 50px);
+    }
+
+    .ball4:not(.preview) {
+        right: calc(50% - 98px);
+        top: 116px;
+        bottom: auto;
+    }
+
+    .ball5:not(.preview) {
+        width: 50px;
+        height: 50px;
+        left: calc(50% - 124px);
+        bottom: 18%;
+    }
+
+    .ball6:not(.preview) {
+        top: 60px;
+        right: calc(50% - 62px);
+    }
+
+    .ball7:not(.preview) {
+        right: calc(50% - 68px);
+    }
+}
