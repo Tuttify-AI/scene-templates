@@ -1,8 +1,8 @@
 import React, { CSSProperties, forwardRef, useCallback, useMemo, useState, Fragment } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import {useActions, useWindowSize, useImage, useAudios, useTiles} from '../shared/hooks';
-import {clsx, getElementId} from '../shared/utils';
+import { useActions, useWindowSize, useImage, useAudios, useTiles } from '../shared/hooks';
+import { clsx, getElementId } from '../shared/utils';
 import { IMAGES } from './constants';
 
 import { Parameters, SceneProps, SceneValue, TemplateParameterType } from '../shared/types';
@@ -37,7 +37,13 @@ const MultipleTiles6 = forwardRef<HTMLDivElement, MultipleTiles6SceneProps>(
         (values?.[element]?.[parameter] as SceneValue)?.value,
       [values]
     );
-    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode, audios, onActiveElementClick });
+    const { handleClick } = useActions({
+      onClick,
+      getValue,
+      disabled: editMode || previewMode,
+      audios,
+      onActiveElementClick,
+    });
 
     const isActive = useCallback((key: keyof BaseSceneElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
@@ -102,22 +108,22 @@ const MultipleTiles6 = forwardRef<HTMLDivElement, MultipleTiles6SceneProps>(
       }
     };
 
-      const { handleDeleteTile,  getTileData } = useTiles({
-          tiles,
-          onSet,
-          handleAddTile,
-          values,
-          handleClick,
-          getValue,
-          defaultImages: IMAGES,
-          onActiveElementClick,
-          previewMode,
-          editMode,
-      });
+    const { handleDeleteTile, getTileData } = useTiles({
+      tiles,
+      onSet,
+      handleAddTile,
+      values,
+      handleClick,
+      getValue,
+      defaultImages: IMAGES,
+      onActiveElementClick,
+      previewMode,
+      editMode,
+    });
 
     return (
       <div
-         id={getElementId('background', previewMode)}
+        id={getElementId('background', previewMode)}
         onClick={handleClick('background')}
         className={clsx(styles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
@@ -151,9 +157,8 @@ const MultipleTiles6 = forwardRef<HTMLDivElement, MultipleTiles6SceneProps>(
           {tiles.map((k, index) => (
             <SwiperSlide key={k} className={styles.slideItem}>
               <div
-                  id={getElementId(k, previewMode)}
-
-                  onClick={handleClick(k, getTileData(k))}
+                id={getElementId(k, previewMode)}
+                onClick={handleClick(k, getTileData(k))}
                 className={clsx(styles.tile, isActive(k), getEditClass(), isPreview, classes?.tile)}
                 style={
                   {
@@ -171,9 +176,8 @@ const MultipleTiles6 = forwardRef<HTMLDivElement, MultipleTiles6SceneProps>(
                 )}
               </div>
               <img
-                  id={getElementId(`image_${k}`, previewMode)}
-
-                  alt={`image_${k}`}
+                id={getElementId(`image_${k}`, previewMode)}
+                alt={`image_${k}`}
                 src={(getValue(`image_${k}`, 'url') as string) || IMAGES[index] || IMAGES[0]}
                 onClick={handleClick(`image_${k}`, getTileData(k))}
                 onLoad={() => onImageLoad(`image_${k}`)}
@@ -188,9 +192,8 @@ const MultipleTiles6 = forwardRef<HTMLDivElement, MultipleTiles6SceneProps>(
                 )}
               />
               <p
-                  id={getElementId(`text_${k}`, previewMode)}
-
-                  onClick={handleClick(`text_${k}`, getTileData(k))}
+                id={getElementId(`text_${k}`, previewMode)}
+                onClick={handleClick(`text_${k}`, getTileData(k))}
                 className={clsx(
                   styles.tileText,
                   isActive(`text_${k}`),

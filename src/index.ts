@@ -3,8 +3,8 @@ import Base, { BaseSceneProps } from './templates/base';
 import Base2, { Base2SceneProps } from './templates/base2';
 import QuizOne, { QuizOneProps } from './templates/quiz1';
 import FullImage, { FullImageSceneProps } from './templates/fullImage';
-import FullImageWithButton , { FullImageWithButtonProps } from './templates/scene15';
-import FullVideo , { FullVideoSceneProps } from './templates/fullVideo';
+import FullImageWithButton, { FullImageWithButtonProps } from './templates/scene15';
+import FullVideo, { FullVideoSceneProps } from './templates/fullVideo';
 import MultipleTiles, { MultipleTilesSceneProps } from './templates/multipletiles';
 import MultipleTiles4, { MultipleTiles4SceneProps } from './templates/multipletiles4';
 import MultipleTiles4FullImage, { MultipleTiles4FullImageProps } from './templates/multipletiles4FullImg';
@@ -75,5 +75,5 @@ export type {
   MultipleTiles8SceneProps,
   MultipleTiles8FullImageProps,
   FullVideoSceneProps,
-    FullImageWithButtonProps,
+  FullImageWithButtonProps,
 };

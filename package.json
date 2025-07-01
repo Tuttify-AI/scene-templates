@@ -23,6 +23,7 @@
   },
   "scripts": {
     "build": "rollup -c",
+    "format": "prettier --write \"**/*.+(js|jsx|ts|tsx)\"",
     "prepublishOnly": "rm -rf /build && npm run build"
   },
   "eslintConfig": {

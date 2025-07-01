@@ -2,10 +2,10 @@ import React, { CSSProperties, forwardRef, useCallback, useMemo, useState, Fragm
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { useActions, useWindowSize, useImage, useAudios, useTiles } from '../shared/hooks';
-import {clsx, getElementId} from '../shared/utils';
+import { clsx, getElementId } from '../shared/utils';
 import { IMAGES } from './constants';
 
-import { ActiveElementData,Parameters, SceneProps, SceneValue, TemplateParameterType } from '../shared/types';
+import { ActiveElementData, Parameters, SceneProps, SceneValue, TemplateParameterType } from '../shared/types';
 import { BaseSceneElements, Classes } from './types';
 import SwiperClass from 'swiper/types/swiper-class';
 
@@ -108,7 +108,7 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
       }
     };
 
-    const { handleDeleteTile,  getTileData } = useTiles({
+    const { handleDeleteTile, getTileData } = useTiles({
       tiles,
       onSet,
       handleAddTile,
@@ -121,10 +121,9 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
       editMode,
     });
 
-
     return (
       <div
-          id={getElementId('background', previewMode)}
+        id={getElementId('background', previewMode)}
         onClick={handleClick('background')}
         className={clsx(styles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
@@ -157,8 +156,8 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
           {tiles.map((k, index) => (
             <SwiperSlide key={k} className={styles.slideItem}>
               <div
-                  id={getElementId(k, previewMode)}
-                onClick={handleClick(k, getTileData(k)  as ActiveElementData)}
+                id={getElementId(k, previewMode)}
+                onClick={handleClick(k, getTileData(k) as ActiveElementData)}
                 className={clsx(styles.tile, isActive(k), getEditClass(), isPreview, classes?.tile)}
                 style={
                   {
@@ -176,8 +175,8 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
                 )}
               </div>
               <img
-                  id={getElementId(`image_${k}`, previewMode)}
-                  alt={`image_${k}`}
+                id={getElementId(`image_${k}`, previewMode)}
+                alt={`image_${k}`}
                 src={(getValue(`image_${k}`, 'url') as string) || IMAGES[index] || IMAGES[0]}
                 onClick={handleClick(`image_${k}`, getTileData(k))}
                 onLoad={() => onImageLoad(`image_${k}`)}
@@ -192,7 +191,7 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
                 )}
               />
               <p
-                  id={getElementId(`text_${k}`, previewMode)}
+                id={getElementId(`text_${k}`, previewMode)}
                 onClick={handleClick(`text_${k}`, getTileData(k))}
                 className={clsx(
                   styles.tileText,

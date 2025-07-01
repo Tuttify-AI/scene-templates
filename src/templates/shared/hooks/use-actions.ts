@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, { useCallback } from 'react';
 import { ActiveElementData, AudioElements, Elements, Parameters, SceneProps } from '../types';
 
 type Params = {
@@ -10,16 +10,15 @@ type Params = {
 };
 
 export default function useActions({ disabled, getValue, onClick, audios, onActiveElementClick }: Params) {
-
-
-  const handleClick = useCallback((key: keyof Elements, data?: ActiveElementData) => async (e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation();
-    // if data is passed - implementing onActiveElementClick
-    onActiveElementClick && data && onActiveElementClick(`${key}`, data);
-    onClick && onClick(`${key}`, e.currentTarget);
-    if (getValue(key, 'sound') && !disabled) {
-      if (audios) {
-        await Promise.all(
+  const handleClick = useCallback(
+    (key: keyof Elements, data?: ActiveElementData) => async (e: React.MouseEvent<HTMLElement>) => {
+      e.stopPropagation();
+      // if data is passed - implementing onActiveElementClick
+      onActiveElementClick && data && onActiveElementClick(`${key}`, data);
+      onClick && onClick(`${key}`, e.currentTarget);
+      if (getValue(key, 'sound') && !disabled) {
+        if (audios) {
+          await Promise.all(
             Object.keys(audios).map(async audio => {
               const currentAudio = audios?.[audio]?.current;
               if (currentAudio) {
@@ -32,10 +31,12 @@ export default function useActions({ disabled, getValue, onClick, audios, onActi
                 }
               }
             })
-        );
+          );
+        }
       }
-    }
-  }, [audios, disabled, getValue, onClick, onActiveElementClick]);
+    },
+    [audios, disabled, getValue, onClick, onActiveElementClick]
+  );
 
   return {
     handleClick,
