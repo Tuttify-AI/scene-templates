@@ -1,7 +1,6 @@
 import * as Types from './templates/shared/types';
 import Base, { BaseSceneProps } from './templates/base';
 import Base2, { Base2SceneProps } from './templates/base2';
-import Base3, { Base3SceneProps } from './templates/base3';
 import QuizOne, { QuizOneProps } from './templates/quiz1';
 import FullImage, { FullImageSceneProps } from './templates/fullImage';
 import FullImageWithButton, { FullImageWithButtonProps } from './templates/scene15';
@@ -20,7 +19,6 @@ import AtomiHalloween from './templates/atomiHalloween';
 
 import base from './templates/base/assets/preview';
 import base2 from './templates/base2/assets/preview';
-import base3 from './templates/base3/assets/preview';
 import quiz1 from './templates/quiz1/assets/preview';
 import fullImage from './templates/fullImage/assets/preview';
 import fullImageWithButton from './templates/fullImage/assets/preview';
@@ -36,10 +34,30 @@ import spellbee from './templates/spellBee/assets/preview';
 import atomiHalloween from './templates/atomiHalloween/assets/preview';
 import parallax1 from './templates/parallax1/assets/preview';
 
+export enum Scenes {
+  Base = 'base',
+  Base2 = 'base2',
+  Quiz1 = 'quiz1',
+  FullImage = 'fullImage',
+  FullVideo = 'fullVideo',
+  MultipleTiles = 'multipletiles',
+  MultipleTiles4 = 'multipletiles4',
+  MultipleTiles4FullImage = 'multipletiles4FullImg',
+  MultipleTiles6FullImage = 'multipletiles6FullImg',
+  MultipleTiles8FullImage = 'multipletiles8FullImg',
+  MultipleTiles6 = 'multipletiles6',
+  MultipleTiles8 = 'multipletiles8',
+  FullImageWithButton = 'fullImageWithButton',
+  Tiles = 'tiles',
+  Spellbee = 'spellbee',
+  Parallax1 = 'parallax1',
+  Scene15 = 'scene15',
+  Atomi = 'atomi',
+}
+
 const previews = {
   base,
   base2,
-  base3,
   quiz1,
   fullImage,
   multipleTiles,
@@ -59,7 +77,6 @@ const previews = {
 export {
   Base,
   Base2,
-  Base3,
   QuizOne,
   FullImage,
   FullVideo,
@@ -80,7 +97,6 @@ export {
 export type {
   BaseSceneProps,
   Base2SceneProps,
-  Base3SceneProps,
   QuizOneProps,
   FullImageSceneProps,
   MultipleTilesSceneProps,
@@ -97,75 +113,71 @@ export type {
 };
 
 export const AVAILABLE_SCENES = {
-  base: {
+  [Scenes.Base]: {
     component: Base,
     previewImage: previews.base,
   },
-  base2: {
+  [Scenes.Base2]: {
     component: Base2,
     previewImage: previews.base2,
   },
-  base3: {
-    component: Base3,
-    previewImage: previews.base3,
-  },
-  atomi: {
+  [Scenes.Atomi]: {
     component: AtomiHalloween,
     previewImage: previews.atomiHalloween,
   },
-  quiz1: {
+  [Scenes.Quiz1]: {
     component: QuizOne,
     previewImage: previews.quiz1,
   },
-  fullImage: {
+  [Scenes.FullImage]: {
     component: FullImage,
     previewImage: previews.fullImage,
   },
-  fullVideo: {
+  [Scenes.FullVideo]: {
     component: FullVideo,
     previewImage: previews.fullImage,
   },
-  multipletiles: {
+  [Scenes.MultipleTiles]: {
     component: MultipleTiles,
     previewImage: previews.multipleTiles,
   },
-  multipletiles4: {
+  [Scenes.MultipleTiles4]: {
     component: MultipleTiles4,
     previewImage: previews.multipleTiles4,
   },
-  multipletiles4FullImg: {
+  [Scenes.MultipleTiles4FullImage]: {
     component: MultipleTiles4FullImage,
     previewImage: previews.multipleTiles4FullImage,
   },
-  multipletiles6: {
+  [Scenes.MultipleTiles6]: {
     component: MultipleTiles6,
     previewImage: previews.multipleTiles6,
   },
-  multipletiles6FullImg: {
+  [Scenes.MultipleTiles6FullImage]: {
     component: MultipleTiles6FullImage,
     previewImage: previews.multipleTiles6FullImage,
   },
-  multipletiles8: {
+  [Scenes.MultipleTiles8]: {
     component: MultipleTiles8,
     previewImage: previews.multipleTiles8,
   },
-  multipletiles8FullImg: {
+  [Scenes.MultipleTiles4FullImage]: {
     component: MultipleTiles8FullImage,
     previewImage: previews.multipleTiles8FullImage,
   },
-  scene15: {
+  [Scenes.Scene15]: {
     component: FullImageWithButton,
     previewImage: previews.fullImageWithButton,
   },
-  tiles: {
+  [Scenes.Tiles]: {
     component: Tiles,
     previewImage: previews.tiles,
   },
-  spellbee: {
+  [Scenes.Spellbee]: {
     component: SpellBee,
     previewImage: previews.tiles,
   },
-  parallax1: {
+  [Scenes.Parallax1]: {
     component: Parallax1,
     previewImage: previews.parallax1,
   },
