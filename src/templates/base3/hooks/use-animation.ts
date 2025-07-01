@@ -13,20 +13,20 @@ export default function useAnimation({ element, disabled }: Params) {
   const { isVisible } = useScroll(element);
   const [hovered, setHovered] = useState<keyof BaseSceneElements | ''>('');
   const [{ x, y }, api] = useSpring(
-    () => ({
+    {
       x: 0,
       y: 0,
       config: { mass: 20, tension: 400, friction: 100 },
-    }),
+    },
     []
   );
   const [{ rotate, opacity, x: visibleX }] = useSpring(
-    () => ({
+    {
       x: isVisible ? 0 : -40,
       rotate: isVisible ? 0 : 40,
       opacity: isVisible ? 1 : 0,
       config: { mass: 1, tension: 1000, friction: 200 },
-    }),
+    },
     [isVisible, hovered]
   );
   const createScale = useCallback(

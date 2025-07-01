@@ -1,6 +1,7 @@
 import * as Types from './templates/shared/types';
 import Base, { BaseSceneProps } from './templates/base';
 import Base2, { Base2SceneProps } from './templates/base2';
+import Base3, { Base3SceneProps } from './templates/base3';
 import QuizOne, { QuizOneProps } from './templates/quiz1';
 import FullImage, { FullImageSceneProps } from './templates/fullImage';
 import FullImageWithButton, { FullImageWithButtonProps } from './templates/scene15';
@@ -19,6 +20,7 @@ import AtomiHalloween from './templates/atomiHalloween';
 
 import base from './templates/base/assets/preview';
 import base2 from './templates/base2/assets/preview';
+import base3 from './templates/base3/assets/preview';
 import quiz1 from './templates/quiz1/assets/preview';
 import fullImage from './templates/fullImage/assets/preview';
 import fullImageWithButton from './templates/fullImage/assets/preview';
@@ -37,6 +39,7 @@ import parallax1 from './templates/parallax1/assets/preview';
 const previews = {
   base,
   base2,
+  base3,
   quiz1,
   fullImage,
   multipleTiles,
@@ -56,6 +59,7 @@ const previews = {
 export {
   Base,
   Base2,
+  Base3,
   QuizOne,
   FullImage,
   FullVideo,
@@ -76,6 +80,7 @@ export {
 export type {
   BaseSceneProps,
   Base2SceneProps,
+  Base3SceneProps,
   QuizOneProps,
   FullImageSceneProps,
   MultipleTilesSceneProps,
@@ -99,6 +104,10 @@ export const AVAILABLE_SCENES = {
   base2: {
     component: Base2,
     previewImage: previews.base2,
+  },
+  base3: {
+    component: Base3,
+    previewImage: previews.base3,
   },
   atomi: {
     component: AtomiHalloween,
