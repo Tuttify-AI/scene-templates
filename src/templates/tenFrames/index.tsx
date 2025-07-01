@@ -15,7 +15,6 @@ import useAnswerTimer from '../shared/hooks/use-answer-timer';
 export type TenFrames1SceneProps = SceneProps & {
   values?: TenFramesElements<SceneValue>;
   classes?: Classes;
-  showBubbles?: boolean;
 };
 
 const TenFrames = forwardRef<HTMLDivElement, TenFrames1SceneProps>(
@@ -31,7 +30,6 @@ const TenFrames = forwardRef<HTMLDivElement, TenFrames1SceneProps>(
       onActiveElementClick,
       onSceneSolved,
       onSet,
-      showBubbles,
     },
     ref
   ) => {
@@ -218,12 +216,7 @@ const TenFrames = forwardRef<HTMLDivElement, TenFrames1SceneProps>(
           ))}
         </div>
         <div className={clsx(styles.wrapper, isPreview, getEditClass())} onClick={handleClick('image')}>
-          <Bubbles
-            showBubbles={showBubbles}
-            operationNumbersArray={operationNumbersArray}
-            values={values}
-            editMode={editMode}
-          />
+          <Bubbles values={values} arrLength={operationNumbersArray?.length} editMode={editMode} />
         </div>
         <div className={clsx(styles.answerTextWrapper, getEditClass(), isPreview)} onClick={handleClick('answer_text')}>
           {renderNumber('numbers', operationNumbersArray[0])}
