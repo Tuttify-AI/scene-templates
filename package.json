@@ -25,7 +25,7 @@
   },
   "scripts": {
     "build": "rollup -c",
-    "install-dev": "npm install && rm -rf ./node_modules/react  && rm -rf ./node_modules/react-dom",
+    "install-dev": "npm install && rm -rf ./node_modules/react  && rm -rf ./node_modules/react-dom && rm -rf ./node_modules/@types/react",
     "format": "prettier --write \"**/*.+(ts|tsx)\"",
     "prepublishOnly": "rm -rf /build && npm run build",
     "type-check": "tsc --pretty --noEmit --skipLibCheck",

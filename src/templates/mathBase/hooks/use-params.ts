@@ -1,10 +1,12 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useWindowSize } from '../../shared/hooks';
-import { DefaultType, SceneProps } from '../../shared/types';
-import { getElementValue, getNumber } from '../../shared/utils';
-import { MathBaseConfig } from '../types';
+import { SceneProps, SceneValue } from '../../shared/types';
+import { getElementValue, getNumber, randomizeArray, randomizeString } from '../../shared/utils';
+import { CountingConfig } from '../types';
 
-type Params = Pick<SceneProps, 'values' | 'previewMode' | 'editMode'>;
+type Params = Pick<SceneProps, 'values' | 'previewMode' | 'editMode' | 'onSet'> & {
+  useArray?: boolean;
+};
 
 const DEFAULTS = {
   selectionTextSize: 72,
@@ -15,57 +17,155 @@ const DEFAULTS = {
   textPadding: 8,
 };
 
-export default function useParams({ values, previewMode, editMode }: Params) {
-  const { isSm } = useWindowSize();
+export default function useParams({ values, previewMode, editMode, onSet, useArray }: Params) {
+  const { isMd, isSm } = useWindowSize();
 
   const getConfigValue = useCallback(
-    (parameter: keyof MathBaseConfig) => getElementValue(values)('config', parameter),
+    (parameter: keyof CountingConfig) => getElementValue(values)('config', parameter),
     [values]
   );
-
-  const additionalNumbersArray = useMemo(
-    () => ((getConfigValue('additional_items') || []) as string[])?.map(n => getNumber(n)),
+  const onSetConfig = useCallback(
+    (key: keyof CountingConfig, value: SceneValue['value']) => {
+      onSet && values && onSet({ ...values, config: { ...values.config, [key]: { ...values.config[key], value } } });
+    },
+    [onSet, values]
+  );
+  const lockCorrectSelection = useMemo(
+    () => getNumber(getConfigValue('lock_correct_selection')) === 1,
     [getConfigValue]
   );
-
-  const showQuestionMark = useMemo(() => getNumber(getConfigValue('show_question_mark')) === 1, [getConfigValue]);
-
-  const rightNumber = useMemo(
-    () => (getConfigValue('right_number') === '' ? null : getNumber(getConfigValue('right_number'))),
+  const highlightCorrectSelection = useMemo(
+    () => getNumber(getConfigValue('highlight_correct_selection')) === 1,
     [getConfigValue]
   );
-
-  const leftNumber = useMemo(
-    () => (getConfigValue('left_number') === '' ? null : getNumber(getConfigValue('left_number'))),
+  const highlightIncorrectSelection = useMemo(
+    () => getNumber(getConfigValue('highlight_incorrect_selection')) === 1,
     [getConfigValue]
   );
-
-  const resultNumber = useMemo(
-    () => (getConfigValue('result') === '' ? null : getNumber(getConfigValue('result'))),
-    [getConfigValue]
+  const totalItemsArray = useMemo(
+    () =>
+      useArray && Array.isArray(getConfigValue('items_total'))
+        ? (getConfigValue('items_total') as string[])?.map(w => w.toUpperCase())
+        : `${getConfigValue('items_total')}`.split(''),
+    [getConfigValue, useArray]
   );
+  const additionalNumbersArray = useMemo(() => {
+    return useArray && Array.isArray(getConfigValue('additional_items'))
+      ? (getConfigValue('additional_items') as string[])?.map(w => w.toUpperCase())
+      : `${getConfigValue('additional_items')}`.toUpperCase().split('');
+  }, [getConfigValue, useArray]);
 
-  const mathOperand = useMemo(() => getConfigValue('math_operand') as string, [getConfigValue]);
+  const rightNumber = useMemo(() => getNumber(getConfigValue('right_number')), [getConfigValue]);
 
-  const predefinedValues = useMemo(
-    () => ({ leftNumber, rightNumber, resultNumber }),
-    [leftNumber, resultNumber, rightNumber]
+  const leftNumber = useMemo(() => getNumber(getConfigValue('left_number')), [getConfigValue]);
+
+  const resultNumber = useMemo(() => getNumber(getConfigValue('result')), [getConfigValue]);
+
+  const countingOperation = useMemo(() => getConfigValue('counting_operation') as string, [getConfigValue]);
+
+  const answerArray = useMemo(() => Array.from(Array(5).fill(null)), []);
+  const answerValueArray = useMemo(() => Array.from(Array(5).fill(null)), []);
+
+  useEffect(() => {
+    const filteredAdditionalNumbers = additionalNumbersArray.filter(item => item !== ',');
+    if (totalItemsArray.slice().sort().join('') !== [...filteredAdditionalNumbers].slice().sort().join('')) {
+      if (useArray) {
+        onSetConfig('items_total', randomizeArray([...filteredAdditionalNumbers]));
+      } else {
+        onSetConfig('items_total', randomizeString([...filteredAdditionalNumbers].join('')));
+      }
+    }
+  }, [totalItemsArray, onSetConfig, additionalNumbersArray, useArray]);
+
+  const selectionNumbersWidth = useMemo(
+    () =>
+      100 /
+      (isMd && totalItemsArray.length > (useArray ? 4 : 8)
+        ? Math.round(totalItemsArray.length / (useArray ? 1.2 : 2))
+        : totalItemsArray.length || 1),
+    [isMd, totalItemsArray.length, useArray]
   );
+  const additionalNumbers = useMemo(
+    () => additionalNumbersArray && additionalNumbersArray?.map(i => +i),
+    [additionalNumbersArray]
+  );
+  useEffect(() => {
+    if (rightNumber) {
+      answerValueArray[0] = rightNumber;
+      answerArray[0] = 0;
+    }
+  }, [rightNumber, answerArray, answerValueArray]);
+
+  useEffect(() => {
+    if (countingOperation) {
+      answerValueArray[1] = countingOperation;
+      answerArray[1] = 1;
+    }
+  }, [countingOperation, answerArray, answerValueArray]);
+
+  useEffect(() => {
+    if (leftNumber) {
+      answerValueArray[2] = leftNumber;
+      answerArray[2] = 2;
+    }
+  }, [leftNumber, answerArray, answerValueArray]);
+
+  useEffect(() => {
+    answerValueArray[3] = '=';
+    answerArray[3] = 3;
+  }, [answerArray, answerValueArray]);
+
+  useEffect(() => {
+    if (resultNumber) {
+      answerValueArray[4] = resultNumber;
+      answerArray[4] = 4;
+    }
+  }, [resultNumber, answerArray, answerValueArray]);
+
+  /* const itemImageWidth = useMemo(
+     () => (itemsCountArray.length > 5 ? 100 / 5 : 100 / itemsCountArray.length),
+     [itemsCountArray.length]
+   );*/
+
+  /*const itemImageHeight = useMemo(() => (itemsCountArray.length > 5 ? 100 / 2 : 100), [itemsCountArray.length]);*/
+
+  /* const answerNumbersWidth = useMemo(() => 100 / (itemsArray.length || 1), [itemsArray]);*/
+
+  useEffect(() => {
+    additionalNumbers?.length && answerValueArray.splice(5, 0, ...additionalNumbers);
+  }, [answerValueArray, additionalNumbers]);
 
   const selectionFontSize = useMemo(
-    () => Math.floor(isSm ? DEFAULTS.selectionTextSize * 0.75 : DEFAULTS.selectionTextSize),
-    [isSm]
-  );
-  const wordFontSize = useMemo(() => Math.floor(isSm ? DEFAULTS.wordTextSize * 0.55 : DEFAULTS.wordTextSize), [isSm]);
-  const getFontSize = useCallback(
-    (originalFontSize: number, value?: DefaultType) =>
+    () =>
       Math.floor(
-        !Number.isNaN(value) && Number(value)?.toString().length > 2 ? originalFontSize * 0.65 : originalFontSize
+        isSm && useArray
+          ? DEFAULTS.selectionWordSize * 0.4
+          : !isSm && useArray
+          ? DEFAULTS.selectionWordSize
+          : isSm
+          ? DEFAULTS.selectionTextSize * 0.75
+          : DEFAULTS.selectionTextSize
       ),
-    []
+    [isSm, useArray]
+  );
+  const wordFontSize = useMemo(
+    () =>
+      Math.floor(
+        isSm && useArray
+          ? DEFAULTS.wordSize * 0.4
+          : !isSm && useArray
+          ? DEFAULTS.wordSize
+          : isSm && !useArray
+          ? DEFAULTS.wordTextSize * 0.55
+          : DEFAULTS.wordTextSize
+      ),
+    [isSm, useArray]
   );
 
-  const wordPadding = useMemo(() => (isSm ? DEFAULTS.textPadding * 0.4 : DEFAULTS.textPadding * 0.8), [isSm]);
+  const wordPadding = useMemo(
+    () => (isSm ? DEFAULTS.textPadding * (useArray ? 0.4 : 0.5) : DEFAULTS.textPadding * (useArray ? 0.8 : 1)),
+    [isSm, useArray]
+  );
   const selectionContainerHeight = useMemo(() => selectionFontSize + wordPadding * 2, [selectionFontSize, wordPadding]);
   const wordContainerHeight = useMemo(() => wordFontSize + DEFAULTS.textPadding * 2, [wordFontSize]);
 
@@ -75,21 +175,24 @@ export default function useParams({ values, previewMode, editMode }: Params) {
   const showSceneActionElements = useMemo(() => editMode && !previewMode, [editMode, previewMode]);
 
   return {
+    highlightIncorrectSelection,
+    highlightCorrectSelection,
+    lockCorrectSelection,
     selectionFontSize,
     selectionContainerHeight,
     wordContainerHeight,
     wordFontSize,
-    getFontSize,
+    totalItemsArray,
     rightNumber,
     leftNumber,
     resultNumber,
     DEFAULTS,
     showSceneActionElements,
-    predefinedValues,
+    selectionNumbersWidth,
+    answerArray,
     wordPadding,
     fullScreenTextSize,
-    mathOperand,
-    additionalNumbersArray,
-    showQuestionMark,
+    answerValueArray,
+    additionalNumbers,
   };
 }

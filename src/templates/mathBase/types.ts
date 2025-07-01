@@ -1,17 +1,20 @@
 import { Parameters, Elements, SceneValue } from '../shared/types';
 
-export type MathBaseConfig<T = SceneValue> = {
+export type CountingConfig<T = SceneValue> = {
   right_number: T;
   left_number: T;
   result: T;
-  math_operand: T;
+  counting_operation: T;
   additional_items: T;
-  show_question_mark: T;
+  items_total: T;
+  lock_correct_selection: T;
+  highlight_correct_selection: T;
+  highlight_incorrect_selection: T;
 };
 
 export type CountingElements<T = string | number> = Elements<T> & {
   title?: Parameters<T>;
-  config?: MathBaseConfig<T>;
+  config?: CountingConfig<T>;
   image?: Parameters<T>;
   background?: Parameters<T>;
   selection_text?: Parameters<T>;
