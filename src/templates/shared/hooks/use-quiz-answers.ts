@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ActiveElementData, Elements, Parameters, SceneProps } from '../types';
 import { deleteElement } from '../utils';
-import useActions from './use-actions';
+import useActions, { OnClickData } from './use-actions';
 import { SceneNames } from '../../../index';
 
 type Params = Pick<SceneProps, 'editMode' | 'previewMode' | 'onSet' | 'values'> & {
@@ -11,6 +11,8 @@ type Params = Pick<SceneProps, 'editMode' | 'previewMode' | 'onSet' | 'values'> 
   elements: string[];
   handleClick: ReturnType<typeof useActions>['handleClick'];
   defaultImages: string[];
+  getUserAnswerTime: () => number;
+  handleComplete: (key: keyof Elements, { data }: OnClickData) => void;
 };
 
 const INITIAL_STATE = {
@@ -30,10 +32,10 @@ export default function useQuizAnswers({
   elements,
   handleClick,
   defaultImages,
+  getUserAnswerTime,
+  handleComplete,
 }: Params) {
   const [fullImage, setFullImage] = useState(INITIAL_STATE);
-  const [isCorrect, setIsCorrect] = useState(false);
-  const [selectedAnswer, setSelectedAnswer] = useState();
   useEffect(() => {
     if (editMode || previewMode) {
       setFullImage(INITIAL_STATE);
@@ -58,16 +60,14 @@ export default function useQuizAnswers({
       let isCorrect = getValue(k, 'is_correct');
       if (isCorrect && typeof isCorrect === 'string') {
         isCorrect = isCorrect === 'true';
-        setIsCorrect(isCorrect as boolean);
       }
-      setSelectedAnswer(k);
       return {
         ...(text ? { text } : {}),
         ...(fullScreenText ? { fullScreenText } : {}),
         ...(imageUrl ? { imageUrl } : {}),
         ...(fullScreenUrl ? { fullScreenUrl } : {}),
         ...(audioUrl ? { audioUrl } : {}),
-        ...(isCorrect ? { isCorrect } : {}),
+        isCorrect: !!isCorrect,
         templateName: SceneNames.Quiz1,
       } as ActiveElementData;
     },
@@ -86,7 +86,6 @@ export default function useQuizAnswers({
   const handleClearFullImageSrc = useCallback(() => setFullImage(INITIAL_STATE), [setFullImage]);
 
   const handleFullImageClick = useCallback(() => {
-    setSelectedAnswer(null);
     onActiveElementClick &&
       onActiveElementClick(fullImage.key, {
         imageUrl: fullImage.src,
@@ -97,6 +96,15 @@ export default function useQuizAnswers({
   const handleImageClick = useCallback(
     (k: string, index: number) => (e: React.MouseEvent<HTMLElement>) => {
       handleClick(k, { data: getElementData(k) })(e);
+      const { isCorrect } = getElementData(k);
+      handleComplete('answer', {
+        data: {
+          isCorrect,
+          answer: k,
+          answerTime: getUserAnswerTime(),
+        },
+      });
+
       handleSetFullImageSrc({
         key: `full_image_${k}`,
         src: (getValue(k, 'full_screen_url') as string) || defaultImages[index] || defaultImages[0],
@@ -104,7 +112,7 @@ export default function useQuizAnswers({
         text: (getValue(k, 'full_screen_text') as string) || '',
       });
     },
-    [getValue, handleSetFullImageSrc, defaultImages, handleClick, getElementData]
+    [handleClick, getElementData, handleComplete, getUserAnswerTime, handleSetFullImageSrc, getValue, defaultImages]
   );
 
   return {
@@ -113,7 +121,5 @@ export default function useQuizAnswers({
     handleDelete,
     fullImage,
     getElementData,
-    correct: isCorrect,
-    selectedAnswer,
   };
 }

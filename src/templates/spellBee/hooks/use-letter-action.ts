@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActiveElementData, SceneValue } from '../../shared/types';
+import { ActiveElementData, Elements, SceneValue } from '../../shared/types';
 import { getElementValue } from '../../shared/utils';
 import { AnswerType, SpellBeeElements } from '../types';
-import { checkArray, checkCorrectWord } from '../utils';
+import { checkArray, checkCorrectWord, getAnswer } from '../utils';
 import { useActions } from '../../shared/hooks';
 import useParams from './use-params';
+import { OnClickData } from '../../shared/hooks/use-actions';
 
 const INITIAL_STATE = {
   src: '',
@@ -25,6 +26,8 @@ type UseLetterActionParams = {
   lockCorrectSelection?: boolean;
   values?: SpellBeeElements<SceneValue>;
   handleClick?: ReturnType<typeof useActions>['handleClick'];
+  handleComplete?: (key: keyof Elements, { data }: OnClickData) => void;
+  getUserAnswerTime: () => number;
 };
 const useLetterAction = ({
   answerArray,
@@ -35,6 +38,8 @@ const useLetterAction = ({
   lockCorrectSelection,
   handleClick,
   predefinedTotalItemIndexes = EMPTY_ARRAY,
+  handleComplete,
+  getUserAnswerTime,
 }: UseLetterActionParams) => {
   const [selectedLetterIndex, setSelectedLetterIndex] = useState<AnswerType>(null);
   const [answer, setAnswer] = useState(predefinedTotalItemIndexes);
@@ -99,6 +104,19 @@ const useLetterAction = ({
     [itemsArray, totalItemsArray, answer]
   );
 
+  useEffect(() => {
+    isFullAnswer &&
+      handleComplete &&
+      handleComplete('answers', {
+        data: {
+          isCorrect: correct,
+          word: itemsArray.join(''),
+          answer: getAnswer(answer, totalItemsArray),
+          answerTime: getUserAnswerTime(),
+        },
+      });
+  }, [answer, correct, getUserAnswerTime, handleComplete, isFullAnswer, itemsArray, totalItemsArray]);
+
   const getAnswerData = useCallback(
     (index: number, totalLetterIndex: number | null) => {
       const isCorrect = totalLetterIndex !== null && totalItemsArray[totalLetterIndex] === itemsArray[index];
@@ -129,7 +147,7 @@ const useLetterAction = ({
         }
       }
     },
-    [selectedLetterIndex, editMode, lockCorrectSelection, checkIfCorrectLetter, handleClick, getAnswerData]
+    [selectedLetterIndex, lockCorrectSelection, checkIfCorrectLetter, editMode, handleClick, getAnswerData]
   );
 
   const handleClearFullImageSrc = useCallback(

@@ -1,4 +1,4 @@
-import React, { CSSProperties, forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { CSSProperties, forwardRef, useCallback, useMemo } from 'react';
 import { useActions, useAudios } from '../shared/hooks';
 
 import { SceneProps, SceneValue } from '../shared/types';
@@ -11,7 +11,7 @@ import styles from './styles.module.css';
 import { AnswerType, Classes, SpellBeeElements } from './types';
 import useDragNDrop from '../shared/hooks/use-drag-n-drop';
 import { ReactComponent as IconPlus } from '../shared/assets/icon-plus.svg';
-import { getAnswer } from './utils';
+import useAnswerTimer from '../shared/hooks/use-answer-timer';
 
 export type SpellBeeSceneProps = SceneProps & {
   values?: SpellBeeElements<SceneValue>;
@@ -25,7 +25,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
     ref
   ) => {
     const getValue = useMemo(() => getElementValue<SpellBeeElements>(values), [values]);
-
+    const { getUserAnswerTime } = useAnswerTimer();
     const {
       totalItemsArray,
       selectionItemsWidth,
@@ -71,7 +71,6 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       handleFullImageClick,
       fullScreen,
       checkIfCorrectLetter,
-      correct,
     } = useLetterAction({
       answerArray,
       totalItemsArray,
@@ -81,6 +80,8 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       lockCorrectSelection,
       handleClick,
       predefinedTotalItemIndexes,
+      handleComplete,
+      getUserAnswerTime,
     });
     const { onDrop, onDragEnter, onDragLeave, dragTargetItem, onDragStart, dragSelectedItem, onDragEnd, onDragOver } =
       useDragNDrop({ handleDrop: handleSetAnswer });
@@ -94,29 +95,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       (index: number) => (lockCorrectSelection ? !checkIfCorrectLetter(index) : true),
       [checkIfCorrectLetter, lockCorrectSelection]
     );
-    const [userAnswerTime, setUserAnswerTime] = useState(0);
-    useEffect(() => {
-      const timer = setInterval(() => {
-        setUserAnswerTime(prevState => ++prevState);
-      }, 1000);
 
-      if (isFullAnswer) {
-        handleComplete &&
-          handleComplete('answers', {
-            data: {
-              isCorrect: correct,
-              word: itemsArray.join(''),
-              answer: getAnswer(answer, totalItemsArray),
-              answerTime: userAnswerTime,
-            },
-          });
-        setUserAnswerTime(0);
-        clearInterval(timer);
-      }
-      return () => {
-        clearInterval(timer);
-      };
-    }, [setUserAnswerTime, answer, correct, isFullAnswer]);
     const answerLetterClasses = useCallback(
       (answerIndex: AnswerType, index: number) => {
         return isPredefinedIndex(answerIndex)

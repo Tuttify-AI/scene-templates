@@ -1,40 +1,32 @@
 import { useCallback, useEffect, useState } from 'react';
 
-export default function useAnswerTimer(disable = false) {
+export default function useAnswerTimer() {
   const [userAnswerTime, setUserAnswerTime] = useState(0);
-  const [totalSceneTime, setTotalSceneTime] = useState(0);
   const [timer, setTimer] = useState<NodeJS.Timer>();
 
-  const startTimer = useCallback(() => {
+  const startTimer = () => {
     const timer = setInterval(() => {
       setUserAnswerTime(prevState => ++prevState);
-      setTotalSceneTime(prevState => ++prevState);
     }, 1000);
     setTimer(timer);
     return timer;
-  }, []);
+  };
 
   useEffect(() => {
-    if (!disable) {
-      startTimer();
-    }
-  }, [startTimer, disable]);
+    startTimer();
+  }, []);
 
   const clearTimer = useCallback(() => {
     setUserAnswerTime(0);
-    setTotalSceneTime(0);
     timer && clearInterval(timer);
     startTimer();
-  }, [timer, startTimer]);
+  }, [timer]);
 
   const getUserAnswerTime = useCallback(() => {
     const time = userAnswerTime;
-    setUserAnswerTime(0);
-    return {
-      time,
-      total: totalSceneTime,
-    };
-  }, [userAnswerTime, totalSceneTime]);
+    clearTimer();
+    return time;
+  }, [clearTimer, userAnswerTime]);
 
   return { userAnswerTime, clearTimer, getUserAnswerTime };
 }
