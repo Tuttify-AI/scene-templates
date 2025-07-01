@@ -1,43 +1,28 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
-import { usePrevious, useWindowSize } from '../../shared/hooks';
+import { useCallback, useEffect, useMemo } from 'react';
+import { useWindowSize } from '../../shared/hooks';
 import { SceneProps, SceneValue } from '../../shared/types';
-import {
-  arrayIsEqual,
-  getElement,
-  getElementValue,
-  getNumber,
-  randomizeArray,
-  randomizeString,
-} from '../../shared/utils';
-import { AnswerType, SpellBeeConfig } from '../types';
+import { getElementValue, getNumber, randomizeString } from '../../shared/utils';
+import { SpellBeeConfig } from '../types';
 
-type Params = Pick<SceneProps, 'values' | 'previewMode' | 'editMode' | 'onSet'> & {
-  useArray?: boolean;
-};
+type Params = Pick<SceneProps, 'values' | 'previewMode' | 'editMode' | 'onSet'>;
 
 const DEFAULTS = {
   selectionTextSize: 72,
-  selectionWordSize: 50,
   wordTextSize: 90,
-  wordSize: 42,
   fullScreenTextSize: 40,
   textPadding: 8,
 };
 
-export default function useParams({ values, previewMode, editMode, onSet, useArray }: Params) {
+export default function useParams({ values, previewMode, editMode, onSet }: Params) {
   const { isMd, isSm } = useWindowSize();
-
-  const emptyValue = useMemo(() => (useArray ? [] : ''), [useArray]);
 
   const getConfigValue = useCallback(
     (parameter: keyof SpellBeeConfig) => getElementValue(values)('config', parameter),
     [values]
   );
   const onSetConfig = useCallback(
-    (key: keyof SpellBeeConfig, value: SceneValue['value'], parameter: keyof SceneValue = 'value') => {
-      onSet &&
-        values &&
-        onSet({ ...values, config: { ...values.config, [key]: { ...values.config[key], [parameter]: value } } });
+    (key: keyof SpellBeeConfig, value: SceneValue['value']) => {
+      onSet && values && onSet({ ...values, config: { ...values.config, [key]: { ...values.config[key], value } } });
     },
     [onSet, values]
   );
@@ -53,143 +38,30 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
     () => getNumber(getConfigValue('highlight_incorrect_selection')) === 1,
     [getConfigValue]
   );
-
-  const items = useMemo(
-    () => getConfigValue('items') || getConfigValue('word') || emptyValue,
-    [emptyValue, getConfigValue]
-  );
-
-  const totalItemsArray = useMemo(() => {
-    const totalItems = getConfigValue('items_total') || getConfigValue('letters_total') || emptyValue;
-    return useArray && Array.isArray(totalItems) ? (totalItems as string[]) : `${totalItems}`.split('');
-  }, [getConfigValue, useArray, emptyValue]);
-
-  const additionalLettersArray = useMemo(() => {
-    const additionalItems = getConfigValue('additional_items') || getConfigValue('additional_letters') || emptyValue;
-    return useArray && Array.isArray(additionalItems) ? (additionalItems as string[]) : `${additionalItems}`.split('');
-  }, [getConfigValue, useArray, emptyValue]);
-
-  const itemsArray = useMemo(() => {
-    return useArray && Array.isArray(items) ? (items as string[]) : `${items}`.split('');
-  }, [items, useArray]);
-
-  const answerArray = useMemo(() => Array.from(Array(itemsArray.length).fill(null)), [itemsArray]);
-
-  const predefinedTotalItemIndexes = useMemo(
-    () => (getConfigValue('predefined_total_item_indexes') || []) as AnswerType[],
+  const lettersArray = useMemo(() => `${getConfigValue('letters_total')}`.toUpperCase().split(''), [getConfigValue]);
+  const additionalLettersArray = useMemo(
+    () => `${getConfigValue('additional_letters')}`.toUpperCase().split(''),
     [getConfigValue]
   );
-
-  const setPredefinedTotalItemIndexes = useCallback(
-    (values: AnswerType[]) => onSetConfig('predefined_total_item_indexes', values),
-    [onSetConfig]
-  );
-
-  const isPredefinedIndex = useCallback(
-    (answerIndex: AnswerType) => answerIndex !== null && predefinedTotalItemIndexes?.includes(answerIndex),
-    [predefinedTotalItemIndexes]
-  );
-
-  const allowPredefine = useCallback(
-    (itemsIndex: AnswerType) => {
-      return !(!isPredefinedIndex(itemsIndex) && predefinedTotalItemIndexes.filter(v => v === null).length <= 1);
-    },
-    [predefinedTotalItemIndexes, isPredefinedIndex]
-  );
-
-  const handlePredefinedTotalItemIndexes = useCallback(
-    (answerIndex: number | null) => (e: React.MouseEvent) => {
-      e?.preventDefault();
-      e?.stopPropagation();
-      const totalItemsIndexes = totalItemsArray.reduce(
-        (acc, item, i) => (answerIndex !== null && item === itemsArray?.[answerIndex] ? [...acc, i] : acc),
-        [] as number[]
-      );
-      setPredefinedTotalItemIndexes(
-        predefinedTotalItemIndexes.map((item, index, array) => {
-          if (index === answerIndex && totalItemsIndexes.length) {
-            const filteredIndexes = totalItemsIndexes.filter(i => !array.includes(i));
-            const checkIndex = filteredIndexes.length ? filteredIndexes[0] : totalItemsIndexes[0];
-            return item !== null ? null : checkIndex;
-          }
-          return item;
-        })
-      );
-    },
-    [totalItemsArray, itemsArray, setPredefinedTotalItemIndexes, predefinedTotalItemIndexes]
-  );
+  const wordArray = useMemo(() => `${getConfigValue('word')}`.toUpperCase().split(''), [getConfigValue]);
+  const answerArray = useMemo(() => Array.from(Array(wordArray.length).fill(null)), [wordArray]);
 
   useEffect(() => {
-    const valueLength = getElement(values)('config', 'items')?.value_length;
-    const itemsLength = Array.isArray(items) ? items.length : `${items}`.length;
-    if (valueLength !== itemsLength) {
-      onSetConfig('items', itemsLength, 'value_length');
+    if (lettersArray.slice().sort().join('') !== [...wordArray, ...additionalLettersArray].slice().sort().join('')) {
+      onSetConfig('letters_total', randomizeString([...wordArray, ...additionalLettersArray].join('')));
     }
-  }, [items, onSetConfig, values]);
-
-  useEffect(() => {
-    if (!arrayIsEqual(totalItemsArray, [...itemsArray, ...additionalLettersArray])) {
-      if (useArray) {
-        onSetConfig('items_total', randomizeArray([...itemsArray, ...additionalLettersArray]));
-      } else {
-        onSetConfig('items_total', randomizeString([...itemsArray, ...additionalLettersArray].join('')));
-      }
-    }
-  }, [totalItemsArray, onSetConfig, itemsArray, additionalLettersArray, useArray]);
-
-  const prevItemsArray = usePrevious(itemsArray);
-  const prevTotalItemsArray = usePrevious(totalItemsArray);
-
-  useEffect(() => {
-    // clearing predefined items if items or totalItems array changed
-    if (
-      prevItemsArray &&
-      prevTotalItemsArray &&
-      (!arrayIsEqual(prevItemsArray, itemsArray) || !arrayIsEqual(prevTotalItemsArray, totalItemsArray))
-    ) {
-      setPredefinedTotalItemIndexes(answerArray);
-    }
-  }, [setPredefinedTotalItemIndexes, itemsArray, totalItemsArray, prevTotalItemsArray, prevItemsArray, answerArray]);
-
-  const selectionItemsWidth = useMemo(
-    () =>
-      100 / (isMd && totalItemsArray.length > 8 ? Math.round(totalItemsArray.length / 2) : totalItemsArray.length || 1),
-    [isMd, totalItemsArray.length]
+  }, [lettersArray, onSetConfig, wordArray, additionalLettersArray]);
+  const selectionLettersWidth = useMemo(
+    () => 100 / (isMd && lettersArray.length > 8 ? Math.round(lettersArray.length / 2) : lettersArray.length || 1),
+    [lettersArray, isMd]
   );
-
-  const answerLettersWidth = useMemo(() => (useArray ? 25 : 100 / (itemsArray.length || 1)), [itemsArray, useArray]);
-
+  const answerLettersWidth = useMemo(() => 100 / (wordArray.length || 1), [wordArray]);
   const selectionFontSize = useMemo(
-    () =>
-      Math.floor(
-        isSm && useArray
-          ? DEFAULTS.selectionWordSize * 0.4
-          : !isSm && useArray
-          ? DEFAULTS.selectionWordSize
-          : isSm
-          ? DEFAULTS.selectionTextSize * 0.75
-          : DEFAULTS.selectionTextSize
-      ),
-    [isSm, useArray]
+    () => Math.floor(isSm ? DEFAULTS.selectionTextSize * 0.75 : DEFAULTS.selectionTextSize),
+    [isSm]
   );
-  const wordFontSize = useMemo(
-    () =>
-      Math.floor(
-        isSm && useArray
-          ? DEFAULTS.wordSize * 0.4
-          : !isSm && useArray
-          ? DEFAULTS.wordSize
-          : isSm && !useArray
-          ? DEFAULTS.wordTextSize * 0.55
-          : DEFAULTS.wordTextSize
-      ),
-    [isSm, useArray]
-  );
-
-  const wordPadding = useMemo(
-    () => (isSm ? DEFAULTS.textPadding * (useArray ? 0.4 : 0.5) : DEFAULTS.textPadding * (useArray ? 0.8 : 1)),
-    [isSm, useArray]
-  );
+  const wordFontSize = useMemo(() => Math.floor(isSm ? DEFAULTS.wordTextSize * 0.55 : DEFAULTS.wordTextSize), [isSm]);
+  const wordPadding = useMemo(() => (isSm ? DEFAULTS.textPadding * 0.5 : DEFAULTS.textPadding), [isSm]);
   const selectionContainerHeight = useMemo(() => selectionFontSize + wordPadding * 2, [selectionFontSize, wordPadding]);
   const wordContainerHeight = useMemo(() => wordFontSize + DEFAULTS.textPadding * 2, [wordFontSize]);
 
@@ -206,18 +78,14 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
     selectionContainerHeight,
     wordContainerHeight,
     wordFontSize,
-    totalItemsArray,
-    itemsArray,
+    lettersArray,
+    wordArray,
     DEFAULTS,
     showSceneActionElements,
-    selectionItemsWidth,
+    selectionLettersWidth,
     answerLettersWidth,
     answerArray,
     wordPadding,
     fullScreenTextSize,
-    predefinedTotalItemIndexes,
-    isPredefinedIndex,
-    allowPredefine,
-    handlePredefinedTotalItemIndexes,
   };
 }

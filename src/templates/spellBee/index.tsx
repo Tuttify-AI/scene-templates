@@ -4,76 +4,49 @@ import { useActions, useAudios } from '../shared/hooks';
 import { SceneProps, SceneValue } from '../shared/types';
 import { clsx, getElementId, getElementValue } from '../shared/utils';
 import defaultImage from './assets/default';
-import useItemsAction from './hooks/use-items-action';
+import useLetterAction from './hooks/use-letter-action';
 import useParams from './hooks/use-params';
 
 import styles from './styles.module.css';
-import { AnswerType, Classes, SpellBeeElements } from './types';
+import { Classes, SpellBeeElements } from './types';
 import useDragNDrop from '../shared/hooks/use-drag-n-drop';
-import { ReactComponent as IconPlus } from '../shared/assets/icon-plus.svg';
-import useAnswerTimer from '../shared/hooks/use-answer-timer';
 
 export type SpellBeeSceneProps = SceneProps & {
   values?: SpellBeeElements<SceneValue>;
   classes?: Classes;
-  useArray?: boolean;
 };
 
 const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
-  (
-    {
-      editMode,
-      previewMode,
-      classes,
-      activeKey,
-      onClick,
-      values,
-      onSet,
-      onActiveElementClick,
-      onComplete,
-      useArray,
-      onSceneSolved,
-    },
-    ref
-  ) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick }, ref) => {
     const getValue = useMemo(() => getElementValue<SpellBeeElements>(values), [values]);
-    const { getUserAnswerTime, clearTimer } = useAnswerTimer(previewMode || editMode);
+
     const {
-      totalItemsArray,
-      selectionItemsWidth,
+      lettersArray,
+      selectionLettersWidth,
       answerLettersWidth,
       answerArray,
       selectionFontSize,
       selectionContainerHeight,
       wordContainerHeight,
       wordFontSize,
-      itemsArray,
+      wordArray,
       lockCorrectSelection,
       highlightCorrectSelection,
       highlightIncorrectSelection,
       fullScreenTextSize,
       wordPadding,
-      predefinedTotalItemIndexes,
-      isPredefinedIndex,
-      allowPredefine,
-      handlePredefinedTotalItemIndexes,
     } = useParams({
       values,
       previewMode,
       editMode,
       onSet,
-      useArray,
     });
-    const { renderAudios, handleElementAudio, pauseAudios } = useAudios({ values, previewMode });
-    const { handleClick, handleComplete, handleSceneSolved } = useActions({
+    const { renderAudios, handlePauseAll } = useAudios({ values });
+    const { handleClick } = useActions({
       onClick,
+      handlePauseAll,
       disabled: editMode || previewMode,
       onActiveElementClick,
-      onComplete,
-      onSceneSolved,
-      clearTimer,
-      pauseAudios,
-      handleElementAudio,
     });
 
     const {
@@ -86,21 +59,16 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       handleFullImageClick,
       fullScreen,
       checkIfCorrectLetter,
-    } = useItemsAction({
+    } = useLetterAction({
       answerArray,
-      totalItemsArray,
+      totalLettersArray: lettersArray,
       editMode,
-      itemsArray,
+      wordArray,
       values,
       lockCorrectSelection,
       handleClick,
-      predefinedTotalItemIndexes,
-      handleComplete,
-      handleSceneSolved,
-      getUserAnswerTime,
-      useArray,
     });
-    const { onDrop, onDragEnter, onDragLeave, dragTargetItem, onDragStart, dragSelectedItem, onDragEnd, onDragOver } =
+    const { onDrop, onDragEnter, onDragLeave, dragTargetIndex, onDragStart, dragSelectedIndex, onDragEnd, onDragOver } =
       useDragNDrop({ handleDrop: handleSetAnswer });
     const getEditClass = useCallback(
       (type: 'edit' | 'editRoot' = 'edit') => editMode && styles[type as keyof typeof styles],
@@ -111,28 +79,6 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
     const highlightSelection = useCallback(
       (index: number) => (lockCorrectSelection ? !checkIfCorrectLetter(index) : true),
       [checkIfCorrectLetter, lockCorrectSelection]
-    );
-
-    const answerLetterClasses = useCallback(
-      (answerIndex: AnswerType, index: number) => {
-        return isPredefinedIndex(answerIndex)
-          ? [styles.predefinedAnswer]
-          : [
-              selectedLetterIndex !== null && highlightSelection(index) && styles.empty,
-              dragTargetItem === index && highlightSelection(index) && styles.empty,
-              highlightCorrectSelection && checkIfCorrectLetter(index) && styles.correct,
-              highlightIncorrectSelection && checkIfCorrectLetter(index) === false && styles.incorrect,
-            ];
-      },
-      [
-        checkIfCorrectLetter,
-        highlightCorrectSelection,
-        highlightIncorrectSelection,
-        dragTargetItem,
-        selectedLetterIndex,
-        highlightSelection,
-        isPredefinedIndex,
-      ]
     );
     return (
       <div
@@ -183,17 +129,16 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
           onClick={handleClick('selection_text')}
           id={getElementId(`selection_text`, previewMode)}
         >
-          {totalItemsArray.map((letter, index) => (
+          {lettersArray.map((letter, index) => (
             <div
               key={index}
               className={clsx(
                 styles.selectionLetterItemWrapper,
-                isPredefinedIndex(index) && styles.predefinedItem,
                 selectedLetterIndex === index && styles.selected,
                 checkIsLetterDisabled(index) && styles.disabled
               )}
               style={{
-                width: useArray ? 'auto' : `${selectionItemsWidth}%`,
+                width: `${selectionLettersWidth}%`,
               }}
             >
               <p
@@ -205,7 +150,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
                 className={clsx(
                   styles.selectionLetterItem,
                   !editMode && styles.withHover,
-                  dragSelectedItem === index && styles.dragged
+                  dragSelectedIndex === index && styles.dragged
                 )}
                 style={{
                   fontSize: selectionFontSize,
@@ -240,9 +185,13 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
               >
                 <p
                   id={getElementId(`answer_${answerIndex}`, previewMode)}
-                  data-answer-position={index}
-                  data-answer-value={answerIndex !== null && totalItemsArray[answerIndex]}
-                  className={clsx(styles.answerLetterItem, ...answerLetterClasses(answerIndex, index))}
+                  className={clsx(
+                    styles.answerLetterItem,
+                    selectedLetterIndex !== null && highlightSelection(index) && styles.empty,
+                    dragTargetIndex === index && highlightSelection(index) && styles.empty,
+                    highlightCorrectSelection && checkIfCorrectLetter(index) && styles.correct,
+                    highlightIncorrectSelection && checkIfCorrectLetter(index) === false && styles.incorrect
+                  )}
                   onDragOver={onDragOver}
                   onDrop={onDrop}
                   onDragEnter={onDragEnter(index)}
@@ -259,16 +208,8 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
                     } as CSSProperties
                   }
                 >
-                  {answerIndex !== null && totalItemsArray[answerIndex]}
+                  {answerIndex !== null && lettersArray[answerIndex]}
                 </p>
-                {allowPredefine(answerIndex) && editMode && (
-                  <div
-                    onClick={handlePredefinedTotalItemIndexes(index)}
-                    className={clsx(styles.answerPredefinedBox, isPreview)}
-                  >
-                    {isPredefinedIndex(answerIndex) ? null : <IconPlus className={clsx(styles.answerPredefinedIcon)} />}
-                  </div>
-                )}
               </div>
             ))}
           </div>

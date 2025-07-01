@@ -1,13 +1,23 @@
-import { DefaultType } from '../shared/types';
-import { checkArray, checkCorrectWord } from '../shared/utils';
-
-export function getAnswer(answerArr: DefaultType[], allArr: string[], useArray = false) {
-  const answer = [] as string[];
-  for (let i = 0; i < answerArr.length; i++) {
-    const index = answerArr[i];
-    if (typeof index === 'number') answer[i] = allArr[index];
+export function checkArray(answer_arr: (number | null)[]) {
+  if (!answer_arr?.length) {
+    return false;
   }
-  return answer.join(useArray ? ' ' : '');
+  for (let i = 0; i < answer_arr.length; i++) {
+    const index = answer_arr[i];
+    if (!index && typeof index != 'number') {
+      return false;
+    }
+  }
+  return true;
 }
 
-export { checkArray, checkCorrectWord };
+export function checkCorrectWord(answer_arr: (number | null)[], all_arr: string[], word: string) {
+  const answer = [];
+  for (let i = 0; i < answer_arr.length; i++) {
+    const index = answer_arr[i];
+    if (!index && typeof index != 'number') {
+      return false;
+    } else if (typeof index === 'number') answer[i] = all_arr[index];
+  }
+  return answer.join() === word;
+}

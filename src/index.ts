@@ -4,7 +4,7 @@ import Base2, { Base2SceneProps } from './templates/base2';
 import QuizOne, { QuizOneProps } from './templates/quiz1';
 import FullImage, { FullImageSceneProps } from './templates/fullImage';
 import FullImageWithButton, { FullImageWithButtonProps } from './templates/scene15';
-import GuessWord, { GuessWordSceneProps } from './templates/wordGuess';
+import SpellBee, { SpellBeeSceneProps } from './templates/spellBee';
 import FullVideo, { FullVideoSceneProps } from './templates/fullVideo';
 import MultipleTiles, { MultipleTilesSceneProps } from './templates/multipletiles';
 import Tiles from './templates/tiles';
@@ -29,6 +29,7 @@ import multipleTiles6FullImage from './templates/multipletiles6Fullimg/assets/pr
 import multipleTiles8FullImage from './templates/multipletiles8Fullimg/assets/preview';
 import multipleTiles6 from './templates/multipletiles6/assets/preview';
 import multipleTiles8 from './templates/multipletiles8/assets/preview';
+import spellbee from './templates/spellBee/assets/preview';
 import atomiHalloween from './templates/atomiHalloween/assets/preview';
 
 const previews = {
@@ -46,6 +47,7 @@ const previews = {
   atomiHalloween,
   fullImageWithButton,
   tiles,
+  spellbee,
 };
 
 export {
@@ -81,7 +83,7 @@ export type {
   MultipleTiles8FullImageProps,
   FullVideoSceneProps,
   FullImageWithButtonProps,
-  GuessWordSceneProps,
+  SpellBeeSceneProps,
 };
 
 export const AVAILABLE_SCENES = {
@@ -145,8 +147,13 @@ export const AVAILABLE_SCENES = {
     component: Tiles,
     previewImage: previews.tiles,
   },
+  //old name
   wordGuess: {
-    component: GuessWord,
+    component: SpellBee,
+    previewImage: previews.tiles,
+  },
+  spellbee: {
+    component: SpellBee,
     previewImage: previews.tiles,
   },
 };
