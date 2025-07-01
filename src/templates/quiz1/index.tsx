@@ -1,29 +1,26 @@
-import React, { forwardRef, Fragment, useCallback, useMemo } from 'react';
+import React, { CSSProperties, forwardRef, Fragment, useCallback, useMemo } from 'react';
+
+import answerImage from "./assets/answer";
+import questionImage from "./assets/question";
 import { useActions, useAudios, useImage, useQuizAnswers } from '../shared/hooks';
 
 import { Parameters, SceneProps, SceneValue, TemplateParameterType } from '../shared/types';
 import { clsx } from '../shared/utils';
-
-import answerImage from "./assets/answer";
 import iconCross from './assets/icon-cross.svg';
 
 import iconPlus from './assets/icon-plus.svg';
-import questionImage from "./assets/question";
 import styles from './styles.module.css';
-import { Classes, Quiz1SceneElements } from './types';
+import { Quiz1SceneElements, Classes } from './types';
 
 export type QuizOneProps = SceneProps & {
   values?: Quiz1SceneElements<SceneValue>;
   classes?: Classes;
 };
 
-const MAX_ANSWERS = 6;
-const MIN_ANSWERS = 2;
-
 const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
-  ({editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet, onActiveElementClick}, ref) => {
-    const {hiddenImageList, onImageError, onImageLoad} = useImage();
-    const {audios} = useAudios({values});
+  ({ editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet, onActiveElementClick }, ref) => {
+    const { hiddenImageList, onImageError, onImageLoad } = useImage();
+    const { audios } = useAudios({ values });
     const isActive = useCallback((key: keyof Quiz1SceneElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
     const getEditClass = useCallback(
@@ -36,7 +33,7 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
         (values?.[element]?.[parameter] as SceneValue)?.value,
       [values]
     );
-    const {handleClick} = useActions({
+    const { handleClick } = useActions({
       onClick,
       getValue,
       disabled: editMode || previewMode,
@@ -52,76 +49,68 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
     );
 
     const handleAddAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
-      e.stopPropagation();
-      const lastAnswer = Number(answers[answers.length - 1]?.replace('answer', ''));
-      if (lastAnswer && onAdd && lastAnswer < MAX_ANSWERS) {
-        onAdd({
-          [`answer${lastAnswer + 1}`]: {
-            title: {
-              type: TemplateParameterType.title,
-              title: `Answer No.${lastAnswer + 1}`,
-              value: `Answer No.${lastAnswer + 1}`,
-            },
-            url: {
-              type: TemplateParameterType.image,
-              title: "Image",
-              value: "",
-            },
-            full_screen_url: {
-              type: TemplateParameterType.image,
-              title: "Fullscreen image",
-              value: "",
-            },
-            text: {
-              type: TemplateParameterType.text,
-              title: "Answer text",
-              value: "Text"
-            },
-            full_screen_text: {
-              type: TemplateParameterType.text,
-              title: "Answer fullscreen text",
-              value: "Text"
-            },
-            background: {
-              type: TemplateParameterType.color,
-              title: "Fullscreen background color",
-              value: "#5468E7",
-            },
-            sound: {
-              type: TemplateParameterType.sound,
-              title: "On click sound link",
-              value: "",
-            },
-            is_correct: {
-              type: TemplateParameterType.boolean,
-              title: "Is correct answer",
-              value: "false"
-            }
-          }
-        });
-      }
+        e.stopPropagation();
+        const lastAnswer = Number(answers[answers.length - 1]?.replace('answer', ''));
+        if (lastAnswer && onAdd && lastAnswer < 4) {
+            onAdd({
+                [`answer${lastAnswer + 1}`]: {
+                  title: {
+                    type: TemplateParameterType.title,
+                    title: `Answer No.${lastAnswer + 1}`,
+                    value: `Answer No.${lastAnswer + 1}`,
+                  },
+                  url: {
+                    type: TemplateParameterType.image,
+                    title: "Image",
+                    value: "",
+                  },
+                  full_screen_url: {
+                    type: TemplateParameterType.image,
+                    title: "Fullscreen image",
+                    value: "",
+                  },
+                  text: {
+                    type: TemplateParameterType.text,
+                    title: "Answer text",
+                    value: "Text"
+                  },
+                  full_screen_text: {
+                    type: TemplateParameterType.text,
+                    title: "Answer fullscreen text",
+                    value: "Text"
+                  },
+                  background_hover: {
+                    type: TemplateParameterType.color,
+                    title: "Background hover color",
+                    value: "#5468E7",
+                  },
+                  sound: {
+                    type: TemplateParameterType.sound,
+                    title: "On click sound link",
+                    value: "",
+                  },
+                  is_correct: {
+                    type: TemplateParameterType.boolean,
+                    title: "Is correct answer",
+                    value: "false"
+                  }
+                }
+            });
+        }
     };
 
-    const {handleFullImageClick, handleImageClick, handleDelete, fullImage} = useQuizAnswers({
+    const { handleFullImageClick, handleImageClick, handleDelete, fullImage, getElementData } = useQuizAnswers({
       elements: answers,
       onSet,
       handleAdd: handleAddAnswer,
       values,
       getValue,
       handleClick,
-      defaultImages: [answerImage],
+      defaultImages: [questionImage],
       onActiveElementClick,
       previewMode,
       editMode,
     });
-
-    const answerStyles = useMemo(() =>
-      answers.length > 4
-        ? {width: '50%', height: '33.3%'}
-        : answers.length > 2
-          ? {width: '50%', height: '50%'}
-          : {width: '100%', height: '50%'},
-      [answers])
 
     return (
       <div
@@ -153,91 +142,93 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
             fullImage.src ? styles.showActiveDiv : styles.hideActiveDiv
           )}
           onClick={handleFullImageClick}
-          style={{background: fullImage.background}}
+          style={{ background: fullImage.background }}
         >
-          <h2
-            id="question"
-            className={clsx(styles.fullScreenText, isPreview, classes?.fullScreenText)}
-          >
-            {fullImage.text}
-          </h2>
-          <div
+          <img
             id={fullImage.key}
-            style={{backgroundImage: `url(${fullImage.src})`}}
-            className={clsx(styles.activeImage, styles.image, isPreview, getEditClass(), classes?.fullScreenImage)}
+            alt=""
+            src={fullImage.src}
+            className={clsx(styles.activeImage, isPreview, getEditClass())}
           />
         </div>
-        {answers.length < MAX_ANSWERS ? (
-          <button className={clsx(styles.btn, styles.btnAddElement, getEditClass())} onClick={handleAddAnswer}>
-            <img className={styles.addElementIcon} src={iconPlus} alt=""/>
-          </button>) : null}
-        <div
-          className={clsx(styles.questionRoot, getEditClass(), classes?.questionRoot)}
-          onClick={handleClick('question')}
-        >
-          <h1
-            id="question"
-            className={clsx(styles.title, isPreview, classes?.questionText)}
-          >
-            {getValue('question', 'text')}
-          </h1>
-          <div className={clsx(styles.imageContainer, isPreview, classes?.questionImageContainer)}>
-            <div
-              id="question_image"
-              style={{backgroundImage: `url(${`${getValue('question', 'url')}` || questionImage})`}}
-              className={clsx(
-                styles.image,
-                isPreview,
-                classes?.questionImage
-              )}
-              onLoad={() => onImageLoad('question_image')}
-              onError={() => onImageError('question_image')}
-            />
+        <button className={clsx(styles.btn, styles.btnAddElement, getEditClass())} onClick={handleAddAnswer}>
+          <img className={styles.addElementIcon} src={iconPlus} alt="" />
+        </button>
+          <div className={clsx(styles.questionRoot, classes?.questionRoot)} onClick={handleClick('question')}>
+            <h1
+              id="question"
+              className={clsx(styles.title, isPreview, classes?.questionText)}
+            >
+              {getValue('question', 'text')}
+            </h1>
+            <div className={clsx(styles.questionImageContainer, isPreview, classes?.questionImageContainer)}>
+              <img
+                id="question_image"
+                alt="question image"
+                src={`${getValue('question', 'url')}` || questionImage}
+                className={clsx(
+                  styles.questionImage,
+                  isPreview,
+                  classes?.questionImage
+                )}
+                onLoad={() => onImageLoad('question_image')}
+                onError={() => onImageError('question_image')}
+              />
+            </div>
           </div>
-        </div>
-        <div className={clsx(styles.answerRoot, classes?.answersRoot)}>
+          <div className={styles.answerRoot}>
           {answers.map((k, index) => (
-            <div key={k} className={clsx(styles.answer, isActive(k), isPreview, getEditClass(), classes?.answerRoot)} onClick={handleImageClick(k, index)} style={answerStyles}>
+            <div className={clsx(styles.answer, isActive(k), isPreview)}  onClick={handleImageClick(k, index)}>
               <div
                 id={k}
-                className={clsx(styles.element, isPreview, classes?.answer)}
+                className={clsx(styles.element, isActive(k), isPreview, classes?.tile)}
+                style={
+                  {
+                    '--custom_color': getValue(k, 'background_hover'),
+                  } as CSSProperties
+                }
               >
-                {answers.length > MIN_ANSWERS && (
+                {index > answers.length - 1 && (
                   <button
                     className={clsx(styles.btn, styles.btnDeleteElement, getEditClass('edit'))}
                     onClick={e => handleDelete(e, k)}
                   >
-                    <img className={styles.deleteElementIcon} src={iconCross} alt=""/>
+                    <img className={styles.deleteElementIcon} src={iconCross} alt="" />
                   </button>
                 )}
-                <p
-                  id={`text_${k}`}
+                <img
+                  id={`image_${k}`}
+                  alt={`image_${k}`}
+                  src={(getValue(`image_${k}`, 'url') as string) || answerImage}
+                  onLoad={() => onImageLoad(`image_${k}`)}
+                  onError={() => onImageError(`image_${k}`)}
                   className={clsx(
-                    styles.answerText,
+                    styles.tileImage,
+                    isActive(`image_${k}`),
+                    isImageHidden(`image_${k}`),
+                    getEditClass(),
                     isPreview,
-                    classes?.answerText
+                    classes?.tileImage
                   )}
-                >
-                  {getValue(k, 'text')}
-                </p>
-                <div className={clsx(styles.imageContainer, isPreview, classes?.answerImageContainer)}>
-                  <div
-                    id={`image_${k}`}
-                    style={{backgroundImage: `url(${`${getValue(k, 'url')}` || answerImage})`}}
-                    onLoad={() => onImageLoad(`image_${k}`)}
-                    onError={() => onImageError(`image_${k}`)}
-                    className={clsx(
-                      styles.image,
-                      isImageHidden(`image_${k}`),
-                      isPreview,
-                      classes?.answerImage
-                    )}
-                  />
-                </div>
+                />
               </div>
+
+              <p
+                id={`text_${k}`}
+                onClick={handleClick(`text_${k}`, getElementData(k))}
+                className={clsx(
+                  styles.tileText,
+                  isActive(`text_${k}`),
+                  getEditClass('editText'),
+                  isPreview,
+                  classes?.tileText
+                )}
+              >
+                {getValue(`text_${k}`, 'text')}
+              </p>
             </div>
           ))}
-        </div>
+          </div>
       </div>
     );
   }

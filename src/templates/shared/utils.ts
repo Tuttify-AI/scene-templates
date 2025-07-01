@@ -20,7 +20,7 @@ export const transition =
 
 export const clsx = (...args: unknown[]) => args.filter(a => typeof a === 'string').join(' ');
 
-export const deleteElement = (values: Elements | undefined, elements: string[], key: string) => Object.keys(values || {})
+export const deleteElement = (values: Elements, elements: string[], key: string) => Object.keys(values || {})
   .filter(item => !item.includes(key))
   .reduce((res, parameter) => {
     if (values) {

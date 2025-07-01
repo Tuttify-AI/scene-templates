@@ -16,7 +16,6 @@ const INITIAL_STATE = {
   key: '',
   src: '',
   background: 'transparent',
-  text: '',
 };
 
 export default function useQuizAnswers({ editMode, previewMode , getValue, onActiveElementClick, onSet, values, elements, handleClick, defaultImages }: Params) {
@@ -35,16 +34,12 @@ export default function useQuizAnswers({ editMode, previewMode , getValue, onAct
 
   const getElementData = useCallback((k) => {
     const text = getValue(k, 'text');
-    const fullScreenText = getValue(k, 'full_screen_text');
-    const fullScreenUrl = getValue(k, 'full_screen_url');
     const imageUrl = getValue(k, 'url');
     const audioUrl = getValue(k, 'sound');
     const isCorrect = getValue(k, 'is_correct');
     return {
       ...(text ? {text} : {}),
-      ...(fullScreenText ? {fullScreenText} : {}),
       ...(imageUrl ? {imageUrl} : {}),
-      ...(fullScreenUrl ? {fullScreenUrl} : {}),
       ...(audioUrl ? {audioUrl} : {}),
       ...(isCorrect ? {isCorrect} : {}),
     } as ActiveElementData
@@ -70,8 +65,7 @@ export default function useQuizAnswers({ editMode, previewMode , getValue, onAct
     handleSetFullImageSrc({
       key: `full_image_${k}`,
       src: (getValue(k, 'full_screen_url') as string) || defaultImages[index] || defaultImages[0],
-      background: `${getValue(k, 'background')}`,
-      text: getValue(k, 'full_screen_text') as string || '',
+      background: `${getValue(k, 'background_hover')}`,
     });
   }, [getValue, handleSetFullImageSrc, defaultImages, handleClick, getElementData]);
 
