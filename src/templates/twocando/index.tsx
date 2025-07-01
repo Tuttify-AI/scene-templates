@@ -34,17 +34,25 @@ const Twocando = forwardRef<HTMLDivElement, TwocandoSceneProps>(
       [hiddenImageList]
     );
 
-    const { translateY, getAnimationsStyle, handleMouseMove, resetAnimatedProps, getScale, clearHover, handleHover } =
-      useAnimation({
-        disabled: editMode || previewMode,
-        element: scrollRef.current,
-      });
-    const { renderAudios, handleElementAudio } = useAudios({ values, previewMode });
+    const {
+      opacity,
+      translateY,
+      getAnimationsStyle,
+      handleMouseMove,
+      resetAnimatedProps,
+      getScale,
+      clearHover,
+      handleHover,
+    } = useAnimation({
+      disabled: editMode || previewMode,
+      element: scrollRef.current,
+    });
+    const { renderAudios, handlePauseAll } = useAudios({ values });
     const { handleClick } = useActions({
       onClick,
       disabled: editMode || previewMode,
       onActiveElementClick,
-      handleElementAudio,
+      handlePauseAll,
     });
 
     const getImageSrc = useCallback(
@@ -86,6 +94,7 @@ const Twocando = forwardRef<HTMLDivElement, TwocandoSceneProps>(
               classes?.[name as keyof Classes]
             )}
             style={{
+              opacity,
               translateY,
               backgroundColor: `${getValue(name, 'background')}`,
               ...(!isStatic && getScale(name, scale)),
