@@ -1,4 +1,4 @@
-@keyframes bounceZoom {
+@keyframes bounce {
     0% { transform: scale(0.15) }
     60% { transform: scale(1.0) }
     70% { transform: scale(0.95) }
