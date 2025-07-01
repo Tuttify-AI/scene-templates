@@ -40,3 +40,5 @@ export const deleteElement = (values: Elements, elements: string[], key: string)
     }
     return res;
   }, {} as Elements);
+
+export const getElementId = (id: string, previewMode?: boolean) => `${id}${previewMode ? '-preview' : ''}`;

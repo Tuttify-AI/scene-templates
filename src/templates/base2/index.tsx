@@ -6,7 +6,7 @@ import { BaseSceneElements, Classes } from './types';
 import { TemplateParameter, SceneProps, SceneValue, Parameters } from '../shared/types';
 import { useActions, useAudios, useImage } from '../shared/hooks';
 import { useAnimation } from './hooks';
-import { transition, clsx } from '../shared/utils';
+import {transition, clsx, getElementId} from '../shared/utils';
 
 export type Base2SceneProps = SceneProps & {
   parameters?: BaseSceneElements<TemplateParameter>;
@@ -59,7 +59,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
 
     return (
       <animated.div
-        id="background"
+        id={getElementId('background', previewMode)}
         onClick={handleClick('background')}
         onMouseMove={handleMouseMove}
         onMouseLeave={resetAnimatedProps}
@@ -85,7 +85,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
         <div className={sceneStyles.view}>
           {IMAGES.filter(el => el.isPreviewImage).map(({ name, defaultImage }) => (
             <animated.img
-              id={name}
+              id={getElementId(name, previewMode)}
               onMouseEnter={handleHover(name)}
               onMouseLeave={clearHover}
               onClick={handleClick(name, {imageUrl: getValue(name, 'url') as string})}
@@ -115,7 +115,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
 
         {IMAGES.filter(el => !el.isPreviewImage).map(({ name, defaultImage }) => (
           <animated.img
-            id={name}
+              id={getElementId(name, previewMode)}
             onMouseEnter={handleHover(name)}
             onMouseLeave={clearHover}
             onClick={handleClick(name, {imageUrl: getValue(name, 'url') as string})}
@@ -144,7 +144,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
 
         {SHAPES.map(({ name, mods }) => (
           <animated.div
-            id={`${name}`}
+              id={getElementId(`${name}`, previewMode)}
             onMouseEnter={handleHover(name)}
             onMouseLeave={clearHover}
             onClick={handleClick(name, {imageUrl: getValue(name, 'background') as string})}

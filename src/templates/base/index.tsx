@@ -6,7 +6,7 @@ import { BaseSceneElements, Classes } from './types';
 import { TemplateParameter, SceneProps, SceneValue, Parameters } from '../shared/types';
 import { useImage, useActions, useAudios } from '../shared/hooks';
 import { useAnimation } from './hooks';
-import { transition, clsx } from '../shared/utils';
+import {transition, clsx, getElementId} from '../shared/utils';
 import defaultImage from './assets/defaultImage';
 
 export type BaseSceneProps = SceneProps & {
@@ -60,7 +60,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
 
     return (
       <animated.div
-        id="background"
+        id={getElementId('background', previewMode)}
         onClick={handleClick('background', {background: getValue('background', 'background') as string})}
         className={clsx(sceneStyles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
@@ -84,7 +84,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
         )}
         <div ref={scrollRef} className={sceneStyles.scroll} />
         <animated.h1
-          id="title"
+          id={getElementId('title', previewMode)}
           onMouseEnter={handleHover('title')}
           onMouseLeave={clearHover}
           onClick={handleClick('title', {text: getValue('title', 'text') as string})}
@@ -99,7 +99,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
           {getValue('title', 'text')}
         </animated.h1>
         <animated.p
-          id="description"
+          id={getElementId('description', previewMode)}
           onMouseEnter={handleHover('description')}
           onMouseLeave={clearHover}
           onClick={handleClick('description', {text: getValue('description', 'text') as string})}
@@ -120,7 +120,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
           {getValue('description', 'text')}
         </animated.p>
         <animated.img
-          id="image"
+          id={getElementId('image', previewMode)}
           onMouseEnter={handleHover('image')}
           onMouseLeave={clearHover}
           alt="image"
@@ -145,7 +145,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
         />
         {ANIMATIONS.map(({ name, mods }) => (
           <animated.div
-            id={`${name}`}
+            id={getElementId(`${name}`, previewMode)}
             onMouseEnter={handleHover(name)}
             onMouseLeave={clearHover}
             key={name}
