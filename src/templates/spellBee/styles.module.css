@@ -243,6 +243,7 @@
 }
 
 .answerLetterItemWrapper{
+    position: relative;
     padding: 8px;
 }
 
@@ -275,6 +276,31 @@
 .answerLetterItem.incorrect {
     transform: scale(1);
     animation: pulseError 1s infinite;
+}
+
+.answerPredefinedBox {
+    position: absolute;
+    width: 60%;
+    height: 60%;
+    top: 50%;
+    left: 50%;
+    background: rgba(100, 100, 100, 0.05);
+    transform: translate(-50%,-50%);
+    border-radius: var(--mainBorderRadius);
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    padding: 8px;
+}
+
+.answerPredefinedBox.preview {
+    display: none;
+}
+
+.answerPredefinedIcon {
+    height: 100%;
+    width: 100%;
+    fill: rgba(100, 100, 100, 0.5);
 }
 
 @media screen and (max-width: 600px) {

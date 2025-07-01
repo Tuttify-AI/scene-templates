@@ -1,6 +1,7 @@
 import * as Types from './templates/shared/types';
 import Base, { BaseSceneProps } from './templates/base';
 import Base2, { Base2SceneProps } from './templates/base2';
+import Base3, { Base3SceneProps } from './templates/base3';
 import QuizOne, { QuizOneProps } from './templates/quiz1';
 import FullImage, { FullImageSceneProps } from './templates/fullImage';
 import FullImageWithButton, { FullImageWithButtonProps } from './templates/scene15';
@@ -15,11 +16,12 @@ import MultipleTiles8FullImage, { MultipleTiles8FullImageProps } from './templat
 import MultipleTiles6, { MultipleTiles6SceneProps } from './templates/multipletiles6';
 import MultipleTiles8, { MultipleTiles8SceneProps } from './templates/multipletiles8';
 import Parallax1, { Parallax1SceneProps } from './templates/parallax1';
-import AtomiHalloween from './templates/atomiHalloween';
+import WordGuess, { WordGuessSceneProps } from './templates/wordGuess';
 import Twocando, { TwocandoSceneProps } from './templates/twocando';
 
 import base from './templates/base/assets/preview';
 import base2 from './templates/base2/assets/preview';
+import base3 from './templates/base3/assets/preview';
 import quiz1 from './templates/quiz1/assets/preview';
 import fullImage from './templates/fullImage/assets/preview';
 import fullImageWithButton from './templates/fullImage/assets/preview';
@@ -32,13 +34,14 @@ import multipleTiles8FullImage from './templates/multipletiles8Fullimg/assets/pr
 import multipleTiles6 from './templates/multipletiles6/assets/preview';
 import multipleTiles8 from './templates/multipletiles8/assets/preview';
 import spellbee from './templates/spellBee/assets/preview';
-import atomiHalloween from './templates/atomiHalloween/assets/preview';
 import parallax1 from './templates/parallax1/assets/preview';
 import twocando from './templates/twocando/assets/preview';
+import wordGuess from './templates/wordGuess/assets/preview';
 
 export enum SceneNames {
   Base = 'base',
   Base2 = 'base2',
+  Base3 = 'base3',
   Quiz1 = 'quiz1',
   FullImage = 'fullImage',
   FullVideo = 'fullVideo',
@@ -56,11 +59,13 @@ export enum SceneNames {
   Scene15 = 'scene15',
   Atomi = 'atomi',
   Twocando = 'twocando',
+  WordGuess = 'wordGuess',
 }
 
 const previews = {
   base,
   base2,
+  base3,
   quiz1,
   fullImage,
   multipleTiles,
@@ -70,17 +75,18 @@ const previews = {
   multipleTiles8FullImage,
   multipleTiles6,
   multipleTiles8,
-  atomiHalloween,
   fullImageWithButton,
   tiles,
   spellbee,
   parallax1,
+  wordGuess,
   twocando,
 };
 
 export {
   Base,
   Base2,
+  Base3,
   QuizOne,
   FullImage,
   FullVideo,
@@ -91,17 +97,18 @@ export {
   MultipleTiles6FullImage,
   MultipleTiles8,
   MultipleTiles8FullImage,
-  AtomiHalloween,
   FullImageWithButton,
   Parallax1,
   Twocando,
   Tiles,
   Types,
   previews,
+  WordGuess,
 };
 export type {
   BaseSceneProps,
   Base2SceneProps,
+  Base3SceneProps,
   QuizOneProps,
   FullImageSceneProps,
   MultipleTilesSceneProps,
@@ -116,6 +123,7 @@ export type {
   SpellBeeSceneProps,
   Parallax1SceneProps,
   TwocandoSceneProps,
+  WordGuessSceneProps,
 };
 
 export const AVAILABLE_SCENES = {
@@ -127,9 +135,9 @@ export const AVAILABLE_SCENES = {
     component: Base2,
     previewImage: previews.base2,
   },
-  [SceneNames.Atomi]: {
-    component: AtomiHalloween,
-    previewImage: previews.atomiHalloween,
+  [SceneNames.Base3]: {
+    component: Base3,
+    previewImage: previews.base3,
   },
   [SceneNames.Quiz1]: {
     component: QuizOne,
@@ -167,7 +175,7 @@ export const AVAILABLE_SCENES = {
     component: MultipleTiles8,
     previewImage: previews.multipleTiles8,
   },
-  [SceneNames.MultipleTiles4FullImage]: {
+  [SceneNames.MultipleTiles8FullImage]: {
     component: MultipleTiles8FullImage,
     previewImage: previews.multipleTiles8FullImage,
   },
@@ -190,5 +198,9 @@ export const AVAILABLE_SCENES = {
   [SceneNames.Twocando]: {
     component: Twocando,
     previewImage: previews.twocando,
+  },
+  [SceneNames.WordGuess]: {
+    component: WordGuess,
+    previewImage: previews.wordGuess,
   },
 };
