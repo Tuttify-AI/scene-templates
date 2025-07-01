@@ -1,11 +1,11 @@
-import React, { useCallback, useMemo, forwardRef, CSSProperties } from 'react';
-import { animated } from '@react-spring/web';
+import React, { useCallback, useMemo, forwardRef, Fragment } from 'react';
+import { animated } from 'react-spring';
 import sceneStyles from './styles.module.css';
 import { BaseSceneElements, Classes } from './types';
-import { TemplateParameter, SceneProps, SceneValue } from '../shared/types';
+import { TemplateParameter, SceneProps, SceneValue, Parameters } from '../shared/types';
 import { useImage, useActions, useAudios } from '../shared/hooks';
 import { useAnimation } from './hooks';
-import { transition, clsx, getElementId, getElementValue } from '../shared/utils';
+import { transition, clsx } from '../shared/utils';
 import defaultImage from './assets/full-image';
 
 export type FullImageWithButtonProps = SceneProps & {
@@ -21,20 +21,15 @@ const FullImageWithButton = forwardRef<HTMLDivElement, FullImageWithButtonProps>
       disabled: editMode || previewMode,
     });
 
-    const getEditClass = useCallback(
-      (type: 'edit' | 'editRoot' | 'editText' = 'edit') => editMode && sceneStyles[type],
-      [editMode]
+    const getEditClass = useCallback((type: 'edit' | 'editRoot' = 'edit') => editMode && sceneStyles[type], [editMode]);
+    const { audios } = useAudios({ values });
+    const getValue = useCallback(
+      (element: keyof BaseSceneElements, parameter: keyof Parameters) =>
+        values?.[element]?.[parameter]?.value ?? parameters?.[element]?.[parameter]?.default_value,
+      [values, parameters]
     );
-    const { renderAudios, handleElementAudio } = useAudios({ values, previewMode });
 
-    const getValue = useMemo(() => getElementValue(values, parameters), [values, parameters]);
-
-    const { handleClick } = useActions({
-      onClick,
-      handleElementAudio,
-      disabled: editMode || previewMode,
-      onActiveElementClick,
-    });
+    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode, audios, onActiveElementClick });
 
     const isActive = useCallback(
       (key: keyof BaseSceneElements) => activeKey === key && sceneStyles.active,
@@ -48,7 +43,7 @@ const FullImageWithButton = forwardRef<HTMLDivElement, FullImageWithButtonProps>
 
     return (
       <animated.div
-        id={getElementId(`background`, previewMode)}
+        id="background"
         onClick={handleClick('background')}
         className={clsx(sceneStyles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
@@ -58,23 +53,20 @@ const FullImageWithButton = forwardRef<HTMLDivElement, FullImageWithButtonProps>
         onMouseLeave={resetAnimatedProps}
         ref={ref}
       >
-        {renderAudios()}
-        <animated.h1
-          id={getElementId(`title`, previewMode)}
-          onMouseEnter={handleHover('title')}
-          onMouseLeave={clearHover}
-          onClick={handleClick('title', { data: { text: getValue('title', 'text') as string } })}
-          className={clsx(sceneStyles.title, isActive('title'), getEditClass('editText'), isPreview, classes?.title)}
-          style={{
-            ...scale,
-            ...getAnimationsStyle(transition({ modX: 15, modY: 15 })),
-            color: getValue('title', 'text_color') as string,
-          }}
-        >
-          {getValue('title', 'text')}
-        </animated.h1>
+        {audios && (
+          <Fragment>
+            {Object.keys(audios).map(audio => (
+              <audio
+                key={`${audio}_sound`}
+                id={`${audio}_sound`}
+                ref={audios?.[audio]}
+                src={getValue(audio, 'sound') as string}
+              />
+            ))}
+          </Fragment>
+        )}
         <animated.img
-          id={getElementId(`image`, previewMode)}
+          id="image"
           alt="image"
           onMouseEnter={handleHover('image')}
           onMouseLeave={clearHover}
@@ -88,36 +80,31 @@ const FullImageWithButton = forwardRef<HTMLDivElement, FullImageWithButtonProps>
             classes?.image
           )}
           style={{
-            ...scale,
+              ...scale,
             ...getAnimationsStyle(transition({ modX: 20, modY: 20 })),
           }}
           onLoad={() => onImageLoad('image')}
           onError={() => onImageError('image')}
-          onClick={handleClick('image', { data: { imageUrl: getValue('image', 'url') as string } })}
+          onClick={handleClick('image', {imageUrl: getValue('image', 'url') as string})}
         />
-        <button
-          type="button"
-          id={getElementId(`button`, previewMode)}
-          onMouseEnter={handleHover('button')}
-          onMouseLeave={clearHover}
-          className={clsx(
-            sceneStyles.button,
-            isImageHidden('button'),
-            isActive('button'),
-            getEditClass(),
-            isPreview,
-            classes?.button
-          )}
-          style={
-            {
-              '--button-background-color': getValue('button', 'background'),
-              '--button-text-color': getValue('button', 'text_color'),
-            } as CSSProperties
-          }
-          onClick={handleClick('button', { data: { text: getValue('button', 'text') as string } })}
-        >
-          {getValue('button', 'text')}
-        </button>
+          <button
+              id="button"
+              onMouseEnter={handleHover('button')}
+              onMouseLeave={clearHover}
+              className={clsx(
+                  sceneStyles.button,
+                  isImageHidden('button'),
+                  isActive('button'),
+                  getEditClass(),
+                  isPreview,
+                  classes?.button
+              )}
+              style={{
+
+
+              }}
+              onClick={handleClick('button', {imageUrl: getValue('button', 'url') as string})}
+          >Test</button>
       </animated.div>
     );
   }
