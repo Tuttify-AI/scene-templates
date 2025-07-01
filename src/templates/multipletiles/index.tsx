@@ -5,7 +5,7 @@ import { useActions, useWindowSize, useImage, useAudios, useTiles } from '../sha
 import { clsx } from '../shared/utils';
 import { IMAGES } from './constants';
 
-import { Parameters, SceneProps, SceneValue, TemplateParameterType } from '../shared/types';
+import { ActiveElementData,Parameters, SceneProps, SceneValue, TemplateParameterType } from '../shared/types';
 import { BaseSceneElements, Classes } from './types';
 import SwiperClass from 'swiper/types/swiper-class';
 
@@ -158,7 +158,7 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
             <SwiperSlide key={k} className={styles.slideItem}>
               <div
                 id={k}
-                onClick={handleClick(k, getTileData(k))}
+                onClick={handleClick(k, getTileData(k)  as ActiveElementData)}
                 className={clsx(styles.tile, isActive(k), getEditClass(), isPreview, classes?.tile)}
                 style={
                   {

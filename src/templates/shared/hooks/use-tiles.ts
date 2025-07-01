@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Elements, Parameters, SceneProps, SceneValue } from '../types';
+import { ActiveElementData, Elements, Parameters, SceneProps, SceneValue } from '../types';
 import { BaseSceneElements } from '../../multipletiles4FullImg/types';
 import { useActions } from './index';
 
@@ -61,7 +61,7 @@ export default function useTiles({ editMode, previewMode , getValue, onActiveEle
       ...(text ? {text} : {}),
       ...(imageUrl ? {imageUrl} : {}),
       ...(audioUrl ? {audioUrl} : {}),
-    }
+    } as ActiveElementData
   }, [getValue]);
 
   const handleSetFullImageSrc = useCallback((data: typeof fullImage) => {
@@ -80,7 +80,7 @@ export default function useTiles({ editMode, previewMode , getValue, onActiveEle
   }, [onActiveElementClick, handleClearFullImageSrc, fullImage]);
 
   const handleImageClick = useCallback((k: string, index: number) => (e: React.MouseEvent<HTMLElement>) => {
-    handleClick(`image_${k}`, getTileData(k))(e);
+    handleClick(`image_${k}`, getTileData(k) as ActiveElementData)(e);
     handleSetFullImageSrc({
       key: `full_image_${k}`,
       src: (getValue(`image_${k}`, 'fullScreenUrl') as string) || defaultImages[index] || defaultImages[0],

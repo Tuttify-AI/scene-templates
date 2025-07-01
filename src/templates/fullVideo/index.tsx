@@ -1,13 +1,12 @@
 import React, { useCallback, useMemo, forwardRef } from 'react';
-import { animated } from '@react-spring/web';
+import { animated } from 'react-spring';
 import sceneStyles from './styles.module.css';
 import { BaseSceneElements, Classes } from './types';
-import { TemplateParameter, SceneProps, SceneValue } from '../shared/types';
+import { TemplateParameter, SceneProps, SceneValue, Parameters } from '../shared/types';
 import { useActions, useAudios } from '../shared/hooks';
 import { useAnimation } from './hooks';
-import { clsx, getElementId, getElementValue } from '../shared/utils';
+import {clsx} from '../shared/utils';
 import ReactPlayer from 'react-player';
-import defaultImage from './assets/full-image';
 
 export type FullVideoSceneProps = SceneProps & {
   parameters?: BaseSceneElements<TemplateParameter>;
@@ -17,20 +16,20 @@ export type FullVideoSceneProps = SceneProps & {
 
 const FullVideo = forwardRef<HTMLDivElement, FullVideoSceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, parameters, values, onActiveElementClick }, ref) => {
-    const { handleMouseMove, resetAnimatedProps } = useAnimation({
+    const { handleMouseMove, resetAnimatedProps, } = useAnimation({
       disabled: editMode || previewMode,
     });
 
     const getEditClass = useCallback((type: 'edit' | 'editRoot' = 'edit') => editMode && sceneStyles[type], [editMode]);
-    const { handleElementAudio } = useAudios({ values, previewMode });
-    const getValue = useMemo(() => getElementValue(values, parameters), [values, parameters]);
+    const { audios } = useAudios({ values });
+    const getValue = useCallback(
+      (element: keyof BaseSceneElements, parameter: keyof Parameters) => {
+        return  values?.[element]?.[parameter]?.value ?? parameters?.[element]?.[parameter]?.default_value
+      },
+      [values, parameters]
+    );
 
-    const { handleClick } = useActions({
-      onClick,
-      handleElementAudio,
-      disabled: editMode || previewMode,
-      onActiveElementClick,
-    });
+    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode, audios, onActiveElementClick });
 
     const isActive = useCallback(
       (key: keyof BaseSceneElements) => activeKey === key && sceneStyles.active,
@@ -38,9 +37,19 @@ const FullVideo = forwardRef<HTMLDivElement, FullVideoSceneProps>(
     );
     const isPreview = useMemo(() => previewMode && sceneStyles.preview, [previewMode]);
 
+    const splitValues = useCallback((value, element) => {
+      if(typeof value !== 'string') return;
+      if (element === 'video'){
+        return value ? value?.split(',')[0] : 'https://youtu.be/ErxyunQ7joA'
+      }
+      if (element === 'image'){
+        return value ? value?.split(',')[1] : 'https://i.ytimg.com/vi/ErxyunQ7joA/hqdefault.jpg'
+      }
+      return '';
+    }, [values])
     return (
       <animated.div
-        id={getElementId('background', previewMode)}
+        id="background"
         onClick={handleClick('background')}
         className={clsx(sceneStyles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
@@ -51,30 +60,38 @@ const FullVideo = forwardRef<HTMLDivElement, FullVideoSceneProps>(
         ref={ref}
       >
         <div>
-          {editMode && (
+          {editMode &&
             <div
               className={sceneStyles.image}
-              onClick={handleClick('video', { data: { videoUrl: getValue('video', 'url') as string } })}
+              onClick={handleClick('video', {videoUrl: getValue('video', 'url') as string})}
               style={{
                 zIndex: 5,
               }}
-            />
-          )}
-          {editMode ? (
-            <img src={`${getValue('video', 'preview') || defaultImage}`} className={clsx(sceneStyles.image)} alt="" />
-          ) : (
-            <ReactPlayer
-              playing
-              light
-              controls
-              width="92%"
-              height="80%"
-              id="video"
-              url={`${getValue('video', 'url') || ''}`}
-              className={clsx(sceneStyles.image, isActive('video'), getEditClass(), isPreview, classes?.image)}
-              onClick={handleClick('video', { data: { videoUrl: getValue('video', 'url') as string } })}
-            />
-          )}
+          />}
+          {editMode
+            ? <img
+                src={`${splitValues(values?.video?.url?.value, 'image')}`}
+                className={clsx(sceneStyles.image)}
+                alt=""
+              />
+            : (<ReactPlayer
+                playing
+                light
+                controls
+                width='92%'
+                height='80%'
+                id='video'
+                url={`${splitValues(values?.video?.url?.value, 'video')}`}
+                className={clsx(
+                  sceneStyles.image,
+                  isActive('video'),
+                  getEditClass(),
+                  isPreview,
+                  classes?.image,
+                )}
+                onClick={handleClick('video', { videoUrl: getValue('video', 'url') as string })}
+              />)
+          }
         </div>
       </animated.div>
     );
