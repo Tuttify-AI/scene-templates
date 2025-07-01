@@ -1,206 +1,99 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActiveElementData, Parameters, SceneProps } from '../types';
-import { deleteElement, getElementValue } from '../utils';
-import { useActions, useWindowSize } from './index';
-import SwiperClass from 'swiper/types/swiper-class';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Elements, Parameters, SceneProps, SceneValue } from '../types';
+import { BaseSceneElements } from '../../multipletiles4FullImg/types';
+import { useActions } from './index';
 
 type Params = Pick<SceneProps, 'editMode' | 'previewMode' | 'onSet' | 'values'> & {
   onActiveElementClick?: SceneProps['onActiveElementClick'];
+  getValue: (element: keyof Elements, parameter: keyof Parameters) => unknown;
   handleAddTile: (e: React.MouseEvent<HTMLButtonElement>) => void;
   tiles: string[];
   handleClick: ReturnType<typeof useActions>['handleClick'];
-  defaultImages?: string[];
-  defaultImageKey?: string;
-  params?: Partial<FullTileParams>;
-  swiper?: SwiperClass | null;
-  slidesPerViewFromConfig?: number;
-  slidesPerColumn?: number;
-};
-
-type FullTileParams = {
-  imageBackground: string;
-  imageUrl: string;
-  text: string;
-  textColor: string;
-  imageHoverScale: number;
-  imageHeight: number; //in percents,
-  slidesPerColumn: number;
-  textSize: number;
-  slidesPerViewFromConfig: number;
-  textPadding: number;
-};
-
-type FullElementState = {
-  key: string;
-  value: string;
-  background?: string;
-  color?: string;
+  defaultImages: string[]
 };
 
 const INITIAL_STATE = {
-  image: {
-    key: '',
-    value: '',
-    background: 'transparent',
-  } as FullElementState,
-  text: {
-    key: '',
-    value: '',
-    color: '',
-  } as FullElementState,
+  key: '',
+  src: '',
+  background: 'transparent',
 };
 
-const DEFAULT_PARAMS: FullTileParams = {
-  imageBackground: 'background_hover',
-  imageUrl: 'fullscreen_url',
-  text: 'fullscreen_text',
-  textColor: 'fullscreen_text_color',
-  imageHoverScale: 1.35,
-  imageHeight: 0.4, //in percents,
-  slidesPerColumn: 2,
-  textSize: 36,
-  slidesPerViewFromConfig: 8,
-  textPadding: 8,
-};
-
-export default function useTiles({
-  editMode,
-  previewMode,
-  onActiveElementClick,
-  onSet,
-  values,
-  tiles,
-  handleClick,
-  defaultImages,
-  defaultImageKey = 'image_',
-  params = DEFAULT_PARAMS,
-  swiper,
-}: Params) {
-  const [fullTile, setFullTile] = useState(INITIAL_STATE);
-  const { isMd, isSm } = useWindowSize();
-  const fullTileParams = useMemo(() => ({ ...DEFAULT_PARAMS, ...params }), [params]);
+export default function useTiles({ editMode, previewMode , getValue, onActiveElementClick, onSet, values, tiles, handleClick, defaultImages }: Params) {
+  const [fullImage, setFullImage] = useState(INITIAL_STATE);
   useEffect(() => {
     if (editMode || previewMode) {
-      setFullTile(INITIAL_STATE);
+      setFullImage(INITIAL_STATE);
     }
-  }, [editMode, previewMode, setFullTile]);
+  }, [editMode, previewMode, setFullImage]);
 
-  const handleFullTile = useCallback(
-    (value: Partial<typeof fullTile>) => setFullTile(prev => ({ ...prev, ...value })),
-    []
-  );
+  const handleDeleteTile = useCallback((e: React.MouseEvent<HTMLButtonElement>, k: string) => {
+    e.stopPropagation();
+    onSet &&
+    onSet(
+        Object.keys(values || {})
+            .filter(item => !item.includes(k))
+            .reduce((res, parameter) => {
+              if (values) {
+                const newIndex = tiles.filter(t => t !== k).findIndex(t => parameter.endsWith(t)) + 1;
+                if (newIndex) {
+                  const parameterStr = parameter.replace(/\d+/gi, '');
+                  res[`${parameterStr}${newIndex}`] = {
+                    ...values[parameter],
+                    title: {
+                      ...values[parameter].title,
+                      title: values[parameter].title.title.replace(/\d+/g, `${newIndex}`),
+                    },
+                  };
+                } else {
+                  res[parameter] = values[parameter];
+                }
+              }
+              return res;
+            }, {} as BaseSceneElements<SceneValue>)
+    );
+  }, [onSet, tiles, values]);
 
-  const getValue = useMemo(() => getElementValue(values), [values]);
+  const getTileData = useCallback((k) => {
+    const text = getValue(`text_${k}`, 'text');
+    const imageUrl = getValue(`image_${k}`, 'url');
+    const audioUrl = getValue(`sound_${k}`, 'sound');
+    return {
+      ...(text ? {text} : {}),
+      ...(imageUrl ? {imageUrl} : {}),
+      ...(audioUrl ? {audioUrl} : {}),
+    }
+  }, [getValue]);
 
-  const handleDeleteTile = useCallback(
-    (k: string | string[], e?: React.MouseEvent<HTMLButtonElement>) => {
-      e?.stopPropagation();
-      onSet && onSet(deleteElement(values, tiles, k));
-    },
-    [onSet, tiles, values]
-  );
+  const handleSetFullImageSrc = useCallback((data: typeof fullImage) => {
+    if (!(editMode || previewMode)) {
+      setFullImage(data);
+    }
+  }, [editMode, previewMode, setFullImage]);
 
-  const getTileData = useCallback(
-    k => {
-      const text = getValue(`text_${k}`, 'text') || getValue(k, 'text');
-      const imageUrl = getValue(`image_${k}`, 'url') || getValue(k, 'url');
-      const audioUrl = getValue(`sound_${k}`, 'sound') || getValue(k, 'sound');
-      return {
-        ...(text ? { text } : {}),
-        ...(imageUrl ? { imageUrl } : {}),
-        ...(audioUrl ? { audioUrl } : {}),
-      } as ActiveElementData;
-    },
-    [getValue]
-  );
+  const handleClearFullImageSrc = useCallback(() => setFullImage(INITIAL_STATE), [setFullImage]);
 
-  const handleSetFullTile = useCallback(
-    (data: Partial<typeof fullTile>) => {
-      if (!(editMode || previewMode)) {
-        handleFullTile(data);
-      }
-    },
-    [editMode, previewMode, handleFullTile]
-  );
+  const handleFullImageClick = useCallback(() => {
+    onActiveElementClick && onActiveElementClick(`${fullImage.key}_full_image`, {
+      imageUrl: fullImage.src,
+    })
+    handleClearFullImageSrc()
+  }, [onActiveElementClick, handleClearFullImageSrc, fullImage]);
 
-  const handleClearFullTile = useCallback(() => setFullTile(INITIAL_STATE), [setFullTile]);
+  const handleImageClick = useCallback((k: string, index: number) => (e: React.MouseEvent<HTMLElement>) => {
+    handleClick(`image_${k}`, getTileData(k))(e);
+    handleSetFullImageSrc({
+      key: `image_${k}`,
+      src: (getValue(`image_${k}`, 'fullScreenUrl') as string) || defaultImages[index] || defaultImages[0],
+      background: `${getValue(k, 'background_hover')}`,
+    });
+  }, [getTileData, handleClick, getValue, handleSetFullImageSrc, defaultImages]);
 
-  const handleFullImageClick = useCallback(
-    (k?: string, parameter?: keyof Parameters) => (e: React.MouseEvent<HTMLElement>) => {
-      onActiveElementClick &&
-        onActiveElementClick(fullTile.image.key, {
-          imageUrl: fullTile.image.value,
-          text: fullTile.text.value,
-        });
-      k && handleClick(`${defaultImageKey}${k}`, { parameter })(e);
-      handleClearFullTile();
-    },
-    [onActiveElementClick, handleClearFullTile, fullTile, handleClick, defaultImageKey]
-  );
 
-  const slideHeight = useMemo(() => 100 / fullTileParams.slidesPerColumn, []);
-
-  const textSize = useMemo(
-    () =>
-      Math.floor(
-        fullTileParams.textSize *
-          (1 -
-            fullTileParams.slidesPerViewFromConfig * 0.035 * (isSm ? 0.5 : isMd ? 0.75 : 1) -
-            fullTileParams.slidesPerColumn * 0.075)
-      ),
-    [isMd, isSm]
-  );
-
-  const textMargin = useMemo(
-    () =>
-      ((swiper?.height || 0) / fullTileParams.slidesPerColumn) * (fullTileParams.imageHeight / 2) +
-      textSize +
-      fullTileParams.textPadding / 2,
-    [fullTileParams, swiper?.height, textSize]
-  );
-
-  const textTranslateY = useMemo(
-    () => `translateY(calc(-100% + ${slideHeight * fullTileParams.imageHoverScale - slideHeight}px))`,
-    [slideHeight]
-  );
-
-  const onSetFullTile = useCallback(
-    (k: string, index: number, parameter?: keyof Parameters) => (e: React.MouseEvent<HTMLElement>) => {
-      const defaultValue = defaultImages ? defaultImages[index] || defaultImages[0] : '';
-      // latest scenes now uses fullscreen_url parameter, fullScreenUrl is left for older scenes
-      const value =
-        (getValue(`${defaultImageKey}${k}`, 'fullScreenUrl') as string) ||
-        (getValue(`${defaultImageKey}${k}`, fullTileParams.imageUrl) as string);
-      handleClick(`${defaultImageKey}${k}`, { data: getTileData(k) as ActiveElementData, parameter })(e);
-      handleSetFullTile({
-        image: {
-          key: `full_image_${k}`,
-          value: value || defaultValue,
-          background: `${getValue(k, fullTileParams.imageBackground)}`,
-        },
-        text: {
-          key: `full_text_${k}`,
-          value: `${getValue(k, fullTileParams.text)}`,
-          color: `${getValue(k, fullTileParams.textColor)}`,
-        },
-      });
-    },
-    [getTileData, handleClick, getValue, handleSetFullTile, defaultImages, defaultImageKey, fullTileParams]
-  );
-  const parsedFullImageKey = useMemo(() => fullTile.image.key?.replace('full_image_', ''), [fullTile.image.key]);
-  const parsedFullTextKey = useMemo(() => fullTile.text.key?.replace('full_text_', ''), [fullTile.text.key]);
   return {
-    onSetFullTile,
+    handleImageClick,
     handleFullImageClick,
     handleDeleteTile,
-    fullTile,
+    fullImage,
     getTileData,
-    parsedFullImageKey,
-    parsedFullTextKey,
-    DEFAULT_PARAMS,
-    slideHeight,
-    textSize,
-    textMargin,
-    textTranslateY,
   };
 }

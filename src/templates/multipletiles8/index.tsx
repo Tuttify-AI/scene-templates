@@ -1,7 +1,7 @@
 import React, { CSSProperties, forwardRef, useCallback, useMemo, useState, Fragment } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { useActions, useWindowSize, useImage, useAudios } from '../shared/hooks';
+import {useActions, useWindowSize, useImage, useAudios, useTiles} from '../shared/hooks';
 import { clsx } from '../shared/utils';
 import { IMAGES } from './constants';
 
@@ -22,13 +22,13 @@ export type MultipleTiles8SceneProps = SceneProps & {
 };
 
 const MultipleTiles8 = forwardRef<HTMLDivElement, MultipleTiles8SceneProps>(
-  ({ editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet }, ref) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet, onActiveElementClick }, ref) => {
     const [swiper, setSwiper] = useState<SwiperClass | null>(null);
     const { isMd, isSm } = useWindowSize();
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
-    const {audios} = useAudios({values});
+    const { audios } = useAudios({ values });
     const getEditClass = useCallback(
-      (type: 'edit' | 'editText' | 'editRoot' = 'edit') => editMode && styles[type],
+      (type: 'edit' | 'editText' | 'editRoot' = 'edit') => editMode && styles[type as keyof typeof styles],
       [editMode]
     );
 
@@ -37,7 +37,7 @@ const MultipleTiles8 = forwardRef<HTMLDivElement, MultipleTiles8SceneProps>(
         (values?.[element]?.[parameter] as SceneValue)?.value,
       [values]
     );
-    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode, audios });
+    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode, audios, onActiveElementClick });
 
     const isActive = useCallback((key: keyof BaseSceneElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
@@ -102,36 +102,23 @@ const MultipleTiles8 = forwardRef<HTMLDivElement, MultipleTiles8SceneProps>(
       }
     };
 
-    const handleDeleteTile = (e: React.MouseEvent<HTMLButtonElement>, k: string) => {
-      e.stopPropagation();
-      onSet &&
-        onSet(
-          Object.keys(values || {})
-            .filter(item => !item.includes(k))
-            .reduce((res, parameter) => {
-              if (values) {
-                const newIndex = tiles.filter(t => t !== k).findIndex(t => parameter.endsWith(t)) + 1;
-                if (newIndex) {
-                  const parameterStr = parameter.replace(/\d+/gi, '');
-                  res[`${parameterStr}${newIndex}`] = {
-                    ...values[parameter],
-                    title: {
-                      ...values[parameter].title,
-                      title: values[parameter].title.title.replace(/\d+/g, `${newIndex}`),
-                    },
-                  };
-                } else {
-                  res[parameter] = values[parameter];
-                }
-              }
-              return res;
-            }, {} as BaseSceneElements<SceneValue>)
-        );
-    };
+      const { handleDeleteTile, getTileData } = useTiles({
+          tiles,
+          onSet,
+          handleAddTile,
+          values,
+          handleClick,
+          getValue,
+          defaultImages: IMAGES,
+          onActiveElementClick,
+          previewMode,
+          editMode,
+      });
 
-    return (
+
+      return (
       <div
-        id='background'
+        id="background"
         onClick={handleClick('background')}
         className={clsx(styles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
@@ -142,7 +129,12 @@ const MultipleTiles8 = forwardRef<HTMLDivElement, MultipleTiles8SceneProps>(
         {audios && (
           <Fragment>
             {Object.keys(audios).map(audio => (
-              <audio key={`${audio}_sound`} id={`${audio}_sound`} ref={audios?.[audio]} src={getValue(audio, 'sound') as string}/>
+              <audio
+                key={`${audio}_sound`}
+                id={`${audio}_sound`}
+                ref={audios?.[audio]}
+                src={getValue(audio, 'sound') as string}
+              />
             ))}
           </Fragment>
         )}
@@ -161,7 +153,7 @@ const MultipleTiles8 = forwardRef<HTMLDivElement, MultipleTiles8SceneProps>(
             <SwiperSlide key={k} className={styles.slideItem}>
               <div
                 id={k}
-                onClick={handleClick(k)}
+                onClick={handleClick(k, getTileData(k))}
                 className={clsx(styles.tile, isActive(k), getEditClass(), isPreview, classes?.tile)}
                 style={
                   {
@@ -182,7 +174,7 @@ const MultipleTiles8 = forwardRef<HTMLDivElement, MultipleTiles8SceneProps>(
                 id={`image_${k}`}
                 alt={`image_${k}`}
                 src={(getValue(`image_${k}`, 'url') as string) || IMAGES[index] || IMAGES[0]}
-                onClick={handleClick(`image_${k}`)}
+                onClick={handleClick(`image_${k}`, getTileData(k))}
                 onLoad={() => onImageLoad(`image_${k}`)}
                 onError={() => onImageError(`image_${k}`)}
                 className={clsx(
@@ -196,7 +188,7 @@ const MultipleTiles8 = forwardRef<HTMLDivElement, MultipleTiles8SceneProps>(
               />
               <p
                 id={`text_${k}`}
-                onClick={handleClick(`text_${k}`)}
+                onClick={handleClick(`text_${k}`, getTileData(k))}
                 className={clsx(
                   styles.tileText,
                   isActive(`text_${k}`),

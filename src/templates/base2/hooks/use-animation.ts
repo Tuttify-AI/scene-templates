@@ -62,6 +62,7 @@ export default function useAnimation({ element, disabled }: Params) {
 
   const clearHover = () => setHovered('');
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const getScale = (key: keyof BaseSceneElements) => useSpring(createScale(key));
 
   return {

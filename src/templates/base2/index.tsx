@@ -15,9 +15,9 @@ export type Base2SceneProps = SceneProps & {
 };
 
 const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
-  ({ editMode, previewMode, classes, activeKey, onClick, parameters, values }, ref) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, parameters, values, onActiveElementClick }, ref) => {
     const scrollRef = useRef<HTMLDivElement>(null);
-    const {audios} = useAudios({values});
+    const { audios } = useAudios({ values });
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
 
     const {
@@ -35,7 +35,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
     });
 
     const getEditClass = useCallback(
-      (type: 'edit' | 'editText' | 'editRoot' = 'edit') => editMode && sceneStyles[type],
+      (type: 'edit' | 'editText' | 'editRoot' = 'edit') => editMode && sceneStyles[type as keyof typeof sceneStyles],
       [editMode]
     );
 
@@ -45,7 +45,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
       [values, parameters]
     );
 
-    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode, audios });
+    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode, audios, onActiveElementClick });
 
     const isActive = useCallback(
       (key: keyof BaseSceneElements) => activeKey === key && sceneStyles.active,
@@ -59,7 +59,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
 
     return (
       <animated.div
-        id='background'
+        id="background"
         onClick={handleClick('background')}
         onMouseMove={handleMouseMove}
         onMouseLeave={resetAnimatedProps}
@@ -72,7 +72,12 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
         {audios && (
           <Fragment>
             {Object.keys(audios).map(audio => (
-              <audio key={`${audio}_sound`} id={`${audio}_sound`} ref={audios?.[audio]} src={getValue(audio, 'sound') as string}/>
+              <audio
+                key={`${audio}_sound`}
+                id={`${audio}_sound`}
+                ref={audios?.[audio]}
+                src={getValue(audio, 'sound') as string}
+              />
             ))}
           </Fragment>
         )}
@@ -83,7 +88,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
               id={name}
               onMouseEnter={handleHover(name)}
               onMouseLeave={clearHover}
-              onClick={handleClick(name)}
+              onClick={handleClick(name, {imageUrl: getValue(name, 'url') as string})}
               onLoad={() => onImageLoad(name)}
               onError={() => onImageError(name)}
               key={name}
@@ -91,7 +96,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
               src={`${getValue(name, 'url')}` || defaultImage}
               className={clsx(
                 sceneStyles.previewImage,
-                sceneStyles[name],
+                sceneStyles[name as keyof typeof sceneStyles],
                 isImageHidden(name),
                 isActive(name),
                 getEditClass(),
@@ -113,7 +118,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
             id={name}
             onMouseEnter={handleHover(name)}
             onMouseLeave={clearHover}
-            onClick={handleClick(name)}
+            onClick={handleClick(name, {imageUrl: getValue(name, 'url') as string})}
             onLoad={() => onImageLoad(name)}
             onError={() => onImageError(name)}
             key={name}
@@ -121,7 +126,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
             src={`${getValue(name, 'url')}` || defaultImage}
             className={clsx(
               sceneStyles.cloudImage,
-              sceneStyles[name],
+              sceneStyles[name as keyof typeof sceneStyles],
               isImageHidden(name),
               isActive(name),
               getEditClass(),
@@ -139,14 +144,14 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
 
         {SHAPES.map(({ name, mods }) => (
           <animated.div
-            id={name}
+            id={`${name}`}
             onMouseEnter={handleHover(name)}
             onMouseLeave={clearHover}
-            onClick={handleClick(name)}
+            onClick={handleClick(name, {imageUrl: getValue(name, 'background') as string})}
             key={name}
             className={clsx(
               sceneStyles.shape,
-              sceneStyles[name],
+              sceneStyles[name as keyof typeof sceneStyles],
               isActive(name),
               getEditClass(),
               isPreview,

@@ -18,13 +18,13 @@ export default function useAnimation({ disabled }: Params) {
     []
   );
   const scale = useSpring({
-      from: {
-        scale: 1,
-      },
-      to: {
-        scale: !disabled && hovered === 'image' ? 1.1 : 1,
-      },
-    });
+    from: {
+      scale: 1,
+    },
+    to: {
+      scale: !disabled && hovered === 'image' ? 1.1 : 1,
+    },
+  });
 
   const handleMouseMove = ({ clientX, clientY }: React.MouseEvent<HTMLDivElement>) => {
     if (!disabled) {

@@ -1,4 +1,4 @@
-import React, {RefObject} from 'react';
+import React, { RefObject } from 'react';
 
 export type AtomiDocument = Record<string, unknown> & {
   destroy?: () => void;
@@ -71,7 +71,15 @@ export type SceneValue = {
 };
 
 export type AudioElements = {
-  [key: string]: RefObject<HTMLAudioElement>
+  [key: string]: RefObject<HTMLAudioElement>;
+};
+
+export type ActiveElementData = {
+  text?: string;
+  imageUrl?: string;
+  audioUrl?: string;
+  background?: string;
+  [key: string]: string | undefined;
 }
 
 export type SceneProps = {
@@ -101,6 +109,12 @@ export type SceneProps = {
    * @param element - selected HTMLElement
    */
   onClick?: (key: string, element: HTMLElement) => void;
+  /**
+   * onActiveElementClick function for interactive elements click
+   * @param key - parameter key
+   * @param data - interactive element data
+   */
+  onActiveElementClick?: (key: string, data?: ActiveElementData) => void;
   /**
    * Ref to access child component
    */

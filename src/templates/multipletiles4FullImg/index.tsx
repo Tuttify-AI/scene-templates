@@ -1,7 +1,7 @@
-import React, { CSSProperties, forwardRef, useCallback, useEffect, useMemo, useState, Fragment } from 'react';
+import React, { CSSProperties, forwardRef, useCallback, useMemo, useState, Fragment } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { useActions, useWindowSize, useImage, useAudios } from '../shared/hooks';
+import { useActions, useWindowSize, useImage, useAudios, useTiles } from '../shared/hooks';
 import { clsx } from '../shared/utils';
 import { IMAGES } from './constants';
 
@@ -21,24 +21,14 @@ export type MultipleTiles4FullImageProps = SceneProps & {
   classes?: Classes;
 };
 
-const INITIAL_STATE = {
-  src: '',
-  background: 'transparent',
-};
-
 const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullImageProps>(
-  ({ editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet }, ref) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet, onActiveElementClick }, ref) => {
     const [swiper, setSwiper] = useState<SwiperClass | null>(null);
     const { isSm } = useWindowSize();
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
-    const {audios} = useAudios({values});
-    const [fullImage, setFullImage] = useState(INITIAL_STATE);
-    useEffect(() => {
-      if (editMode || previewMode) {
-        setFullImage(INITIAL_STATE);
-      }
-    }, [editMode, previewMode, setFullImage]);
-
+    const { audios } = useAudios({ values });
+    const isActive = useCallback((key: keyof BaseSceneElements) => activeKey === key && styles.active, [activeKey]);
+    const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
     const getEditClass = useCallback(
       (type: 'edit' | 'editText' | 'editRoot' = 'edit') => editMode && styles[type],
       [editMode]
@@ -49,10 +39,14 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
         (values?.[element]?.[parameter] as SceneValue)?.value,
       [values]
     );
-    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode, audios });
+    const { handleClick } = useActions({
+      onClick,
+      getValue,
+      disabled: editMode || previewMode,
+      audios,
+      onActiveElementClick,
+    });
 
-    const isActive = useCallback((key: keyof BaseSceneElements) => activeKey === key && styles.active, [activeKey]);
-    const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
     const tiles = useMemo(() => Object.keys(values || {}).filter(k => k.startsWith('tile')), [values]);
     const isImageHidden = useCallback(
       (key: keyof BaseSceneElements) => hiddenImageList[key] && styles.hidden,
@@ -60,103 +54,81 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
     );
 
     const handleAddTile = (e: React.MouseEvent<HTMLButtonElement>) => {
-      e.stopPropagation();
-      const lastTile = Number(tiles[tiles.length - 1]?.replace('tile', ''));
-      if (lastTile && onAdd) {
-        onAdd({
-          [`tile${lastTile + 1}`]: {
-            background_hover: {
-              value: '#5468E7',
-              title: 'Background hover color',
-              type: TemplateParameterType.color,
-            },
-            sound: {
-              value: '',
-              title: 'On click sound link',
-              type: TemplateParameterType.sound,
-            },
-            title: {
-              value: `Tile No.${tiles.length + 1}`,
-              title: `Tile No.${tiles.length + 1}`,
-              type: TemplateParameterType.title,
-            },
-          },
-          [`text_tile${lastTile + 1}`]: {
-            text: {
-              value: 'Text',
-              title: 'Tile text',
-              type: TemplateParameterType.text,
-            },
-            title: {
-              value: `Tile No.${tiles.length + 1} text`,
-              title: `Tile No.${tiles.length + 1} text`,
-              type: TemplateParameterType.title,
-            },
-          },
-          [`image_tile${lastTile + 1}`]: {
-            url: {
-              value: '',
-              title: 'Image',
-              type: TemplateParameterType.image,
-            },
-            fullScreenUrl: {
-              value: '',
-              title: 'Fullscreen image',
-              type: TemplateParameterType.image,
-            },
-            title: {
-              value: `Tile No.${tiles.length + 1} image`,
-              title: `Tile No.${tiles.length + 1} image`,
-              type: TemplateParameterType.title,
-            },
-          },
-        });
-      }
-
-      if (swiper) {
-        swiper.update();
-        setTimeout(() => swiper.slideTo(tiles.length), 0);
-      }
-    };
-
-    const handleSetFullImageSrc = (data: typeof fullImage) => {
-      if (!(editMode || previewMode)) {
-        setFullImage(data);
-      }
-    };
-
-    const handleClearFullImageSrc = () => setFullImage(INITIAL_STATE);
-
-    const handleDeleteTile = (e: React.MouseEvent<HTMLButtonElement>, k: string) => {
-      e.stopPropagation();
-      onSet &&
-        onSet(
-          Object.keys(values || {})
-            .filter(item => !item.includes(k))
-            .reduce((res, parameter) => {
-              if (values) {
-                const newIndex = tiles.filter(t => t !== k).findIndex(t => parameter.endsWith(t)) + 1;
-                if (newIndex) {
-                  const parameterStr = parameter.replace(/\d+/gi, '');
-                  res[`${parameterStr}${newIndex}`] = {
-                    ...values[parameter],
-                    title: {
-                      ...values[parameter].title,
-                      title: values[parameter].title.title.replace(/\d+/g, `${newIndex}`),
+        e.stopPropagation();
+        const lastTile = Number(tiles[tiles.length - 1]?.replace('tile', ''));
+        if (lastTile && onAdd) {
+            onAdd({
+                [`tile${lastTile + 1}`]: {
+                    background_hover: {
+                        value: '#5468E7',
+                        title: 'Background hover color',
+                        type: TemplateParameterType.color,
                     },
-                  };
-                } else {
-                  res[parameter] = values[parameter];
-                }
-              }
-              return res;
-            }, {} as BaseSceneElements<SceneValue>)
-        );
+                    sound: {
+                        value: '',
+                        title: 'On click sound link',
+                        type: TemplateParameterType.sound,
+                    },
+                    title: {
+                        value: `Tile No.${tiles.length + 1}`,
+                        title: `Tile No.${tiles.length + 1}`,
+                        type: TemplateParameterType.title,
+                    },
+                },
+                [`text_tile${lastTile + 1}`]: {
+                    text: {
+                        value: 'Text',
+                        title: 'Tile text',
+                        type: TemplateParameterType.text,
+                    },
+                    title: {
+                        value: `Tile No.${tiles.length + 1} text`,
+                        title: `Tile No.${tiles.length + 1} text`,
+                        type: TemplateParameterType.title,
+                    },
+                },
+                [`image_tile${lastTile + 1}`]: {
+                    url: {
+                        value: '',
+                        title: 'Image',
+                        type: TemplateParameterType.image,
+                    },
+                    fullScreenUrl: {
+                        value: '',
+                        title: 'Fullscreen image',
+                        type: TemplateParameterType.image,
+                    },
+                    title: {
+                        value: `Tile No.${tiles.length + 1} image`,
+                        title: `Tile No.${tiles.length + 1} image`,
+                        type: TemplateParameterType.title,
+                    },
+                },
+            });
+        }
+
+        if (swiper) {
+            swiper.update();
+            setTimeout(() => swiper.slideTo(tiles.length), 0);
+        }
     };
+
+    const { handleFullImageClick, handleImageClick, handleDeleteTile, fullImage, getTileData } = useTiles({
+      tiles,
+      onSet,
+      handleAddTile,
+      values,
+      handleClick,
+      getValue,
+      defaultImages: IMAGES,
+      onActiveElementClick,
+      previewMode,
+      editMode,
+    });
 
     return (
       <div
-        id='background'
+        id="background"
         onClick={handleClick('background')}
         className={clsx(styles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
@@ -167,7 +139,12 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
         {audios && (
           <Fragment>
             {Object.keys(audios).map(audio => (
-              <audio key={`${audio}_sound`} id={`${audio}_sound`} ref={audios?.[audio]} src={getValue(audio, 'sound') as string}/>
+              <audio
+                key={`${audio}_sound`}
+                id={`${audio}_sound`}
+                ref={audios?.[audio]}
+                src={getValue(audio, 'sound') as string}
+              />
             ))}
           </Fragment>
         )}
@@ -178,10 +155,15 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
             getEditClass(),
             fullImage.src ? styles.showActiveDiv : styles.hideActiveDiv
           )}
-          onClick={handleClearFullImageSrc}
+          onClick={handleFullImageClick}
           style={{ background: fullImage.background }}
         >
-          <img alt="" src={fullImage.src} className={clsx(styles.activeImage, isPreview, getEditClass())} />
+          <img
+            id="full_image"
+            alt=""
+            src={fullImage.src}
+            className={clsx(styles.activeImage, isPreview, getEditClass())}
+          />
         </div>
         <button className={clsx(styles.btn, styles.btnAddTile, getEditClass('edit'))} onClick={handleAddTile}>
           <img className={styles.addTileIcon} src={iconPlus} alt="" />
@@ -198,7 +180,7 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
             <SwiperSlide key={k} className={clsx(styles.slideItem)}>
               <div
                 id={k}
-                onClick={handleClick(k)}
+                onClick={handleClick(k, getTileData(k))}
                 className={clsx(styles.tile, isActive(k), getEditClass(), isPreview, classes?.tile)}
                 style={
                   {
@@ -219,13 +201,7 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
                 id={`image_${k}`}
                 alt={`image_${k}`}
                 src={(getValue(`image_${k}`, 'url') as string) || IMAGES[index] || IMAGES[0]}
-                onClick={e => {
-                  handleClick(`image_${k}`)(e);
-                  handleSetFullImageSrc({
-                    src: (getValue(`image_${k}`, 'fullScreenUrl') as string) || IMAGES[index] || IMAGES[0],
-                    background: `${getValue(k, 'background_hover')}`,
-                  });
-                }}
+                onClick={handleImageClick(k, index)}
                 onLoad={() => onImageLoad(`image_${k}`)}
                 onError={() => onImageError(`image_${k}`)}
                 className={clsx(
@@ -239,7 +215,7 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
               />
               <p
                 id={`text_${k}`}
-                onClick={handleClick(`text_${k}`)}
+                onClick={handleClick(`text_${k}`, getTileData(k))}
                 className={clsx(
                   styles.tileText,
                   isActive(`text_${k}`),
