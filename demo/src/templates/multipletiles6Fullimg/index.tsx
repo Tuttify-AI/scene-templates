@@ -16,7 +16,7 @@ import 'swiper/swiper.scss';
 import 'swiper/components/navigation/navigation.min.css';
 import styles from './styles.module.css';
 
-export type MultipleTiles8FullImageProps = SceneProps & {
+export type BaseSceneProps = SceneProps & {
   values?: BaseSceneElements<SceneValue>;
   classes?: Classes;
 };
@@ -26,7 +26,7 @@ const INITIAL_STATE = {
   background: 'transparent',
 };
 
-const MultipleTiles8Fullimg = forwardRef<HTMLDivElement, MultipleTiles8FullImageProps>(
+const MultipleTiles6Fullimg = forwardRef<HTMLDivElement, BaseSceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet }, ref) => {
     const [swiper, setSwiper] = useState<SwiperClass | null>(null);
     const { isMd, isSm } = useWindowSize();
@@ -96,6 +96,11 @@ const MultipleTiles8Fullimg = forwardRef<HTMLDivElement, MultipleTiles8FullImage
               value: `Tile No.${tiles.length + 1} image`,
               title: `Tile No.${tiles.length + 1} image`,
               type: TemplateParameterType.title,
+            },
+            fullScreenUrl: {
+              value: '',
+              title: 'Fullscreen image',
+              type: TemplateParameterType.image,
             },
           },
         });
@@ -170,7 +175,7 @@ const MultipleTiles8Fullimg = forwardRef<HTMLDivElement, MultipleTiles8FullImage
         <Swiper
           className={styles.swiper}
           spaceBetween={0}
-          slidesPerView={previewMode ? 4 : isSm ? 1 : isMd ? 2 : 4}
+          slidesPerView={previewMode ? 3 : isSm ? 1 : isMd ? 2 : 3}
           slidesPerColumn={2}
           onSwiper={setSwiper}
         >
@@ -235,4 +240,4 @@ const MultipleTiles8Fullimg = forwardRef<HTMLDivElement, MultipleTiles8FullImage
   }
 );
 
-export default MultipleTiles8Fullimg;
+export default MultipleTiles6Fullimg;

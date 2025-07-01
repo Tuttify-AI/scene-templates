@@ -7,6 +7,8 @@ import {
     MultipleTiles6,
     MultipleTiles8,
     Multipletiles4FullImg,
+    multipletiles6Fullimg,
+    multipletiles8Fullimg,
 } from './../templates';
 
 const routes = [
@@ -46,10 +48,20 @@ const routes = [
         component: MultipleTiles6
     },
     {
+        path: '/templates/multipletiles6Fullimg',
+        name: 'multipletiles6Fullimg',
+        component: multipletiles6Fullimg
+    },
+    {
         path: '/templates/multipletiles8',
         name: 'Multipletiles8',
         component: MultipleTiles8
-    }
+    },
+    {
+        path: '/templates/multipletiles8Fullimg',
+        name: 'multipletiles8Fullimg',
+        component: multipletiles8Fullimg
+    },
 ];
 
 export default routes;

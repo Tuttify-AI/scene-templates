@@ -1,57 +1,58 @@
 import React, { CSSProperties, forwardRef, useCallback, useMemo, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { useActions, useWindowSize, useImage, useAudios } from '../shared/hooks';
-import useTiles from '../shared/hooks/use-tiles';
-import { clsx, getElementId, getElementValue } from '../shared/utils';
+import { useActions, useWindowSize, useImage } from '../shared/hooks';
+import { clsx } from '../shared/utils';
 import { IMAGES } from './constants';
 
-import { SceneProps, SceneValue, TemplateParameterType } from '../shared/types';
+import { Parameters, SceneProps, SceneValue, TemplateParameterType } from '../shared/types';
 import { BaseSceneElements, Classes } from './types';
 import SwiperClass from 'swiper/types/swiper-class';
 
 import iconPlus from './assets/icon-plus.svg';
 import iconCross from './assets/icon-cross.svg';
 
-import 'swiper/css';
-import 'swiper/css/grid';
+import 'swiper/swiper.scss';
+import 'swiper/components/navigation/navigation.min.css';
 import styles from './styles.module.css';
-import { Grid } from 'swiper';
 
 export type MultipleTiles6FullImageProps = SceneProps & {
   values?: BaseSceneElements<SceneValue>;
   classes?: Classes;
 };
 
+const INITIAL_STATE = {
+  src: '',
+  background: 'transparent',
+};
+
 const MultipleTiles6Fullimg = forwardRef<HTMLDivElement, MultipleTiles6FullImageProps>(
-  ({ editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet, onActiveElementClick }, ref) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet }, ref) => {
     const [swiper, setSwiper] = useState<SwiperClass | null>(null);
     const { isMd, isSm } = useWindowSize();
-    const { handleElementAudio, renderAudios } = useAudios({ values, previewMode });
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
-    const isActive = useCallback((key: keyof BaseSceneElements) => activeKey === key && styles.active, [activeKey]);
-    const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
+    const [fullImage, setFullImage] = useState(INITIAL_STATE);
     const getEditClass = useCallback(
       (type: 'edit' | 'editText' | 'editRoot' = 'edit') => editMode && styles[type],
       [editMode]
     );
 
-    const getValue = useMemo(() => getElementValue(values), [values]);
+    const getValue = useCallback(
+      (element: keyof BaseSceneElements, parameter: keyof Parameters) =>
+        (values?.[element]?.[parameter] as SceneValue)?.value,
+      [values]
+    );
+    const { handleClick } = useActions({ onClick, getValue, disabled: editMode || previewMode });
 
-    const { handleClick } = useActions({
-      onClick,
-      disabled: editMode || previewMode,
-      handleElementAudio,
-      onActiveElementClick,
-    });
-
+    const isActive = useCallback((key: keyof BaseSceneElements) => activeKey === key && styles.active, [activeKey]);
+    const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
     const tiles = useMemo(() => Object.keys(values || {}).filter(k => k.startsWith('tile')), [values]);
     const isImageHidden = useCallback(
       (key: keyof BaseSceneElements) => hiddenImageList[key] && styles.hidden,
       [hiddenImageList]
     );
 
-    const handleAddTile = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleAddTile = (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
       const lastTile = Number(tiles[tiles.length - 1]?.replace('tile', ''));
       if (lastTile && onAdd) {
@@ -61,6 +62,11 @@ const MultipleTiles6Fullimg = forwardRef<HTMLDivElement, MultipleTiles6FullImage
               value: '#5468E7',
               title: 'Background hover color',
               type: TemplateParameterType.color,
+            },
+            sound: {
+              value: '',
+              title: 'On click sound link',
+              type: TemplateParameterType.sound,
             },
             title: {
               value: `Tile No.${tiles.length + 1}`,
@@ -96,60 +102,53 @@ const MultipleTiles6Fullimg = forwardRef<HTMLDivElement, MultipleTiles6FullImage
               title: 'Fullscreen image',
               type: TemplateParameterType.image,
             },
-            sound: {
-              value: '',
-              title: 'On click sound link',
-              type: TemplateParameterType.sound,
-            },
           },
         });
       }
 
       if (swiper) {
-        await swiper.update();
-        await swiper.slideTo(tiles.length);
+        swiper.update();
+        setTimeout(() => swiper.slideTo(tiles.length), 0);
       }
     };
 
-    const {
-      handleFullImageClick,
-      onSetFullTile,
-      handleDeleteTile,
-      fullTile,
-      getTileData,
-      DEFAULT_PARAMS,
-      slideHeight,
-      textSize,
-      textMargin,
-      textTranslateY,
-    } = useTiles({
-      tiles,
-      onSet,
-      handleAddTile,
-      values,
-      handleClick,
-      defaultImages: IMAGES,
-      onActiveElementClick,
-      previewMode,
-      editMode,
-      swiper,
-      params: {
-        slidesPerViewFromConfig: 6,
-        slidesPerColumn: 2,
-      },
-    });
+    const handleDeleteTile = (e: React.MouseEvent<HTMLButtonElement>, k: string) => {
+      e.stopPropagation();
+      onSet &&
+        onSet(
+          Object.keys(values || {})
+            .filter(item => !item.includes(k))
+            .reduce((res, parameter) => {
+              if (values) {
+                const newIndex = tiles.filter(t => t !== k).findIndex(t => parameter.endsWith(t)) + 1;
+                if (newIndex) {
+                  const parameterStr = parameter.replace(/\d+/gi, '');
+                  res[`${parameterStr}${newIndex}`] = {
+                    ...values[parameter],
+                    title: {
+                      ...values[parameter].title,
+                      title: values[parameter].title.title.replace(/\d+/g, `${newIndex}`),
+                    },
+                  };
+                } else {
+                  res[parameter] = values[parameter];
+                }
+              }
+              return res;
+            }, {} as BaseSceneElements<SceneValue>)
+        );
+    };
 
-    const getImageSrc = useCallback(
-      (k: string) => {
-        const src = getValue(k, 'url') as string;
-        return src !== '' && !Number.isNaN(Number(src)) ? IMAGES[Number(src)] : src;
-      },
-      [getValue]
-    );
+    const handleSetFullImageSrc = (data: typeof fullImage) => {
+      if (!(editMode || previewMode)) {
+        setFullImage(data);
+      }
+    };
+
+    const handleClearFullImageSrc = () => setFullImage(INITIAL_STATE);
 
     return (
       <div
-        id={getElementId('background', previewMode)}
         onClick={handleClick('background')}
         className={clsx(styles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
@@ -157,29 +156,19 @@ const MultipleTiles6Fullimg = forwardRef<HTMLDivElement, MultipleTiles6FullImage
         }}
         ref={ref}
       >
-        {renderAudios()}
         <div
           className={clsx(
             styles.activeDiv,
             isPreview,
             getEditClass(),
-            fullTile.image.value ? styles.showActiveDiv : styles.hideActiveDiv
+            fullImage.src ? styles.showActiveDiv : styles.hideActiveDiv
           )}
-          onClick={handleFullImageClick()}
-          style={{ background: fullTile.image.background }}
+          onClick={handleClearFullImageSrc}
+          style={{ background: fullImage.background }}
         >
-          <img
-            id={getElementId(fullTile.image.key, previewMode)}
-            alt=""
-            src={fullTile.image.value}
-            className={clsx(styles.activeImage, isPreview, getEditClass())}
-          />
+          <img alt="" src={fullImage.src} className={clsx(styles.activeImage, isPreview, getEditClass())} />
         </div>
-        <button
-          type="button"
-          className={clsx(styles.btn, styles.btnAddTile, getEditClass('edit'))}
-          onClick={handleAddTile}
-        >
+        <button className={clsx(styles.btn, styles.btnAddTile, getEditClass('edit'))} onClick={handleAddTile}>
           <img className={styles.addTileIcon} src={iconPlus} alt="" />
         </button>
         <span className={clsx(styles.totalTiles, getEditClass('edit'))}>Total tiles: {tiles.length}</span>
@@ -187,23 +176,13 @@ const MultipleTiles6Fullimg = forwardRef<HTMLDivElement, MultipleTiles6FullImage
           className={styles.swiper}
           spaceBetween={0}
           slidesPerView={previewMode ? 3 : isSm ? 1 : isMd ? 2 : 3}
-          grid={{
-            rows: 2,
-          }}
-          modules={[Grid]}
+          slidesPerColumn={2}
           onSwiper={setSwiper}
         >
           {tiles.map((k, index) => (
-            <SwiperSlide
-              key={k}
-              className={clsx(styles.slideItem, isPreview)}
-              onClick={handleClick(k, { data: getTileData(k) })}
-              style={{
-                height: `${slideHeight.toFixed(2)}%`,
-              }}
-            >
+            <SwiperSlide key={k} className={styles.slideItem}>
               <div
-                id={getElementId(k, previewMode)}
+                onClick={handleClick(k)}
                 className={clsx(styles.tile, isActive(k), getEditClass(), isPreview, classes?.tile)}
                 style={
                   {
@@ -213,15 +192,25 @@ const MultipleTiles6Fullimg = forwardRef<HTMLDivElement, MultipleTiles6FullImage
               >
                 {index > IMAGES.length - 1 && (
                   <button
-                    type="button"
                     className={clsx(styles.btn, styles.btnDeleteTile, getEditClass('edit'))}
-                    onClick={e => handleDeleteTile(k, e)}
+                    onClick={e => handleDeleteTile(e, k)}
                   >
                     <img className={styles.deleteTileIcon} src={iconCross} alt="" />
                   </button>
                 )}
               </div>
-              <div
+              <img
+                alt={`image_${k}`}
+                src={(getValue(`image_${k}`, 'url') as string) || IMAGES[index] || IMAGES[0]}
+                onClick={e => {
+                  handleClick(`image_${k}`)(e);
+                  handleSetFullImageSrc({
+                    src: (getValue(`image_${k}`, 'fullScreenUrl') as string) || IMAGES[index] || IMAGES[0],
+                    background: `${getValue(k, 'background_hover')}`,
+                  });
+                }}
+                onLoad={() => onImageLoad(`image_${k}`)}
+                onError={() => onImageError(`image_${k}`)}
                 className={clsx(
                   styles.tileImage,
                   isActive(`image_${k}`),
@@ -230,25 +219,9 @@ const MultipleTiles6Fullimg = forwardRef<HTMLDivElement, MultipleTiles6FullImage
                   isPreview,
                   classes?.tileImage
                 )}
-                style={
-                  {
-                    '--image-height': `${DEFAULT_PARAMS.imageHeight * 100}%`,
-                    '--image-hover-scale': DEFAULT_PARAMS.imageHoverScale,
-                  } as CSSProperties
-                }
-              >
-                <img
-                  id={getElementId(`image_${k}`, previewMode)}
-                  alt={`image_${k}`}
-                  src={(getValue(`image_${k}`, 'url') as string) || IMAGES[index] || IMAGES[0]}
-                  onClick={onSetFullTile(k, index)}
-                  onLoad={() => onImageLoad(`image_${k}`)}
-                  onError={() => onImageError(`image_${k}`)}
-                />
-              </div>
+              />
               <p
-                id={getElementId(`text_${k}`, previewMode)}
-                onClick={handleClick(`text_${k}`, { data: getTileData(k) })}
+                onClick={handleClick(`text_${k}`)}
                 className={clsx(
                   styles.tileText,
                   isActive(`text_${k}`),
@@ -256,17 +229,6 @@ const MultipleTiles6Fullimg = forwardRef<HTMLDivElement, MultipleTiles6FullImage
                   isPreview,
                   classes?.tileText
                 )}
-                style={
-                  {
-                    marginTop: isImageHidden(k) ? textSize / 2 : textMargin,
-                    fontSize: textSize,
-                    lineHeight: `${textSize}px`,
-                    '--text-color': getValue(k, 'text_color'),
-                    '--text-hover-color': getValue(k, 'text_hover_color'),
-                    '--text-hover-scale': getImageSrc(k) ? textTranslateY : 'translateY(-100%)',
-                    padding: `0 ${DEFAULT_PARAMS.textPadding}px`,
-                  } as CSSProperties
-                }
               >
                 {getValue(`text_${k}`, 'text')}
               </p>
