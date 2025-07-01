@@ -108,7 +108,11 @@ export type ActiveElementData = {
   videoUrl?: string;
   background?: string;
   templateName?: string;
-  [key: string]: string | undefined;
+  isCorrect?: boolean;
+  answer?: string | number;
+  value?: string;
+  answerTime?: number;
+  [key: string]: string | undefined | boolean | number | null;
 };
 
 export type Translations = {

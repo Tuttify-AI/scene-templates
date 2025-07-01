@@ -22,6 +22,4 @@ export enum SceneNames {
   WordGuess = 'wordGuess',
   Counting = 'counting',
   MathBase = 'mathBase',
-  TenFrames1 = 'tenFrames1',
-  TenFrames2 = 'tenFrames2',
 }
