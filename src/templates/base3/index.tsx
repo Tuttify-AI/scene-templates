@@ -5,7 +5,7 @@ import { useActions, useAudios, useImage } from '../shared/hooks';
 import { SceneProps, SceneValue, TemplateParameter } from '../shared/types';
 import { clsx, getElementId, getElementValue } from '../shared/utils';
 import styles from '../tiles/styles.module.css';
-import { useAnimation, useBlocksParams } from './hooks';
+import { useAnimation, useBlocks, useBlocksParams } from './hooks';
 import sceneStyles from './styles.module.css';
 import { BaseSceneElements, Classes } from './types';
 
@@ -24,6 +24,8 @@ const Base3 = forwardRef<HTMLDivElement, Base3SceneProps>(
       disabled: editMode || previewMode,
       element: scrollRef.current,
     });
+    const firstBlock = getElementId(blocks[0], previewMode);
+    useBlocks(firstBlock, editMode);
 
     const getEditClass = useCallback(
       (type: 'edit' | 'editText' | 'editBlock' | 'editRoot' = 'edit') => editMode && sceneStyles[type],
@@ -138,16 +140,27 @@ const Base3 = forwardRef<HTMLDivElement, Base3SceneProps>(
                 isPreview,
                 classes?.image
               )}
+              onTouchMove={() => {
+                console.log('animated.div');
+              }}
+              onClick={handleClick('')}
               style={
                 {
                   '--background-color': getValue(k, 'background'),
                   '--background-hover-color': getValue(k, 'background_hover'),
+                  '--top': getValue(k, 'top'),
+                  '--left': getValue(k, 'left'),
                 } as CSSProperties
               }
             >
               {allowDeleteTile && <DeleteButton className={clsx(styles.btnDeleteTile)} onClick={() => ({ index })} />}
             </animated.div>
-            <div id="ghostpane" />
+            <div
+              id="ghost-pane"
+              onTouchMove={() => {
+                console.log('ghost-pane');
+              }}
+            />
           </>
         ))}
       </animated.div>
