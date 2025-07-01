@@ -4,7 +4,7 @@ import { useActions, useAudios } from '../shared/hooks';
 import { SceneProps, SceneValue } from '../shared/types';
 import { clsx, getElementId, getElementValue } from '../shared/utils';
 import defaultImage from './assets/default';
-import useLetterAction from './hooks/use-letter-action';
+import useItemsAction from './hooks/use-items-action';
 import useParams from './hooks/use-params';
 
 import styles from './styles.module.css';
@@ -71,7 +71,7 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       handleFullImageClick,
       fullScreen,
       checkIfCorrectLetter,
-    } = useLetterAction({
+    } = useItemsAction({
       answerArray,
       totalItemsArray,
       editMode,
