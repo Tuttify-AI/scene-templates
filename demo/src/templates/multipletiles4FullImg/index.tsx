@@ -16,7 +16,7 @@ import 'swiper/swiper.scss';
 import 'swiper/components/navigation/navigation.min.css';
 import styles from './styles.module.css';
 
-export type MultipleTiles4FullImageProps = SceneProps & {
+export type BaseSceneProps = SceneProps & {
   values?: BaseSceneElements<SceneValue>;
   classes?: Classes;
 };
@@ -26,7 +26,7 @@ const INITIAL_STATE = {
   background: 'transparent',
 };
 
-const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullImageProps>(
+const MultipleTiles4FullImage = forwardRef<HTMLDivElement, BaseSceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet }, ref) => {
     const [swiper, setSwiper] = useState<SwiperClass | null>(null);
     const { isSm } = useWindowSize();
