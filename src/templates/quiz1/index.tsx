@@ -11,7 +11,6 @@ import questionImage from './assets/question';
 import styles from './styles.module.css';
 import { Classes, Quiz1SceneElements } from './types';
 import { AddButton, DeleteButton } from '../shared/components';
-import useAnswerTimer from '../shared/hooks/use-answer-timer';
 
 export type QuizOneProps = SceneProps & {
   values?: Quiz1SceneElements<SceneValue>;
@@ -22,16 +21,11 @@ const MAX_ANSWERS = 6;
 const MIN_ANSWERS = 2;
 
 const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
-  (
-    { editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet, onActiveElementClick, onComplete },
-    ref
-  ) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet, onActiveElementClick }, ref) => {
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
     const { renderAudios, handlePauseAll } = useAudios({ values });
     const isActive = useCallback((key: keyof Quiz1SceneElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
-    const { getUserAnswerTime } = useAnswerTimer();
-
     const getEditClass = useCallback(
       (type: 'edit' | 'editText' | 'editRoot' = 'edit') => editMode && styles[type],
       [editMode]
@@ -39,12 +33,11 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
 
     const getValue = useMemo(() => getElementValue(values), [values]);
 
-    const { handleClick, handleComplete } = useActions({
+    const { handleClick } = useActions({
       onClick,
       handlePauseAll,
       disabled: editMode || previewMode,
       onActiveElementClick,
-      onComplete,
     });
 
     const answers = useMemo(() => Object.keys(values || {}).filter(k => k.startsWith('answer')), [values]);
@@ -116,8 +109,6 @@ const QuizOne = forwardRef<HTMLDivElement, QuizOneProps>(
       onActiveElementClick,
       previewMode,
       editMode,
-      getUserAnswerTime,
-      handleComplete,
     });
 
     const answerStyles = useMemo(

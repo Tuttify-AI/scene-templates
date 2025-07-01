@@ -11,7 +11,6 @@ import styles from './styles.module.css';
 import { AnswerType, Classes, SpellBeeElements } from './types';
 import useDragNDrop from '../shared/hooks/use-drag-n-drop';
 import { ReactComponent as IconPlus } from '../shared/assets/icon-plus.svg';
-import useAnswerTimer from '../shared/hooks/use-answer-timer';
 
 export type SpellBeeSceneProps = SceneProps & {
   values?: SpellBeeElements<SceneValue>;
@@ -20,12 +19,9 @@ export type SpellBeeSceneProps = SceneProps & {
 };
 
 const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
-  (
-    { editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick, useArray, onComplete },
-    ref
-  ) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick, useArray }, ref) => {
     const getValue = useMemo(() => getElementValue<SpellBeeElements>(values), [values]);
-    const { getUserAnswerTime } = useAnswerTimer();
+
     const {
       totalItemsArray,
       selectionItemsWidth,
@@ -53,12 +49,11 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       useArray,
     });
     const { renderAudios, handlePauseAll } = useAudios({ values });
-    const { handleClick, handleComplete } = useActions({
+    const { handleClick } = useActions({
       onClick,
       handlePauseAll,
       disabled: editMode || previewMode,
       onActiveElementClick,
-      onComplete,
     });
 
     const {
@@ -80,8 +75,6 @@ const SpellBee = forwardRef<HTMLDivElement, SpellBeeSceneProps>(
       lockCorrectSelection,
       handleClick,
       predefinedTotalItemIndexes,
-      handleComplete,
-      getUserAnswerTime,
     });
     const { onDrop, onDragEnter, onDragLeave, dragTargetItem, onDragStart, dragSelectedItem, onDragEnd, onDragOver } =
       useDragNDrop({ handleDrop: handleSetAnswer });

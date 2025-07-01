@@ -10,7 +10,6 @@ import useParams from './hooks/use-params';
 import styles from './styles.module.css';
 import { Classes, CountingElements } from './types';
 import useDragNDrop from '../shared/hooks/use-drag-n-drop';
-import useAnswerTimer from '../shared/hooks/use-answer-timer';
 
 export type CountingSceneProps = SceneProps & {
   values?: CountingElements<SceneValue>;
@@ -18,7 +17,7 @@ export type CountingSceneProps = SceneProps & {
 };
 
 const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
-  ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick, onComplete }, ref) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick }, ref) => {
     const getValue = useMemo(() => getElementValue<CountingElements>(values), [values]);
     const {
       totalItemsArray,
@@ -43,13 +42,11 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
       onSet,
     });
     const { renderAudios, handlePauseAll } = useAudios({ values });
-    const { getUserAnswerTime } = useAnswerTimer();
-    const { handleClick, handleComplete } = useActions({
+    const { handleClick } = useActions({
       onClick,
       handlePauseAll,
       disabled: editMode || previewMode,
       onActiveElementClick,
-      onComplete,
     });
 
     const {
@@ -70,8 +67,6 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
       values,
       lockCorrectSelection,
       handleClick,
-      handleComplete,
-      getUserAnswerTime,
     });
     const { onDrop, onDragEnter, onDragLeave, dragTargetItem, onDragStart, dragSelectedItem, onDragEnd, onDragOver } =
       useDragNDrop({ handleDrop: handleSetAnswer });

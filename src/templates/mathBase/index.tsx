@@ -10,7 +10,6 @@ import useParams from './hooks/use-params';
 
 import styles from './styles.module.css';
 import { Classes, CountingElements } from './types';
-import useAnswerTimer from '../shared/hooks/use-answer-timer';
 
 export type MathBaseSceneProps = SceneProps & {
   values?: CountingElements<SceneValue>;
@@ -19,9 +18,8 @@ export type MathBaseSceneProps = SceneProps & {
 };
 
 const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
-  ({ editMode, previewMode, classes, activeKey, onClick, values, onActiveElementClick, onComplete }, ref) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, values, onActiveElementClick }, ref) => {
     const getValue = useMemo(() => getElementValue<CountingElements>(values), [values]);
-    const { getUserAnswerTime } = useAnswerTimer();
     const {
       predefinedValues,
       selectionFontSize,
@@ -38,12 +36,11 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
       editMode,
     });
     const { renderAudios, handlePauseAll } = useAudios({ values });
-    const { handleClick, handleComplete } = useActions({
+    const { handleClick } = useActions({
       onClick,
       handlePauseAll,
       disabled: editMode || previewMode,
       onActiveElementClick,
-      onComplete,
     });
 
     const {
@@ -60,8 +57,6 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
       values,
       handleClick,
       mathOperand,
-      getUserAnswerTime,
-      handleComplete,
     });
     const { onDrop, onDragEnter, onDragLeave, dragTargetItem, onDragStart, dragSelectedItem, onDragEnd, onDragOver } =
       useDragNDrop({ handleDrop: handleSetAnswer });
@@ -71,7 +66,6 @@ const MathBase = forwardRef<HTMLDivElement, MathBaseSceneProps>(
     );
     const isActive = useCallback((key: keyof CountingElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
-
     const renderNumber = (type: keyof typeof answer, value: DefaultType) => (
       <div
         key={type}
