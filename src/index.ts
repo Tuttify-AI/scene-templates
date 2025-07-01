@@ -14,6 +14,7 @@ import MultipleTiles6FullImage, { MultipleTiles6FullImageProps } from './templat
 import MultipleTiles8FullImage, { MultipleTiles8FullImageProps } from './templates/multipletiles8Fullimg';
 import MultipleTiles6, { MultipleTiles6SceneProps } from './templates/multipletiles6';
 import MultipleTiles8, { MultipleTiles8SceneProps } from './templates/multipletiles8';
+import Parallax1, { Parallax1SceneProps } from './templates/parallax1';
 import AtomiHalloween from './templates/atomiHalloween';
 
 import base from './templates/base/assets/preview';
@@ -31,6 +32,7 @@ import multipleTiles6 from './templates/multipletiles6/assets/preview';
 import multipleTiles8 from './templates/multipletiles8/assets/preview';
 import spellbee from './templates/spellBee/assets/preview';
 import atomiHalloween from './templates/atomiHalloween/assets/preview';
+import parallax1 from './templates/parallax1/assets/preview';
 
 const previews = {
   base,
@@ -48,6 +50,7 @@ const previews = {
   fullImageWithButton,
   tiles,
   spellbee,
+  parallax1,
 };
 
 export {
@@ -65,6 +68,7 @@ export {
   MultipleTiles8FullImage,
   AtomiHalloween,
   FullImageWithButton,
+  Parallax1,
   Tiles,
   Types,
   previews,
@@ -84,6 +88,7 @@ export type {
   FullVideoSceneProps,
   FullImageWithButtonProps,
   SpellBeeSceneProps,
+  Parallax1SceneProps,
 };
 
 export const AVAILABLE_SCENES = {
@@ -150,5 +155,9 @@ export const AVAILABLE_SCENES = {
   spellbee: {
     component: SpellBee,
     previewImage: previews.tiles,
+  },
+  parallax1: {
+    component: Parallax1,
+    previewImage: previews.parallax1,
   },
 };

@@ -34,28 +34,26 @@ const Parallax1 = forwardRef<HTMLDivElement, Parallax1SceneProps>(
       [hiddenImageList]
     );
 
-    const { translateY, getAnimationsStyle, handleMouseMove, resetAnimatedProps, getScale, clearHover, handleHover } =
-      useAnimation({
-        disabled: editMode || previewMode,
-        element: scrollRef.current,
-      });
-    const { renderAudios, handleElementAudio } = useAudios({ values, previewMode });
+    const {
+      opacity,
+      translateY,
+      getAnimationsStyle,
+      handleMouseMove,
+      resetAnimatedProps,
+      getScale,
+      clearHover,
+      handleHover,
+    } = useAnimation({
+      disabled: editMode || previewMode,
+      element: scrollRef.current,
+    });
+    const { renderAudios, handlePauseAll } = useAudios({ values });
     const { handleClick } = useActions({
       onClick,
       disabled: editMode || previewMode,
       onActiveElementClick,
-      handleElementAudio,
+      handlePauseAll,
     });
-
-    const getImageSrc = useCallback(
-      (k: string, isAnimation = false) => {
-        const src = getValue(k, 'url') as string;
-        return src !== '' && !Number.isNaN(Number(src))
-          ? (isAnimation ? ANIMATIONS : IMAGES)[Number(src)]?.defaultImage
-          : src;
-      },
-      [getValue]
-    );
 
     return (
       <animated.div
@@ -68,14 +66,14 @@ const Parallax1 = forwardRef<HTMLDivElement, Parallax1SceneProps>(
       >
         {renderAudios()}
         <div ref={scrollRef} className={sceneStyles.scroll} />
-        {IMAGES.map(({ name, isStatic, scale, mods }) => (
+        {IMAGES.map(({ name, defaultImage, isStatic, scale }) => (
           <animated.img
             id={getElementId(name, previewMode)}
             onMouseEnter={handleHover(name)}
             onMouseLeave={clearHover}
             key={name}
             alt={name}
-            src={getImageSrc(name)}
+            src={`${getValue(name, 'url') || defaultImage}`}
             className={clsx(
               //sceneStyles.previewImage
               sceneStyles[name as keyof typeof sceneStyles],
@@ -86,10 +84,10 @@ const Parallax1 = forwardRef<HTMLDivElement, Parallax1SceneProps>(
               classes?.[name as keyof Classes]
             )}
             style={{
+              opacity,
               translateY,
-              backgroundColor: `${getValue(name, 'background')}`,
               ...(!isStatic && getScale(name, scale)),
-              ...(!isStatic && getAnimationsStyle(transition(mods))),
+              ...(!isStatic && getAnimationsStyle(transition({ modX: 20, modY: 20 }))),
             }}
             onLoad={() => onImageLoad(name)}
             onError={() => onImageError(name)}
@@ -110,7 +108,6 @@ const Parallax1 = forwardRef<HTMLDivElement, Parallax1SceneProps>(
               classes?.[name as keyof Classes]
             )}
             style={{
-              backgroundImage: `url(${getImageSrc(name, true)})`,
               backgroundColor: `${getValue(name, 'background')}`,
               ...getScale(name, 1.03),
               ...getAnimationsStyle(transition(mods)),
