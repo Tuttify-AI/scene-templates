@@ -8,13 +8,13 @@ import { useAnimation } from './hooks';
 import { transition, clsx } from '../shared/utils';
 import defaultImage from './assets/full-image';
 
-export type FullImageSceneProps = SceneProps & {
+export type BaseSceneProps = SceneProps & {
   parameters?: BaseSceneElements<TemplateParameter>;
   values?: BaseSceneElements<SceneValue>;
   classes?: Classes;
 };
 
-const FullImage = forwardRef<HTMLDivElement, FullImageSceneProps>(
+const FullImage = forwardRef<HTMLDivElement, BaseSceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, parameters, values }, ref) => {
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
     const { getAnimationsStyle, handleMouseMove, resetAnimatedProps, scale, clearHover, handleHover } = useAnimation(
