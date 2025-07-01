@@ -1,15 +1,12 @@
 import { Parameters, Elements, SceneValue } from '../shared/types';
 
 export type SpellBeeConfig<T = SceneValue> = {
-  word: T;
-  additional_letters: T;
-  letters_total: T;
+  items: T;
+  additional_items: T;
+  items_total: T;
   lock_correct_selection: T;
   highlight_correct_selection: T;
   highlight_incorrect_selection: T;
-  words: T;
-  additional_words: T;
-  words_total: T;
 };
 
 export type SpellBeeElements<T = string | number> = Elements<T> & {
