@@ -9,6 +9,7 @@ import useParams from './hooks/use-params';
 
 import styles from './styles.module.css';
 import { Classes, GuessWordElements } from './types';
+import useDragNDrop from '../shared/hooks/use-drag-n-drop';
 
 export type GuessWordSceneProps = SceneProps & {
   values?: GuessWordElements<SceneValue>;
@@ -67,14 +68,18 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
       lockCorrectSelection,
       handleClick,
     });
-
+    const { onDrop, onDragEnter, onDragLeave, dragTargetIndex, onDragStart, dragSelectedIndex, onDragEnd, onDragOver } =
+      useDragNDrop({ handleDrop: handleSetAnswer });
     const getEditClass = useCallback(
       (type: 'edit' | 'editRoot' = 'edit') => editMode && styles[type as keyof typeof styles],
       [editMode]
     );
     const isActive = useCallback((key: keyof GuessWordElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
-
+    const highlightSelection = useCallback(
+      (index: number) => (lockCorrectSelection ? !checkIfCorrectLetter(index) : true),
+      [checkIfCorrectLetter, lockCorrectSelection]
+    );
     return (
       <div
         id={getElementId('background', previewMode)}
@@ -137,9 +142,16 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
               }}
             >
               <p
+                onDragStart={onDragStart(index)}
+                onDragEnd={onDragEnd}
+                draggable={!editMode && !checkIsLetterDisabled(index)}
                 id={getElementId(`text_${letter}`, previewMode)}
                 onClick={handleLetterClick(index)}
-                className={clsx(styles.selectionLetterItem, !editMode && styles.withHover)}
+                className={clsx(
+                  styles.selectionLetterItem,
+                  !editMode && styles.withHover,
+                  dragSelectedIndex === index && styles.dragged
+                )}
                 style={{
                   fontSize: selectionFontSize,
                   height: selectionContainerHeight,
@@ -175,12 +187,15 @@ const GuessWord = forwardRef<HTMLDivElement, GuessWordSceneProps>(
                   id={getElementId(`answer_${answerIndex}`, previewMode)}
                   className={clsx(
                     styles.answerLetterItem,
-                    selectedLetterIndex !== null &&
-                      (lockCorrectSelection ? !checkIfCorrectLetter(index) : true) &&
-                      styles.empty,
+                    selectedLetterIndex !== null && highlightSelection(index) && styles.empty,
+                    dragTargetIndex === index && highlightSelection(index) && styles.empty,
                     highlightCorrectSelection && checkIfCorrectLetter(index) && styles.correct,
                     highlightIncorrectSelection && checkIfCorrectLetter(index) === false && styles.incorrect
                   )}
+                  onDragOver={onDragOver}
+                  onDrop={onDrop}
+                  onDragEnter={onDragEnter(index)}
+                  onDragLeave={onDragLeave}
                   onClick={handleSetAnswer(index)}
                   style={
                     {
