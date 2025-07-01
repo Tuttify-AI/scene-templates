@@ -14,7 +14,7 @@
 .root {
     z-index: 1;
     width: 100%;
-    height: 60vh;
+    height: 600px;
     position: relative;
     border-radius: var(--mainBorderRadius);
     background: var(--colorWhite);
@@ -41,7 +41,7 @@
 
 .preview.root {
     width: 1200px;
-    height: 60vh;
+    height: 600px;
     position: fixed;
     top: 0;
     left: 0;
@@ -223,14 +223,12 @@
     flex-direction: row;
     align-items: center;
     flex-wrap: wrap;
-    justify-content: center;
 }
 
 .answerTextWrapper{
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
     border-radius: var(--mainBorderRadius);
 }
 
@@ -240,16 +238,18 @@
 
 .answerNumberItemWrapper{
     padding: 8px;
+    height: 100%;
+    width: 100%;
 }
 
 .answerNumberItem {
     display: flex;
+    width: 20%;
+    left: 80%;
     position: relative;
     justify-content: center;
     align-items: center;
     font-size: 60px;
-    height: 105px;
-    width: 105px;
     font-weight: bold;
     padding: 8px;
     cursor: pointer;

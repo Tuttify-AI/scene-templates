@@ -4,7 +4,6 @@ import { getElementValue } from '../../shared/utils';
 import { CountingElements } from '../types';
 import { checkArray, checkCorrectWord } from '../utils';
 import { useActions } from '../../shared/hooks';
-import useAnswerTimer from '../../shared/hooks/use-answer-timer';
 
 const INITIAL_STATE = {
   src: '',
@@ -22,9 +21,6 @@ type UseNumbersActionParams = {
   lockCorrectSelection?: boolean;
   values?: CountingElements<SceneValue>;
   handleClick?: ReturnType<typeof useActions>['handleClick'];
-  handleComplete?: ReturnType<typeof useActions>['handleComplete'];
-  handleSceneSolved?: ReturnType<typeof useActions>['handleSceneSolved'];
-  getUserAnswerTime: ReturnType<typeof useAnswerTimer>['getUserAnswerTime'];
 };
 const useNumbersAction = ({
   answerArray,
@@ -34,9 +30,6 @@ const useNumbersAction = ({
   values,
   lockCorrectSelection,
   handleClick,
-  handleComplete,
-  getUserAnswerTime,
-  handleSceneSolved,
 }: UseNumbersActionParams) => {
   const [selectedNumberIndex, setSelectedNumberIndex] = useState<number | null>(null);
   const [answer, setAnswer] = useState(answerArray);
@@ -105,11 +98,11 @@ const useNumbersAction = ({
     (index: number, totalNumberIndex: number | null) => {
       const isCorrect = totalNumberIndex !== null && totalItemsArray[totalNumberIndex] === itemsArray[index];
       const number = totalNumberIndex !== null && totalItemsArray[totalNumberIndex];
-      const correctAnswer = itemsArray.join('');
+      const numbers = itemsArray.join('');
       return {
         ...(isCorrect !== null ? { isCorrect } : {}),
         ...(number ? { number } : {}),
-        ...(correctAnswer ? { correctAnswer } : {}),
+        ...(numbers ? { numbers } : {}),
         ...(index !== null ? { index } : {}),
       } as ActiveElementData;
     },
@@ -125,44 +118,13 @@ const useNumbersAction = ({
         if (numberIndex === null) {
           setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? null : a)));
         } else {
-          const newAnswer = answer.map((a, i) => (i === index ? numberIndex : a));
-          const isCorrect = checkCorrectWord(newAnswer, totalItemsArray, itemsArray.join());
           handleClick && handleClick('answer', { data: getAnswerData(index, numberIndex) })(e);
-          handleSceneSolved &&
-            handleSceneSolved(
-              'answer',
-              {
-                data: {
-                  isCorrect,
-                  number: itemsArray.join(''),
-                  answer: totalItemsArray[numberIndex],
-                  answerTime: getUserAnswerTime().time,
-                  sceneTime: getUserAnswerTime().total,
-                },
-              },
-              {
-                key: 'image',
-                parameter: isCorrect ? 'success_sound' : 'error_sound',
-              }
-            );
-          setAnswer(newAnswer);
+          setAnswer(prevAnswer => prevAnswer.map((a, i) => (i === index ? numberIndex : a)));
           setSelectedNumberIndex(null);
         }
       }
     },
-    [
-      selectedNumberIndex,
-      lockCorrectSelection,
-      checkIfCorrectNumber,
-      editMode,
-      handleClick,
-      getAnswerData,
-      handleSceneSolved,
-      itemsArray,
-      totalItemsArray,
-      getUserAnswerTime,
-      answer,
-    ]
+    [selectedNumberIndex, editMode, lockCorrectSelection, checkIfCorrectNumber, handleClick, getAnswerData]
   );
 
   const handleClearFullImageSrc = useCallback(() => setAnswer(answer.map(() => null)), [answer, setAnswer]);
@@ -170,8 +132,7 @@ const useNumbersAction = ({
   const handleFullImageClick = useCallback(() => {
     handleClearFullImageSrc();
     setFullScreen(INITIAL_STATE);
-    handleComplete && handleComplete('answer');
-  }, [handleClearFullImageSrc, handleComplete]);
+  }, [handleClearFullImageSrc]);
 
   return {
     checkIsNumberDisabled,

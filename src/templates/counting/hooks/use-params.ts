@@ -10,14 +10,14 @@ type Params = Pick<SceneProps, 'values' | 'previewMode' | 'editMode' | 'onSet'> 
 
 const DEFAULTS = {
   selectionTextSize: 72,
-  selectionWordSize: 72,
+  selectionWordSize: 38,
   wordTextSize: 90,
   wordSize: 42,
   fullScreenTextSize: 40,
   textPadding: 8,
 };
 
-export default function useParams({ values, previewMode, editMode, onSet, useArray = true }: Params) {
+export default function useParams({ values, previewMode, editMode, onSet, useArray }: Params) {
   const { isMd, isSm } = useWindowSize();
 
   const getConfigValue = useCallback(
@@ -61,7 +61,7 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
     return Array.from(Array(parseInt(item as string)).keys());
   }, [getConfigValue]);
 
-  const answerArray = useMemo(() => Array.from(Array(1).fill(null)), []);
+  const answerArray = useMemo(() => Array.from(Array(1).fill(null)), [itemsArray]);
 
   useEffect(() => {
     const filteredAdditionalNumbers = additionalNumbersArray.filter(item => item !== ',');
@@ -80,7 +80,7 @@ export default function useParams({ values, previewMode, editMode, onSet, useArr
       100 /
       (isMd && totalItemsArray.length > (useArray ? 4 : 8)
         ? Math.round(totalItemsArray.length / (useArray ? 1.2 : 2))
-        : totalItemsArray.length * 1.25 || 1),
+        : totalItemsArray.length || 1),
     [isMd, totalItemsArray.length, useArray]
   );
 

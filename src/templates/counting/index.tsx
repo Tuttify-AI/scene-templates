@@ -1,4 +1,4 @@
-import React, { CSSProperties, forwardRef, useCallback, useMemo } from 'react';
+import React, { CSSProperties, forwardRef, useCallback, useEffect, useMemo } from 'react';
 import { useActions, useAudios } from '../shared/hooks';
 
 import { SceneProps, SceneValue } from '../shared/types';
@@ -10,36 +10,25 @@ import useParams from './hooks/use-params';
 import styles from './styles.module.css';
 import { Classes, CountingElements } from './types';
 import useDragNDrop from '../shared/hooks/use-drag-n-drop';
-import useAnswerTimer from '../shared/hooks/use-answer-timer';
 
 export type CountingSceneProps = SceneProps & {
   values?: CountingElements<SceneValue>;
   classes?: Classes;
+  useArray?: boolean;
 };
 
 const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
-  (
-    {
-      editMode,
-      previewMode,
-      classes,
-      activeKey,
-      onClick,
-      values,
-      onSet,
-      onActiveElementClick,
-      onSceneSolved,
-      onComplete,
-    },
-    ref
-  ) => {
+  ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick }, ref) => {
     const getValue = useMemo(() => getElementValue<CountingElements>(values), [values]);
+    const useArray = true;
     const {
       totalItemsArray,
       selectionNumbersWidth,
+      answerNumbersWidth,
       answerArray,
       selectionFontSize,
       selectionContainerHeight,
+      wordContainerHeight,
       wordFontSize,
       itemsArray,
       lockCorrectSelection,
@@ -55,18 +44,14 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
       previewMode,
       editMode,
       onSet,
+      useArray,
     });
-    const { renderAudios, handleElementAudio, pauseAudios } = useAudios({ values, previewMode });
-    const { getUserAnswerTime, clearTimer } = useAnswerTimer(previewMode || editMode);
-    const { handleClick, handleComplete, handleSceneSolved } = useActions({
+    const { renderAudios, handlePauseAll } = useAudios({ values });
+    const { handleClick } = useActions({
       onClick,
+      handlePauseAll,
       disabled: editMode || previewMode,
       onActiveElementClick,
-      onComplete,
-      onSceneSolved,
-      clearTimer,
-      pauseAudios,
-      handleElementAudio,
     });
 
     const {
@@ -87,11 +72,8 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
       values,
       lockCorrectSelection,
       handleClick,
-      handleComplete,
-      getUserAnswerTime,
-      handleSceneSolved,
     });
-    const { onDrop, onDragEnter, onDragLeave, dragTargetItem, onDragStart, dragSelectedItem, onDragEnd, onDragOver } =
+    const { onDrop, onDragEnter, onDragLeave, dragTargetIndex, onDragStart, dragSelectedIndex, onDragEnd, onDragOver } =
       useDragNDrop({ handleDrop: handleSetAnswer });
     const getEditClass = useCallback(
       (type: 'edit' | 'editRoot' = 'edit') => editMode && styles[type as keyof typeof styles],
@@ -103,7 +85,9 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
       (index: number) => (lockCorrectSelection ? !checkIfCorrectNumber(index) : true),
       [checkIfCorrectNumber, lockCorrectSelection]
     );
-
+    useEffect(() => {
+      console.log('rrr', totalItemsArray, answerArray);
+    }, [totalItemsArray, useArray]);
     return (
       <div
         id={getElementId('background', previewMode)}
@@ -174,7 +158,8 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
                 className={clsx(
                   styles.selectionNumberItem,
                   !editMode && styles.withHover,
-                  dragSelectedItem === index && styles.dragged
+                  dragSelectedIndex === index && styles.dragged,
+                  useArray && styles.wordText
                 )}
                 style={{
                   fontSize: selectionFontSize,
@@ -216,7 +201,7 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
                 className={clsx(
                   styles.answerNumberItem,
                   selectedNumberIndex !== null && highlightSelection(index) && styles.empty,
-                  dragTargetItem === index && highlightSelection(index) && styles.empty,
+                  dragTargetIndex === index && highlightSelection(index) && styles.empty,
                   highlightCorrectSelection && checkIfCorrectNumber(index) && styles.correct,
                   highlightIncorrectSelection && checkIfCorrectNumber(index) === false && styles.incorrect
                 )}
@@ -229,6 +214,7 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
                   {
                     padding: wordPadding,
                     fontSize: wordFontSize,
+                    height: wordContainerHeight,
                     color: getValue('answer_text', 'text_color') as string,
                     '--highlightSuccessColor': getValue('answer_text', 'success_highlight_color'),
                     '--highlightErrorColor': getValue('answer_text', 'error_highlight_color'),

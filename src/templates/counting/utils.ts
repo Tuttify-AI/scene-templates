@@ -12,7 +12,7 @@ export function checkArray(answer_arr: (number | null)[]) {
 }
 
 export function checkCorrectWord(answer_arr: (number | null)[], all_arr: string[], word: string) {
-  const answer = [] as string[];
+  const answer = [];
   for (let i = 0; i < answer_arr.length; i++) {
     const index = answer_arr[i];
     if (!index && typeof index != 'number') {
