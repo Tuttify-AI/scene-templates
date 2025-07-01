@@ -55,6 +55,7 @@ export enum TemplateParameterType {
   sound = 'sound',
   image = 'image',
   video = 'video',
+  boolean = 'boolean',
 }
 
 export type TemplateParameter = {

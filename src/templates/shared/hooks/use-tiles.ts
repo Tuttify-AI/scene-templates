@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActiveElementData, Elements, Parameters, SceneProps, SceneValue } from '../types';
-import { BaseSceneElements } from '../../multipletiles4FullImg/types';
+import { ActiveElementData, Elements, Parameters, SceneProps } from '../types';
+import { deleteElement } from '../utils';
 import { useActions } from './index';
 
 type Params = Pick<SceneProps, 'editMode' | 'previewMode' | 'onSet' | 'values'> & {
@@ -29,28 +29,7 @@ export default function useTiles({ editMode, previewMode , getValue, onActiveEle
   const handleDeleteTile = useCallback((e: React.MouseEvent<HTMLButtonElement>, k: string) => {
     e.stopPropagation();
     onSet &&
-    onSet(
-        Object.keys(values || {})
-            .filter(item => !item.includes(k))
-            .reduce((res, parameter) => {
-              if (values) {
-                const newIndex = tiles.filter(t => t !== k).findIndex(t => parameter.endsWith(t)) + 1;
-                if (newIndex) {
-                  const parameterStr = parameter.replace(/\d+/gi, '');
-                  res[`${parameterStr}${newIndex}`] = {
-                    ...values[parameter],
-                    title: {
-                      ...values[parameter].title,
-                      title: values[parameter].title.title.replace(/\d+/g, `${newIndex}`),
-                    },
-                  };
-                } else {
-                  res[parameter] = values[parameter];
-                }
-              }
-              return res;
-            }, {} as BaseSceneElements<SceneValue>)
-    );
+    onSet(deleteElement(values, tiles, k));
   }, [onSet, tiles, values]);
 
   const getTileData = useCallback((k) => {

@@ -1,5 +1,3 @@
-@value bounceZoom from "../shared/shared.css";
-
 :root {
     --shape-box-shadow: 1px 1px 12px 1px rgba(100, 100, 100, 0.8);
     --text-shadow: 0 0 12px rgba(100, 100, 100, 0.8);
@@ -11,7 +9,7 @@
 .root {
     z-index: 1;
     width: 100%;
-    height: 60vh;
+    height: 600px;
     position: relative;
     border-radius: 16px;
     background: var(--colorWhite);
@@ -59,19 +57,22 @@
     flex-direction: column;
     transition: all 0.20s ease-in-out;
     padding: 8px;
+}
+
+.activeDiv.showActiveDiv {
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
-}
-
-.activeDiv.showActiveDiv {
-    animation: bounceZoom 0.25s;
+    transition: all 0.20s ease-in-out;
 }
 
 .activeDiv.hideActiveDiv {
-    transform: scale(0);
-    z-index: -1;
+    width: 100%;
+    height: 0;
+    top: 50%;
+    /*left: 50%;*/
+    transition: all 0.20s ease-in-out;
 }
 
 .fullScreenText {
@@ -125,12 +126,12 @@
     z-index: 6;
     font-size: 40px;
     text-align: center;
-    word-break: break-word;
+    word-break: break-all;
 }
 
 .preview.root {
     width: 1200px;
-    height: 60vh;
+    height: 600px;
     position: fixed;
     top: 0;
     left: 0;
@@ -165,7 +166,7 @@
     font-size: 24px;
     font-weight: bold;
     text-align: center;
-    word-break: break-word;
+    word-break: break-all;
 }
 
 .element {
@@ -188,8 +189,71 @@
     display: inline-flex;
 }
 
-button.btnDeleteElement {
-    transform: translate(0, 0);
+.btn {
+    margin: 0;
+    padding: 0;
+    background: none;
+    font: inherit;
+    text-align: center;
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.btn:focus {
+    outline: none;
+}
+
+.btnAddElement {
+    position: absolute;
+    z-index: 12;
+    bottom: -24px;
+    width: 48px;
+    height: 48px;
+    font-size: 14px;
+    font-weight: 700;
+    background-color: #00a6a8;
+    color: var(--colorWhite);
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    transition: background-color 0.25s ease-in-out;
+}
+
+.btnAddElement:hover {
+    background-color: rgb(0, 116, 117);
+}
+
+.addElementIcon {
+    max-width: 20px;
+    margin: 0 auto;
+    vertical-align: middle;
+}
+
+.btnDeleteElement {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    right: 0;
+    width: 32px;
+    height: 32px;
+    background-color: var(--colorWhite);
+    border: 1px solid var(--colorLightGray);
+}
+
+.deleteElementIcon {
+    max-width: 14px;
+    vertical-align: middle;
+}
+
+.btnAddElement:not(.edit),
+.btnDeleteElement:not(.edit),
+.totalElements:not(.edit),
+.preview .btnAddElement,
+.preview .btnDeleteElement,
+.preview .totalElements {
+    display: none !important;
 }
 
 @media screen and (max-width: 600px) {
