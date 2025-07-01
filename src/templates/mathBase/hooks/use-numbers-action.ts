@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActiveElementData, Elements, SceneValue } from '../../shared/types';
+import { ActiveElementData, SceneValue } from '../../shared/types';
 import { getElementValue } from '../../shared/utils';
 import { CountingElements } from '../types';
 import { useActions } from '../../shared/hooks';
 import useParams from './use-params';
 import { checkCorrectResult } from '../utils';
-import { OnClickData } from '../../shared/hooks/use-actions';
+import useAnswerTimer from '../../shared/hooks/use-answer-timer';
 
 const INITIAL_STATE = {
   src: '',
@@ -21,8 +21,9 @@ type UseNumbersActionParams = {
   editMode?: boolean;
   values?: CountingElements<SceneValue>;
   handleClick?: ReturnType<typeof useActions>['handleClick'];
-  handleComplete?: (key: keyof Elements, { data }: OnClickData) => void;
-  getUserAnswerTime: () => number;
+  handleComplete?: ReturnType<typeof useActions>['handleComplete'];
+  handleSceneSolved?: ReturnType<typeof useActions>['handleSceneSolved'];
+  getUserAnswerTime: ReturnType<typeof useAnswerTimer>['getUserAnswerTime'];
 };
 const useNumbersAction = ({
   predefinedValues,
@@ -31,6 +32,7 @@ const useNumbersAction = ({
   handleClick,
   mathOperand,
   handleComplete,
+  handleSceneSolved,
   getUserAnswerTime,
 }: UseNumbersActionParams) => {
   const [selectedNumber, setSelectedNumber] = useState<number | null>(null);
@@ -99,14 +101,15 @@ const useNumbersAction = ({
         if ((answer[type] && !predefinedValues[type]) || !answer[type]) {
           handleClick && handleClick(type, { data: getAnswerData(type, selectedValue) })(e);
           setAnswer(prev => ({ ...prev, [type]: selectedValue }));
-          handleComplete &&
-            handleComplete('answers', {
+          handleSceneSolved &&
+            handleSceneSolved('answers', {
               data: {
                 isCorrect,
                 answer: selectedValue,
                 leftNumber: answer.leftNumber,
                 rightNumber: answer.rightNumber,
-                answerTime: getUserAnswerTime(),
+                answerTime: getUserAnswerTime().time,
+                sceneTime: getUserAnswerTime().total,
               },
             });
           setSelectedNumber(null);
@@ -120,7 +123,7 @@ const useNumbersAction = ({
       predefinedValues,
       handleClick,
       getAnswerData,
-      handleComplete,
+      handleSceneSolved,
       isCorrect,
       getUserAnswerTime,
     ]
@@ -129,7 +132,18 @@ const useNumbersAction = ({
   const handleFullImageClick = useCallback(() => {
     onClearAnswer();
     setFullScreen(INITIAL_STATE);
-  }, [onClearAnswer]);
+    handleComplete &&
+      handleComplete('answer', {
+        data: {
+          isCorrect,
+          answer: selectedNumber as number,
+          leftNumber: answer.leftNumber,
+          rightNumber: answer.rightNumber,
+          answerTime: getUserAnswerTime().time,
+          sceneTime: getUserAnswerTime().total,
+        },
+      });
+  }, [onClearAnswer, handleComplete, isCorrect, answer, getUserAnswerTime, selectedNumber]);
 
   return {
     selectedNumber,

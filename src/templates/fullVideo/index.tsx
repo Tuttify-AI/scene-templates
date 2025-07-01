@@ -22,12 +22,12 @@ const FullVideo = forwardRef<HTMLDivElement, FullVideoSceneProps>(
     });
 
     const getEditClass = useCallback((type: 'edit' | 'editRoot' = 'edit') => editMode && sceneStyles[type], [editMode]);
-    const { handlePauseAll } = useAudios({ values });
+    const { handleElementAudio } = useAudios({ values, previewMode });
     const getValue = useMemo(() => getElementValue(values, parameters), [values, parameters]);
 
     const { handleClick } = useActions({
       onClick,
-      handlePauseAll,
+      handlePauseAll: handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
     });

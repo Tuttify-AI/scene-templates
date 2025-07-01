@@ -10,11 +10,11 @@ type Params = {
 export default function useAnimation({ disabled }: Params) {
   const [hovered, setHovered] = useState<keyof BaseSceneElements | ''>('');
   const [{ x, y }, api] = useSpring(
-    {
+    () => ({
       x: 0,
       y: 0,
       config: { mass: 20, tension: 400, friction: 100 },
-    },
+    }),
     []
   );
 

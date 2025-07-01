@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActiveElementData, Elements, Parameters, SceneProps } from '../types';
 import { deleteElement } from '../utils';
-import useActions, { OnClickData } from './use-actions';
+import useActions from './use-actions';
 import { SceneNames } from '../enums';
+import useAnswerTimer from './use-answer-timer';
 
 type Params = Pick<SceneProps, 'editMode' | 'previewMode' | 'onSet' | 'values'> & {
   onActiveElementClick?: SceneProps['onActiveElementClick'];
@@ -11,8 +12,9 @@ type Params = Pick<SceneProps, 'editMode' | 'previewMode' | 'onSet' | 'values'> 
   elements: string[];
   handleClick: ReturnType<typeof useActions>['handleClick'];
   defaultImages: string[];
-  getUserAnswerTime: () => number;
-  handleComplete?: (key: keyof Elements, { data }: OnClickData) => void;
+  getUserAnswerTime: ReturnType<typeof useAnswerTimer>['getUserAnswerTime'];
+  handleSceneSolved?: ReturnType<typeof useActions>['handleSceneSolved'];
+  handleComplete?: ReturnType<typeof useActions>['handleComplete'];
 };
 
 const INITIAL_STATE = {
@@ -33,6 +35,7 @@ export default function useQuizAnswers({
   handleClick,
   defaultImages,
   getUserAnswerTime,
+  handleSceneSolved,
   handleComplete,
 }: Params) {
   const [fullImage, setFullImage] = useState(INITIAL_STATE);
@@ -91,18 +94,20 @@ export default function useQuizAnswers({
         imageUrl: fullImage.src,
       });
     handleClearFullImageSrc();
-  }, [onActiveElementClick, handleClearFullImageSrc, fullImage]);
+    handleComplete && handleComplete('answer');
+  }, [onActiveElementClick, handleClearFullImageSrc, fullImage, handleComplete]);
 
   const handleImageClick = useCallback(
     (k: string, index: number) => (e: React.MouseEvent<HTMLElement>) => {
       handleClick(k, { data: getElementData(k) })(e);
       const { isCorrect } = getElementData(k);
-      handleComplete &&
-        handleComplete('answer', {
+      handleSceneSolved &&
+        handleSceneSolved('answer', {
           data: {
             isCorrect,
             answer: k,
-            answerTime: getUserAnswerTime(),
+            answerTime: getUserAnswerTime().time,
+            sceneTime: getUserAnswerTime().total,
           },
         });
 
@@ -113,7 +118,7 @@ export default function useQuizAnswers({
         text: (getValue(k, 'full_screen_text') as string) || '',
       });
     },
-    [handleClick, getElementData, handleComplete, getUserAnswerTime, handleSetFullImageSrc, getValue, defaultImages]
+    [handleClick, getElementData, handleSceneSolved, getUserAnswerTime, handleSetFullImageSrc, getValue, defaultImages]
   );
 
   return {

@@ -10,6 +10,7 @@ import useParams from './hooks/use-params';
 import styles from './styles.module.css';
 import { Classes, CountingElements } from './types';
 import useDragNDrop from '../shared/hooks/use-drag-n-drop';
+import useAnswerTimer from '../shared/hooks/use-answer-timer';
 
 export type CountingSceneProps = SceneProps & {
   values?: CountingElements<SceneValue>;
@@ -17,7 +18,21 @@ export type CountingSceneProps = SceneProps & {
 };
 
 const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
-  ({ editMode, previewMode, classes, activeKey, onClick, values, onSet, onActiveElementClick }, ref) => {
+  (
+    {
+      editMode,
+      previewMode,
+      classes,
+      activeKey,
+      onClick,
+      values,
+      onSet,
+      onActiveElementClick,
+      onSceneSolved,
+      onComplete,
+    },
+    ref
+  ) => {
     const getValue = useMemo(() => getElementValue<CountingElements>(values), [values]);
     const {
       totalItemsArray,
@@ -41,12 +56,16 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
       editMode,
       onSet,
     });
-    const { renderAudios, handlePauseAll } = useAudios({ values });
-    const { handleClick } = useActions({
+    const { renderAudios, handleElementAudio } = useAudios({ values, previewMode });
+    const { getUserAnswerTime, clearTimer } = useAnswerTimer();
+    const { handleClick, handleComplete, handleSceneSolved } = useActions({
       onClick,
-      handlePauseAll,
+      handlePauseAll: handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
+      onComplete,
+      onSceneSolved,
+      clearTimer,
     });
 
     const {
@@ -67,6 +86,9 @@ const Counting = forwardRef<HTMLDivElement, CountingSceneProps>(
       values,
       lockCorrectSelection,
       handleClick,
+      handleComplete,
+      getUserAnswerTime,
+      handleSceneSolved,
     });
     const { onDrop, onDragEnter, onDragLeave, dragTargetItem, onDragStart, dragSelectedItem, onDragEnd, onDragOver } =
       useDragNDrop({ handleDrop: handleSetAnswer });

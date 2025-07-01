@@ -27,7 +27,7 @@ const MultipleTiles6Fullimg = forwardRef<HTMLDivElement, MultipleTiles6FullImage
   ({ editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet, onActiveElementClick }, ref) => {
     const [swiper, setSwiper] = useState<SwiperClass | null>(null);
     const { isMd, isSm } = useWindowSize();
-    const { handlePauseAll, renderAudios } = useAudios({ values });
+    const { handleElementAudio, renderAudios } = useAudios({ values, previewMode });
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
     const isActive = useCallback((key: keyof BaseSceneElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
@@ -41,7 +41,7 @@ const MultipleTiles6Fullimg = forwardRef<HTMLDivElement, MultipleTiles6FullImage
     const { handleClick } = useActions({
       onClick,
       disabled: editMode || previewMode,
-      handlePauseAll,
+      handlePauseAll: handleElementAudio,
       onActiveElementClick,
     });
 
@@ -175,7 +175,11 @@ const MultipleTiles6Fullimg = forwardRef<HTMLDivElement, MultipleTiles6FullImage
             className={clsx(styles.activeImage, isPreview, getEditClass())}
           />
         </div>
-        <button className={clsx(styles.btn, styles.btnAddTile, getEditClass('edit'))} onClick={handleAddTile}>
+        <button
+          type="button"
+          className={clsx(styles.btn, styles.btnAddTile, getEditClass('edit'))}
+          onClick={handleAddTile}
+        >
           <img className={styles.addTileIcon} src={iconPlus} alt="" />
         </button>
         <span className={clsx(styles.totalTiles, getEditClass('edit'))}>Total tiles: {tiles.length}</span>
@@ -209,6 +213,7 @@ const MultipleTiles6Fullimg = forwardRef<HTMLDivElement, MultipleTiles6FullImage
               >
                 {index > IMAGES.length - 1 && (
                   <button
+                    type="button"
                     className={clsx(styles.btn, styles.btnDeleteTile, getEditClass('edit'))}
                     onClick={e => handleDeleteTile(k, e)}
                   >

@@ -5,7 +5,7 @@ import { IMAGES, SHAPES } from './constants';
 import { BaseSceneElements, Classes } from './types';
 import { TemplateParameter, SceneProps, SceneValue } from '../shared/types';
 import { useActions, useAudios, useImage } from '../shared/hooks';
-import { useAnimation } from './hooks';
+import { useAnimation } from '../base/hooks';
 import { transition, clsx, getElementId, getElementValue } from '../shared/utils';
 
 export type Base2SceneProps = SceneProps & {
@@ -16,7 +16,7 @@ export type Base2SceneProps = SceneProps & {
 
 const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, parameters, values, onActiveElementClick }, ref) => {
-    const { handlePauseAll, renderAudios } = useAudios({ values });
+    const { handleElementAudio, renderAudios } = useAudios({ values, previewMode });
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
 
     const { getAnimationsStyle, handleMouseMove, resetAnimatedProps, getScale, clearHover, handleHover } = useAnimation(
@@ -36,7 +36,7 @@ const Base2 = forwardRef<HTMLDivElement, Base2SceneProps>(
       onClick,
       disabled: editMode || previewMode,
       onActiveElementClick,
-      handlePauseAll,
+      handlePauseAll: handleElementAudio,
     });
 
     const isActive = useCallback(

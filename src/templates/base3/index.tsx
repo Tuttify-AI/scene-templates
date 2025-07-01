@@ -34,13 +34,13 @@ const Base3 = forwardRef<HTMLDivElement, Base3SceneProps>(
 
     const getValue = useMemo(() => getElementValue(values, parameters), [values, parameters]);
 
-    const { renderAudios, handlePauseAll } = useAudios({ values });
+    const { renderAudios, handleElementAudio } = useAudios({ values, previewMode });
 
     const { handleClick } = useActions({
       onClick,
       disabled: editMode || previewMode,
       onActiveElementClick,
-      handlePauseAll,
+      handlePauseAll: handleElementAudio,
     });
 
     const isActive = useCallback(

@@ -28,7 +28,7 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
     const [swiper, setSwiper] = useState<SwiperClass | null>(null);
     const { isSm } = useWindowSize();
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
-    const { renderAudios, handlePauseAll } = useAudios({ values });
+    const { renderAudios, handleElementAudio } = useAudios({ values, previewMode });
     const isActive = useCallback((key: keyof BaseSceneElements) => activeKey === key && styles.active, [activeKey]);
     const isPreview = useMemo(() => previewMode && styles.preview, [previewMode]);
     const getEditClass = useCallback(
@@ -40,7 +40,7 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
 
     const { handleClick } = useActions({
       onClick,
-      handlePauseAll,
+      handlePauseAll: handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
     });
@@ -175,7 +175,11 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
             className={clsx(styles.activeImage, isPreview, getEditClass())}
           />
         </div>
-        <button className={clsx(styles.btn, styles.btnAddTile, getEditClass('edit'))} onClick={handleAddTile}>
+        <button
+          type="button"
+          className={clsx(styles.btn, styles.btnAddTile, getEditClass('edit'))}
+          onClick={handleAddTile}
+        >
           <img className={styles.addTileIcon} src={iconPlus} alt="" />
         </button>
         <span className={clsx(styles.totalTiles, getEditClass('edit'))}>Total tiles: {tiles.length}</span>
@@ -209,6 +213,7 @@ const MultipleTiles4FullImage = forwardRef<HTMLDivElement, MultipleTiles4FullIma
               >
                 {index > IMAGES.length - 1 && (
                   <button
+                    type="button"
                     className={clsx(styles.btn, styles.btnDeleteTile, getEditClass('edit'))}
                     onClick={e => handleDeleteTile(k, e)}
                   >

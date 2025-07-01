@@ -25,13 +25,13 @@ const FullImageWithButton = forwardRef<HTMLDivElement, FullImageWithButtonProps>
       (type: 'edit' | 'editRoot' | 'editText' = 'edit') => editMode && sceneStyles[type],
       [editMode]
     );
-    const { renderAudios, handlePauseAll } = useAudios({ values });
+    const { renderAudios, handleElementAudio } = useAudios({ values, previewMode });
 
     const getValue = useMemo(() => getElementValue(values, parameters), [values, parameters]);
 
     const { handleClick } = useActions({
       onClick,
-      handlePauseAll,
+      handlePauseAll: handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
     });

@@ -159,6 +159,12 @@ export type SceneProps = {
    */
   onComplete?: (key: string, data?: ActiveElementData) => void;
   /**
+   * onSceneSolved function that is executed when scene is solved
+   * @param key
+   * @param data
+   */
+  onSceneSolved?: (key: string, data?: ActiveElementData) => void;
+  /**
    * Ref to access child component
    */
   ref?: React.Ref<HTMLDivElement> | null;

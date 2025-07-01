@@ -1,13 +1,16 @@
 import React, { useCallback } from 'react';
 import { ActiveElementData, Elements, Parameters, SceneProps } from '../types';
 import { useAudios } from './';
+import useAnswerTimer from './use-answer-timer';
 
 type Params = {
   disabled?: boolean;
   onClick?: SceneProps['onClick'];
   onActiveElementClick?: SceneProps['onActiveElementClick'];
-  handlePauseAll?: ReturnType<typeof useAudios>['handlePauseAll'];
+  handlePauseAll?: ReturnType<typeof useAudios>['handleElementAudio'];
+  clearTimer?: ReturnType<typeof useAnswerTimer>['clearTimer'];
   onComplete?: SceneProps['onComplete'];
+  onSceneSolved?: SceneProps['onSceneSolved'];
 };
 
 export type OnClickData = {
@@ -17,7 +20,15 @@ export type OnClickData = {
 
 const DEFAULT_DATA = {};
 
-export default function useActions({ disabled, onClick, onActiveElementClick, handlePauseAll, onComplete }: Params) {
+export default function useActions({
+  disabled,
+  onClick,
+  onActiveElementClick,
+  handlePauseAll,
+  onComplete,
+  onSceneSolved,
+  clearTimer,
+}: Params) {
   const handleClick = useCallback(
     (key: keyof Elements, { data, parameter = 'sound' }: OnClickData = DEFAULT_DATA) =>
       async (e?: React.MouseEvent<HTMLElement>) => {
@@ -35,12 +46,21 @@ export default function useActions({ disabled, onClick, onActiveElementClick, ha
   const handleComplete = useCallback(
     (key: keyof Elements, { data }: OnClickData = DEFAULT_DATA) => {
       onComplete && data && onComplete(`${key}`, data);
+      clearTimer && clearTimer();
     },
-    [onComplete]
+    [onComplete, clearTimer]
+  );
+
+  const handleSceneSolved = useCallback(
+    (key: keyof Elements, { data }: OnClickData = DEFAULT_DATA) => {
+      onSceneSolved && data && onSceneSolved(`${key}`, data);
+    },
+    [onSceneSolved]
   );
 
   return {
     handleClick,
     handleComplete,
+    handleSceneSolved,
   };
 }

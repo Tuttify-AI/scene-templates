@@ -26,7 +26,7 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet, onActiveElementClick }, ref) => {
     const [swiper, setSwiper] = useState<SwiperClass | null>(null);
     const { isSm } = useWindowSize();
-    const { handlePauseAll, renderAudios } = useAudios({ values });
+    const { handleElementAudio, renderAudios } = useAudios({ values, previewMode });
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
 
     const getEditClass = useCallback(
@@ -38,7 +38,7 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
 
     const { handleClick } = useActions({
       onClick,
-      handlePauseAll,
+      handlePauseAll: handleElementAudio,
       disabled: editMode || previewMode,
       onActiveElementClick,
     });
@@ -143,7 +143,11 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
         ref={ref}
       >
         {renderAudios()}
-        <button className={clsx(styles.btn, styles.btnAddTile, getEditClass('edit'))} onClick={handleAddTile}>
+        <button
+          type="button"
+          className={clsx(styles.btn, styles.btnAddTile, getEditClass('edit'))}
+          onClick={handleAddTile}
+        >
           <img className={styles.addTileIcon} src={iconPlus} alt="" />
         </button>
         <span className={clsx(styles.totalTiles, getEditClass('edit'))}>Total tiles: {tiles.length}</span>
@@ -177,6 +181,7 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
               >
                 {index > IMAGES.length - 1 && (
                   <button
+                    type="button"
                     className={clsx(styles.btn, styles.btnDeleteTile, getEditClass('edit'))}
                     onClick={e => handleDeleteTile(k, e)}
                   >
