@@ -11,35 +11,30 @@ export const IMAGES: Image[] = [
     defaultImage: previewImage1,
     isPreviewImage: true,
     mods: { modX: 15, modY: 15 },
-    transform: { translateX: '-33%', translateY: '-40%' },
   },
   {
     name: 'previewImage2',
     defaultImage: previewImage2,
     isPreviewImage: true,
     mods: { modX: 15, modY: 15 },
-    transform: { translateX: '25%', translateY: '-100%' },
   },
   {
     name: 'previewImage3',
     defaultImage: previewImage3,
     isPreviewImage: true,
     mods: { modX: 15, modY: 15 },
-    transform: { translateX: '-120%', translateY: '-20%' },
   },
   {
     name: 'cloudImage1',
     defaultImage: cloudImage,
     isPreviewImage: false,
     mods: { modX: 10, modY: 10 },
-    transform: { translateX: '-242%', translateY: '-164%' },
   },
   {
     name: 'cloudImage2',
     defaultImage: cloudImage,
     isPreviewImage: false,
     mods: { modX: 10, modY: 10 },
-    transform: { translateX: '258%', translateY: '108%' },
   },
 ];
 

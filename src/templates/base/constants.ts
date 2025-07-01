@@ -1,5 +1,4 @@
 import { Animation } from '../shared/types';
-import defaultImage from './assets/defaultImage';
 
 export const ANIMATIONS: Animation[] = [
   {
@@ -21,12 +20,5 @@ export const ANIMATIONS: Animation[] = [
   {
     name: 'shape5',
     mods: { modX: 15, modY: 15 },
-  },
-];
-
-export const IMAGES = [
-  {
-    name: 'image1',
-    defaultImage,
   },
 ];
