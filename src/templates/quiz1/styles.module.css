@@ -21,24 +21,31 @@
 }
 
 .questionRoot {
-    z-index: 6;
+    z-index: 1;
     width: 50%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 8px;
+    border-radius: 16px;
 }
 
-.questionImageContainer {
+.imageContainer {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-grow: 1;
+    width: 100%;
+    max-height: 80%;
 }
 
-.questionImage{
+.image {
     width: 100%;
-    max-height: 100%;
+    height: 100%;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 .activeDiv {
     position: absolute;
@@ -46,6 +53,10 @@
     z-index: 10;
     border-radius: 16px;
     display: flex;
+    justify-content: center;
+    flex-direction: column;
+    transition: all 0.20s ease-in-out;
+    padding: 8px;
 }
 
 .activeDiv.showActiveDiv {
@@ -53,22 +64,35 @@
     height: 100%;
     top: 0;
     left: 0;
-    transition: all 0.25s ease-in-out;
+    transition: all 0.20s ease-in-out;
 }
 
 .activeDiv.hideActiveDiv {
-    width: 0;
+    width: 100%;
     height: 0;
     top: 50%;
-    left: 50%;
-    transition: all 0.25s ease-in-out;
+    /*left: 50%;*/
+    transition: all 0.20s ease-in-out;
+}
+
+.fullScreenText {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    z-index: 6;
+    font-size: 40px;
+    text-align: center;
 }
 
 .activeDiv.edit, .activeDiv.preview {
     display: none;
 }
 
-.activeDiv.hideActiveDiv > .activeImage {
+.questionRoot.edit {
+    cursor: pointer;
+}
+
+.activeDiv.hideActiveDiv > .activeImage, .activeDiv.hideActiveDiv > .fullScreenText {
     display: none;
 }
 
@@ -80,11 +104,11 @@
 }
 
 .root.editRoot {
-    transition: all 1s ease-in-out;
+    transition: box-shadow 1s ease-in-out;
 }
 
 .root *.edit {
-    transition: all 0.25s ease-in-out;
+    transition: box-shadow 0.25s ease-in-out;
 }
 
 .active,
@@ -102,6 +126,7 @@
     z-index: 6;
     font-size: 40px;
     text-align: center;
+    word-break: break-all;
 }
 
 .preview.root {
@@ -115,223 +140,79 @@
     opacity: 0;
 }
 .answerRoot {
+    z-index: 2;
+    position: relative;
     width: 50%;
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 .answer {
+    border-radius: 16px;
+    position: relative;
     width: 50%;
     height: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+}
+
+.answerText {
+    width: 100%;
+    padding: 8px;
+    z-index: 6;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    word-break: break-all;
 }
 
 .element {
+    width: 100%;
     position: relative;
     height: 100%;
-    --custom_color: transparent;
+    display: flex;
+    flex-direction: column;
     cursor: pointer;
     user-select: none;
+    transition: transform 0.25s ease-in-out;
 }
 
-.element:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    transition: all 0.25s ease-in-out;
-}
-
-.totalElements {
-    position: absolute;
-    bottom: -24px;
-    right: 10px;
-    font-size: 13px;
-    font-weight: 500;
-    color: #263238;
-}
-
-.btn {
-    margin: 0;
-    padding: 0;
-    background: none;
-    font: inherit;
-    text-align: center;
-    border: 0;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-.btn:focus {
-    outline: none;
-}
-
-.btnAddElement {
-    position: absolute;
-    z-index: 12;
-    bottom: -24px;
-    width: 48px;
-    height: 48px;
-    font-size: 14px;
-    font-weight: 700;
-    background-color: #00a6a8;
-    color: var(--colorWhite);
-    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-    transition: background-color 0.25s ease-in-out;
-}
-
-.btnAddElement:hover {
-    background-color: rgb(0, 116, 117);
-}
-
-.addElementIcon {
-    max-width: 20px;
-    margin: 0 auto;
-    vertical-align: middle;
-}
-
-.btnDeleteElement {
-    display: none;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    z-index: 10;
-    top: -4px;
-    right: 4px;
-    width: 32px;
-    height: 32px;
-    background-color: var(--colorWhite);
-    border: 1px solid var(--colorLightGray);
-}
-
-.deleteElementIcon {
-    max-width: 14px;
-    vertical-align: middle;
-}
-
-.btnAddElement:not(.edit),
-.btnDeleteElement:not(.edit),
-.totalElements:not(.edit),
-.preview .btnAddElement,
-.preview .btnDeleteElement,
-.preview .totalElements {
-    display: none !important;
-}
-
-.slideItem:hover > .tile:before,
-.preview.root .tile:before {
-    background-color: var(--custom_color);
+.answer:not(.edit):hover > .element {
     transform: scaleY(1.1) scaleX(1.05);
     border-radius: 24px;
 }
 
-.slideItem:hover .btnDeleteElement {
+.answer.edit:hover .btnDeleteElement {
     display: inline-flex;
 }
 
-.tile.active:before {
-    background-color: var(--custom_color);
-    transform: scaleY(1.1) scaleX(1.05);
-    border-radius: 24px;
-}
-
-.slideItem:hover > .tileImage, .preview.root .tileImage {
-    transform: scale(1.35) rotate(360deg);
-}
-
-.tileImage {
-    /*position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-left: -55px;
-    margin-top: -55px;*/
-    z-index: 3;
-    width: 110px;
-    height: auto;
-    max-height: 110px;
-    object-fit: contain;
-    transition: all 0.25s ease-in-out;
-    cursor: pointer;
-}
-
-.tileText {
-    z-index: 3;
-    font-size: 28px;
-    font-weight: 600;
-    position: absolute;
-    top: 50%;
-    margin-top: 70px;
-    width: 80%;
-    left: 50%;
-    margin-left: -40%;
-    text-align: center;
-    color: var(--colorSlateGray);
-    transition: all 0.25s ease-in-out;
-}
-
-.slideItem:hover > .tileText,
-.preview.root .tileText {
-    transform: scale(1.1);
-    color: var(--colorWhite);
-    top: 55%;
-}
-
-.swiper {
-    width: 100%;
-    padding: 24px 0;
-}
-
-@media screen and (max-width: 1280px) {
-    .tileText:not(.preview) {
-        font-size: 24px;
-        margin-top: 70px;
-    }
-}
-
-@media screen and (max-width: 1200px) {
-    .slideItem:hover > .tileImage {
-        transform: scale(1.20) rotate(360deg);
-    }
-
-    .tileImage:not(.preview) {
-        width: 90px;
-        max-height: 90px;
-        margin-left: -45px;
-        margin-top: -45px;
-    }
-}
-
-@media screen and (max-width: 960px) {
-    .tileImage:not(.preview) {
-        width: 120px;
-        max-height: 120px;
-        margin-left: -60px;
-        margin-top: -60px;
-    }
-
-    .tileText:not(.preview) {
-        font-size: 28px;
-        margin-top: 80px;
-    }
-
-    .slideItem:hover > .tileImage {
-        transform: scale(1.25) rotate(360deg);
-    }
+button.btnDeleteElement {
+    transform: translate(0, 0);
 }
 
 @media screen and (max-width: 600px) {
     .root:not(.preview) {
         height: 500px;
+        flex-direction: column;
+        align-items: center;
     }
 
-    .tileImage:not(.preview) {
-        width: 90px;
-        max-height: 90px;
-        margin-left: -45px;
-        margin-top: -45px;
+    .questionRoot {
+        width: 100%;
+        height: 50%;
     }
-
-    .tileText:not(.preview) {
+    .title {
         font-size: 24px;
-        margin-top: 60px;
+    }
+    .answerRoot {
+        width: 100%;
+        height: 50%;
+    }
+
+    .answerText {
+        font-size: 16px;
     }
 }

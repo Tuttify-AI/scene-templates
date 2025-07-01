@@ -1,19 +1,19 @@
-import React, { CSSProperties, forwardRef, useCallback, useMemo, useState, Fragment } from 'react';
+import React, { CSSProperties, forwardRef, useCallback, useMemo, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-
+import { Grid } from 'swiper';
 import { useActions, useWindowSize, useImage, useAudios, useTiles } from '../shared/hooks';
-import { clsx, getElementId } from '../shared/utils';
+import { clsx, getElementId, getElementValue } from '../shared/utils';
 import { IMAGES } from './constants';
 
-import { Parameters, SceneProps, SceneValue, TemplateParameterType } from '../shared/types';
+import { SceneProps, SceneValue, TemplateParameterType } from '../shared/types';
 import { BaseSceneElements, Classes } from './types';
 import SwiperClass from 'swiper/types/swiper-class';
 
 import iconPlus from './assets/icon-plus.svg';
 import iconCross from './assets/icon-cross.svg';
 
-import 'swiper/swiper.min.css';
-import 'swiper/components/navigation/navigation.min.css';
+import 'swiper/css';
+import 'swiper/css/grid';
 import styles from './styles.module.css';
 
 export type MultipleTiles4SceneProps = SceneProps & {
@@ -25,7 +25,7 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, values, onAdd, onSet, onActiveElementClick }, ref) => {
     const [swiper, setSwiper] = useState<SwiperClass | null>(null);
     const { isSm } = useWindowSize();
-    const { audios } = useAudios({ values });
+    const { handlePauseAll, renderAudios } = useAudios({ values });
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
 
     const getEditClass = useCallback(
@@ -33,16 +33,12 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
       [editMode]
     );
 
-    const getValue = useCallback(
-      (element: keyof BaseSceneElements, parameter: keyof Parameters) =>
-        (values?.[element]?.[parameter] as SceneValue)?.value,
-      [values]
-    );
+    const getValue = useMemo(() => getElementValue(values), [values]);
+
     const { handleClick } = useActions({
       onClick,
-      getValue,
+      handlePauseAll,
       disabled: editMode || previewMode,
-      audios,
       onActiveElementClick,
     });
 
@@ -54,7 +50,7 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
       [hiddenImageList]
     );
 
-    const handleAddTile = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleAddTile = async (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
       const lastTile = Number(tiles[tiles.length - 1]?.replace('tile', ''));
       if (lastTile && onAdd) {
@@ -104,8 +100,8 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
       }
 
       if (swiper) {
-        swiper.update();
-        setTimeout(() => swiper.slideTo(tiles.length), 0);
+        await swiper.update();
+        await swiper.slideTo(tiles.length);
       }
     };
 
@@ -115,7 +111,6 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
       handleAddTile,
       values,
       handleClick,
-      getValue,
       defaultImages: IMAGES,
       onActiveElementClick,
       previewMode,
@@ -132,18 +127,7 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
         }}
         ref={ref}
       >
-        {audios && (
-          <Fragment>
-            {Object.keys(audios).map(audio => (
-              <audio
-                key={`${audio}_sound`}
-                id={`${audio}_sound`}
-                ref={audios?.[audio]}
-                src={getValue(audio, 'sound') as string}
-              />
-            ))}
-          </Fragment>
-        )}
+        {renderAudios()}
         <button className={clsx(styles.btn, styles.btnAddTile, getEditClass('edit'))} onClick={handleAddTile}>
           <img className={styles.addTileIcon} src={iconPlus} alt="" />
         </button>
@@ -152,14 +136,17 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
           className={styles.swiper}
           spaceBetween={0}
           slidesPerView={previewMode ? 2 : isSm ? 1 : 2}
-          slidesPerColumn={2}
+          grid={{
+            rows: 2,
+          }}
+          modules={[Grid]}
           onSwiper={setSwiper}
         >
           {tiles.map((k, index) => (
             <SwiperSlide key={k} className={clsx(styles.slideItem, isPreview)}>
               <div
                 id={getElementId(k, previewMode)}
-                onClick={handleClick(k, getTileData(k))}
+                onClick={handleClick(k, { data: getTileData(k) })}
                 className={clsx(styles.tile, isActive(k), getEditClass(), isPreview, classes?.tile)}
                 style={
                   {
@@ -170,7 +157,7 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
                 {index > IMAGES.length - 1 && (
                   <button
                     className={clsx(styles.btn, styles.btnDeleteTile, getEditClass('edit'))}
-                    onClick={e => handleDeleteTile(e, k)}
+                    onClick={e => handleDeleteTile(k, e)}
                   >
                     <img className={styles.deleteTileIcon} src={iconCross} alt="" />
                   </button>
@@ -180,7 +167,7 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
                 id={getElementId(`image_${k}`, previewMode)}
                 alt={`image_${k}`}
                 src={(getValue(`image_${k}`, 'url') as string) || IMAGES[index] || IMAGES[0]}
-                onClick={handleClick(`image_${k}`, getTileData(k))}
+                onClick={handleClick(`image_${k}`, { data: getTileData(k) })}
                 onLoad={() => onImageLoad(`image_${k}`)}
                 onError={() => onImageError(`image_${k}`)}
                 className={clsx(
@@ -194,7 +181,7 @@ const MultipleTiles4 = forwardRef<HTMLDivElement, MultipleTiles4SceneProps>(
               />
               <p
                 id={getElementId(`text_${k}`, previewMode)}
-                onClick={handleClick(`text_${k}`, getTileData(k))}
+                onClick={handleClick(`text_${k}`, { data: getTileData(k) })}
                 className={clsx(
                   styles.tileText,
                   isActive(`text_${k}`),

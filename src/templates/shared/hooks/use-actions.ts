@@ -1,41 +1,34 @@
 import React, { useCallback } from 'react';
-import { ActiveElementData, AudioElements, Elements, Parameters, SceneProps } from '../types';
+import { ActiveElementData, Elements, Parameters, SceneProps } from '../types';
+import { useAudios } from './';
 
 type Params = {
   disabled?: boolean;
   onClick?: SceneProps['onClick'];
   onActiveElementClick?: SceneProps['onActiveElementClick'];
-  getValue: (element: keyof Elements, parameter: keyof Parameters) => unknown;
-  audios?: AudioElements;
+  handlePauseAll?: ReturnType<typeof useAudios>['handlePauseAll'];
 };
 
-export default function useActions({ disabled, getValue, onClick, audios, onActiveElementClick }: Params) {
+type OnClickData = {
+  data?: ActiveElementData;
+  parameter?: keyof Parameters;
+};
+
+const DEFAULT_DATA = {};
+
+export default function useActions({ disabled, onClick, onActiveElementClick, handlePauseAll }: Params) {
   const handleClick = useCallback(
-    (key: keyof Elements, data?: ActiveElementData) => async (e: React.MouseEvent<HTMLElement>) => {
-      e.stopPropagation();
-      // if data is passed - implementing onActiveElementClick
-      onActiveElementClick && data && onActiveElementClick(`${key}`, data);
-      onClick && onClick(`${key}`, e.currentTarget);
-      if (getValue(key, 'sound') && !disabled) {
-        if (audios) {
-          await Promise.all(
-            Object.keys(audios).map(async audio => {
-              const currentAudio = audios?.[audio]?.current;
-              if (currentAudio) {
-                if (audio === key) {
-                  currentAudio.currentTime = 0;
-                  await currentAudio.play();
-                } else {
-                  currentAudio.currentTime = 0;
-                  await currentAudio.pause();
-                }
-              }
-            })
-          );
+    (key: keyof Elements, { data, parameter = 'sound' }: OnClickData = DEFAULT_DATA) =>
+      async (e: React.MouseEvent<HTMLElement>) => {
+        e.stopPropagation();
+        // if data is passed - implementing onActiveElementClick
+        onActiveElementClick && data && onActiveElementClick(`${key}`, data);
+        onClick && onClick(`${key}`, e.currentTarget);
+        if (!disabled && handlePauseAll) {
+          await handlePauseAll(key, parameter);
         }
-      }
-    },
-    [audios, disabled, getValue, onClick, onActiveElementClick]
+      },
+    [disabled, onClick, onActiveElementClick, handlePauseAll]
   );
 
   return {

@@ -2,10 +2,10 @@ import React, { useCallback, useMemo, forwardRef } from 'react';
 import { animated } from 'react-spring';
 import sceneStyles from './styles.module.css';
 import { BaseSceneElements, Classes } from './types';
-import { TemplateParameter, SceneProps, SceneValue, Parameters } from '../shared/types';
+import { TemplateParameter, SceneProps, SceneValue } from '../shared/types';
 import { useActions, useAudios } from '../shared/hooks';
 import { useAnimation } from './hooks';
-import { clsx, getElementId } from '../shared/utils';
+import { clsx, getElementId, getElementValue } from '../shared/utils';
 import ReactPlayer from 'react-player';
 import defaultImage from './assets/full-image';
 
@@ -22,19 +22,13 @@ const FullVideo = forwardRef<HTMLDivElement, FullVideoSceneProps>(
     });
 
     const getEditClass = useCallback((type: 'edit' | 'editRoot' = 'edit') => editMode && sceneStyles[type], [editMode]);
-    const { audios } = useAudios({ values });
-    const getValue = useCallback(
-      (element: keyof BaseSceneElements, parameter: keyof Parameters) => {
-        return values?.[element]?.[parameter]?.value ?? parameters?.[element]?.[parameter]?.default_value;
-      },
-      [values, parameters]
-    );
+    const { handlePauseAll } = useAudios({ values });
+    const getValue = useMemo(() => getElementValue(values, parameters), [values, parameters]);
 
     const { handleClick } = useActions({
       onClick,
-      getValue,
+      handlePauseAll,
       disabled: editMode || previewMode,
-      audios,
       onActiveElementClick,
     });
 
@@ -60,7 +54,7 @@ const FullVideo = forwardRef<HTMLDivElement, FullVideoSceneProps>(
           {editMode && (
             <div
               className={sceneStyles.image}
-              onClick={handleClick('video', { videoUrl: getValue('video', 'url') as string })}
+              onClick={handleClick('video', { data: { videoUrl: getValue('video', 'url') as string } })}
               style={{
                 zIndex: 5,
               }}
@@ -78,7 +72,7 @@ const FullVideo = forwardRef<HTMLDivElement, FullVideoSceneProps>(
               id="video"
               url={`${getValue('video', 'url') || ''}`}
               className={clsx(sceneStyles.image, isActive('video'), getEditClass(), isPreview, classes?.image)}
-              onClick={handleClick('video', { videoUrl: getValue('video', 'url') as string })}
+              onClick={handleClick('video', { data: { videoUrl: getValue('video', 'url') as string } })}
             />
           )}
         </div>

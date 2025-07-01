@@ -2,8 +2,7 @@ import React, { CSSProperties, forwardRef, useCallback, useEffect, useMemo, useS
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Grid, Navigation } from 'swiper';
 
-import { useActions, useImage, useAudios } from '../shared/hooks';
-import useTiles from '../shared/hooks/use-tiles';
+import { useActions, useImage, useAudios, useTiles } from '../shared/hooks';
 import { clsx, getElementId, getElementValue, range } from '../shared/utils';
 import { IMAGES } from './constants';
 
@@ -31,7 +30,7 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
   ) => {
     const [swiper, setSwiper] = useState<SwiperClass | null>(null);
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
-    const { renderAudios, handleElementAudio } = useAudios({ values, previewMode });
+    const { renderAudios, handlePauseAll } = useAudios({ values });
     const getEditClass = useCallback(
       (type: 'edit' | 'editRoot' = 'edit') => editMode && styles[type as keyof typeof styles],
       [editMode]
@@ -59,7 +58,7 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
 
     const { handleClick } = useActions({
       onClick,
-      handleElementAudio,
+      handlePauseAll,
       disabled: editMode || previewMode,
       onActiveElementClick,
     });
@@ -115,9 +114,10 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
 
     useEffect(() => {
       // removing tiles if slider is locked and tiles limit is reached
-      const tilesToRemove = tiles.slice(tilesLimit);
-      if (sliderLocked && tilesToRemove.length) {
-        handleDeleteTile(tiles.slice(tilesLimit));
+      if (sliderLocked) {
+        tiles.slice(tilesLimit).forEach(tile => {
+          handleDeleteTile(tile);
+        });
       }
     }, [sliderLocked, tiles, tilesLimit, handleDeleteTile]);
 
@@ -187,9 +187,7 @@ const MultipleTiles = forwardRef<HTMLDivElement, MultipleTilesSceneProps>(
         </div>
         {showSceneActionElements && (
           <span className={clsx(styles.totalTiles)}>
-            {translations?.totalTiles || `Total tiles`}
-            {`: `}
-            {`${tiles.length}/${tilesLimit}`}
+            {translations?.totalTiles || `Total tiles`}: {tiles.length}
           </span>
         )}
         <Swiper

@@ -1,5 +1,3 @@
-@value bounceZoom from "../shared/shared.css";
-
 :root {
     --shape-box-shadow: 1px 1px 12px 1px rgba(100, 100, 100, 0.8);
     --text-shadow: 0 0 12px rgba(100, 100, 100, 0.8);
@@ -12,7 +10,7 @@
 .root {
     z-index: 1;
     width: 100%;
-    height: 60vh;
+    height: 600px;
     position: relative;
     border-radius: var(--mainBorderRadius);
     background: var(--colorWhite);
@@ -45,7 +43,7 @@
 
 .preview.root {
     width: 1200px;
-    height: 60vh;
+    height: 600px;
     position: fixed;
     top: 0;
     left: 0;
@@ -56,7 +54,6 @@
 
 .slideItem {
     padding: 6px 12px;
-    user-select: none;
 }
 
 .tile {
@@ -169,10 +166,6 @@
     padding: 24px 0;
 }
 
-.swiper > div {
-    box-sizing: border-box;
-}
-
 .activeDiv {
     width: 100%;
     height: 100%;
@@ -187,10 +180,9 @@
     align-items: center;
     justify-content: center;
     transition: all .2s ease-in-out;
-    user-select: none;
 }
 .activeDiv.showActiveDiv {
-    animation: bounceZoom 0.25s;
+    transform: scale(1);
 }
 
 .activeDiv.hideActiveDiv {
@@ -230,7 +222,6 @@
     padding: 16px;
     text-align: center;
     font-weight: bold;
-    word-break: break-word;
     --fullscreen-text-color: var(--colorWhite);
     color: var(--fullscreen-text-color);
 }

@@ -1,5 +1,7 @@
 import React, { RefObject } from 'react';
 
+export type GetValue<T> = (element: keyof Elements<T>, parameter: keyof Parameters) => SceneValue['value'] | undefined;
+
 export type AtomiDocument = Record<string, unknown> & {
   destroy?: () => void;
 };
@@ -49,6 +51,7 @@ export type Parameters<T = SceneValue> = {
 
 export enum TemplateParameterType {
   color = 'color',
+  textColor = 'textColor',
   text = 'text',
   textarea = 'textarea',
   title = 'title',
@@ -56,6 +59,8 @@ export enum TemplateParameterType {
   image = 'image',
   video = 'video',
   boolean = 'boolean',
+  number = 'number',
+  select = 'select',
 }
 
 export type TemplateParameter = {
@@ -70,10 +75,14 @@ export type SceneValue = {
   title: string;
   value: string | number;
   length?: number;
+  options?: { label: string; value: string }[];
 };
 
 export type AudioElements = {
-  [key: string]: RefObject<HTMLAudioElement>;
+  [key: string]: {
+    ref: RefObject<HTMLAudioElement>;
+    parameter: keyof Parameters;
+  };
 };
 
 export type ActiveElementData = {
@@ -83,6 +92,10 @@ export type ActiveElementData = {
   videoUrl?: string;
   background?: string;
   [key: string]: string | undefined;
+};
+
+export type Translations = {
+  totalTiles?: string;
 };
 
 export type SceneProps = {
@@ -137,4 +150,8 @@ export type SceneProps = {
    * @param values
    */
   onSet?: (values: Elements) => void;
+  /**
+   * Object for scene localization
+   */
+  translations?: Translations;
 };

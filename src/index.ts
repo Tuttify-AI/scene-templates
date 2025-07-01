@@ -6,6 +6,7 @@ import FullImage, { FullImageSceneProps } from './templates/fullImage';
 import FullImageWithButton, { FullImageWithButtonProps } from './templates/scene15';
 import FullVideo, { FullVideoSceneProps } from './templates/fullVideo';
 import MultipleTiles, { MultipleTilesSceneProps } from './templates/multipletiles';
+import Tiles from './templates/tiles';
 import MultipleTiles4, { MultipleTiles4SceneProps } from './templates/multipletiles4';
 import MultipleTiles4FullImage, { MultipleTiles4FullImageProps } from './templates/multipletiles4FullImg';
 import MultipleTiles6FullImage, { MultipleTiles6FullImageProps } from './templates/multipletiles6Fullimg';
@@ -20,6 +21,7 @@ import quiz1 from './templates/quiz1/assets/preview';
 import fullImage from './templates/fullImage/assets/preview';
 import fullImageWithButton from './templates/fullImage/assets/preview';
 import multipleTiles from './templates/multipletiles/assets/preview';
+import tiles from './templates/tiles/assets/preview';
 import multipleTiles4 from './templates/multipletiles4/assets/preview';
 import multipleTiles4FullImage from './templates/multipletiles4FullImg/assets/preview';
 import multipleTiles6FullImage from './templates/multipletiles6Fullimg/assets/preview';
@@ -42,6 +44,7 @@ const previews = {
   multipleTiles8,
   atomiHalloween,
   fullImageWithButton,
+  tiles,
 };
 
 export {
@@ -59,6 +62,7 @@ export {
   MultipleTiles8FullImage,
   AtomiHalloween,
   FullImageWithButton,
+  Tiles,
   Types,
   previews,
 };
@@ -76,4 +80,67 @@ export type {
   MultipleTiles8FullImageProps,
   FullVideoSceneProps,
   FullImageWithButtonProps,
+};
+
+export const AVAILABLE_SCENES = {
+  base: {
+    component: Base,
+    previewImage: previews.base,
+  },
+  base2: {
+    component: Base2,
+    previewImage: previews.base2,
+  },
+  atomi: {
+    component: AtomiHalloween,
+    previewImage: previews.atomiHalloween,
+  },
+  quiz1: {
+    component: QuizOne,
+    previewImage: previews.quiz1,
+  },
+  fullImage: {
+    component: FullImage,
+    previewImage: previews.fullImage,
+  },
+  fullVideo: {
+    component: FullVideo,
+    previewImage: previews.fullImage,
+  },
+  multipletiles: {
+    component: MultipleTiles,
+    previewImage: previews.multipleTiles,
+  },
+  multipletiles4: {
+    component: MultipleTiles4,
+    previewImage: previews.multipleTiles4,
+  },
+  multipletiles4FullImg: {
+    component: MultipleTiles4FullImage,
+    previewImage: previews.multipleTiles4FullImage,
+  },
+  multipletiles6: {
+    component: MultipleTiles6,
+    previewImage: previews.multipleTiles6,
+  },
+  multipletiles6FullImg: {
+    component: MultipleTiles6FullImage,
+    previewImage: previews.multipleTiles6FullImage,
+  },
+  multipletiles8: {
+    component: MultipleTiles8,
+    previewImage: previews.multipleTiles8,
+  },
+  multipletiles8FullImg: {
+    component: MultipleTiles8FullImage,
+    previewImage: previews.multipleTiles8FullImage,
+  },
+  scene15: {
+    component: FullImageWithButton,
+    previewImage: previews.fullImageWithButton,
+  },
+  tiles: {
+    component: Tiles,
+    previewImage: previews.tiles,
+  },
 };

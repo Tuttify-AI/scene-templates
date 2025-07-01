@@ -1,44 +1,82 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { ActiveElementData, Elements, Parameters, SceneProps } from '../types';
-import { deleteElement } from '../utils';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { ActiveElementData, Parameters, SceneProps } from '../types';
+import { deleteElement, getElementValue } from '../utils';
 import { useActions } from './index';
 
 type Params = Pick<SceneProps, 'editMode' | 'previewMode' | 'onSet' | 'values'> & {
   onActiveElementClick?: SceneProps['onActiveElementClick'];
-  getValue: (element: keyof Elements, parameter: keyof Parameters) => unknown;
   handleAddTile: (e: React.MouseEvent<HTMLButtonElement>) => void;
   tiles: string[];
   handleClick: ReturnType<typeof useActions>['handleClick'];
-  defaultImages: string[];
+  defaultImages?: string[];
+  defaultImageKey?: string;
+  params?: Partial<FullTileParams>;
+};
+
+type FullTileParams = {
+  imageBackground: string;
+  imageUrl: string;
+  text: string;
+  textColor: string;
+};
+
+type FullElementState = {
+  key: string;
+  value: string;
+  background?: string;
+  color?: string;
 };
 
 const INITIAL_STATE = {
-  key: '',
-  src: '',
-  background: 'transparent',
+  image: {
+    key: '',
+    value: '',
+    background: 'transparent',
+  } as FullElementState,
+  text: {
+    key: '',
+    value: '',
+    color: '',
+  } as FullElementState,
+};
+
+const DEFAULT_PARAMS: FullTileParams = {
+  imageBackground: 'background_hover',
+  imageUrl: 'fullscreen_url',
+  text: 'fullscreen_text',
+  textColor: 'fullscreen_text_color',
 };
 
 export default function useTiles({
   editMode,
   previewMode,
-  getValue,
   onActiveElementClick,
   onSet,
   values,
   tiles,
   handleClick,
   defaultImages,
+  defaultImageKey = 'image_',
+  params = DEFAULT_PARAMS,
 }: Params) {
-  const [fullImage, setFullImage] = useState(INITIAL_STATE);
+  const [fullTile, setFullTile] = useState(INITIAL_STATE);
+  const fullTileParams = useMemo(() => ({ ...DEFAULT_PARAMS, ...params }), [params]);
   useEffect(() => {
     if (editMode || previewMode) {
-      setFullImage(INITIAL_STATE);
+      setFullTile(INITIAL_STATE);
     }
-  }, [editMode, previewMode, setFullImage]);
+  }, [editMode, previewMode, setFullTile]);
+
+  const handleFullTile = useCallback(
+    (value: Partial<typeof fullTile>) => setFullTile(prev => ({ ...prev, ...value })),
+    []
+  );
+
+  const getValue = useMemo(() => getElementValue(values), [values]);
 
   const handleDeleteTile = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>, k: string) => {
-      e.stopPropagation();
+    (k: string, e?: React.MouseEvent<HTMLButtonElement>) => {
+      e?.stopPropagation();
       onSet && onSet(deleteElement(values, tiles, k));
     },
     [onSet, tiles, values]
@@ -46,9 +84,9 @@ export default function useTiles({
 
   const getTileData = useCallback(
     k => {
-      const text = getValue(`text_${k}`, 'text');
-      const imageUrl = getValue(`image_${k}`, 'url');
-      const audioUrl = getValue(`sound_${k}`, 'sound');
+      const text = getValue(`text_${k}`, 'text') || getValue(k, 'text');
+      const imageUrl = getValue(`image_${k}`, 'url') || getValue(k, 'url');
+      const audioUrl = getValue(`sound_${k}`, 'sound') || getValue(k, 'sound');
       return {
         ...(text ? { text } : {}),
         ...(imageUrl ? { imageUrl } : {}),
@@ -58,42 +96,62 @@ export default function useTiles({
     [getValue]
   );
 
-  const handleSetFullImageSrc = useCallback(
-    (data: typeof fullImage) => {
+  const handleSetFullTile = useCallback(
+    (data: Partial<typeof fullTile>) => {
       if (!(editMode || previewMode)) {
-        setFullImage(data);
+        handleFullTile(data);
       }
     },
-    [editMode, previewMode, setFullImage]
+    [editMode, previewMode, handleFullTile]
   );
 
-  const handleClearFullImageSrc = useCallback(() => setFullImage(INITIAL_STATE), [setFullImage]);
+  const handleClearFullTile = useCallback(() => setFullTile(INITIAL_STATE), [setFullTile]);
 
-  const handleFullImageClick = useCallback(() => {
-    onActiveElementClick &&
-      onActiveElementClick(fullImage.key, {
-        imageUrl: fullImage.src,
-      });
-    handleClearFullImageSrc();
-  }, [onActiveElementClick, handleClearFullImageSrc, fullImage]);
+  const handleFullImageClick = useCallback(
+    (k?: string, parameter?: keyof Parameters) => (e: React.MouseEvent<HTMLElement>) => {
+      onActiveElementClick &&
+        onActiveElementClick(fullTile.image.key, {
+          imageUrl: fullTile.image.value,
+          text: fullTile.text.value,
+        });
+      k && handleClick(`${defaultImageKey}${k}`, { parameter })(e);
+      handleClearFullTile();
+    },
+    [onActiveElementClick, handleClearFullTile, fullTile, handleClick, defaultImageKey]
+  );
 
-  const handleImageClick = useCallback(
-    (k: string, index: number) => (e: React.MouseEvent<HTMLElement>) => {
-      handleClick(`image_${k}`, getTileData(k) as ActiveElementData)(e);
-      handleSetFullImageSrc({
-        key: `full_image_${k}`,
-        src: (getValue(`image_${k}`, 'fullScreenUrl') as string) || defaultImages[index] || defaultImages[0],
-        background: `${getValue(k, 'background_hover')}`,
+  const onSetFullTile = useCallback(
+    (k: string, index: number, parameter?: keyof Parameters) => (e: React.MouseEvent<HTMLElement>) => {
+      const defaultValue = defaultImages ? defaultImages[index] || defaultImages[0] : '';
+      // latest scenes now uses fullscreen_url parameter, fullScreenUrl is left for older scenes
+      const value =
+        (getValue(`${defaultImageKey}${k}`, 'fullScreenUrl') as string) ||
+        (getValue(`${defaultImageKey}${k}`, fullTileParams.imageUrl) as string);
+      handleClick(`${defaultImageKey}${k}`, { data: getTileData(k) as ActiveElementData, parameter })(e);
+      handleSetFullTile({
+        image: {
+          key: `full_image_${k}`,
+          value: value || defaultValue,
+          background: `${getValue(k, fullTileParams.imageBackground)}`,
+        },
+        text: {
+          key: `full_text_${k}`,
+          value: `${getValue(k, fullTileParams.text)}`,
+          color: `${getValue(k, fullTileParams.textColor)}`,
+        },
       });
     },
-    [getTileData, handleClick, getValue, handleSetFullImageSrc, defaultImages]
+    [getTileData, handleClick, getValue, handleSetFullTile, defaultImages, defaultImageKey, fullTileParams]
   );
-
+  const parsedFullImageKey = useMemo(() => fullTile.image.key?.replace('full_image_', ''), [fullTile.image.key]);
+  const parsedFullTextKey = useMemo(() => fullTile.text.key?.replace('full_text_', ''), [fullTile.text.key]);
   return {
-    handleImageClick,
+    onSetFullTile,
     handleFullImageClick,
     handleDeleteTile,
-    fullImage,
+    fullTile,
     getTileData,
+    parsedFullImageKey,
+    parsedFullTextKey,
   };
 }

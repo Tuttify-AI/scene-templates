@@ -1,12 +1,12 @@
-import React, { useCallback, useMemo, useRef, Fragment, forwardRef } from 'react';
+import React, { useCallback, useMemo, useRef, forwardRef } from 'react';
 import { animated } from 'react-spring';
 import sceneStyles from './styles.module.css';
 import { ANIMATIONS } from './constants';
 import { BaseSceneElements, Classes } from './types';
-import { TemplateParameter, SceneProps, SceneValue, Parameters } from '../shared/types';
+import { TemplateParameter, SceneProps, SceneValue } from '../shared/types';
 import { useImage, useActions, useAudios } from '../shared/hooks';
 import { useAnimation } from './hooks';
-import { transition, clsx, getElementId } from '../shared/utils';
+import { transition, clsx, getElementId, getElementValue } from '../shared/utils';
 import defaultImage from './assets/defaultImage';
 
 export type BaseSceneProps = SceneProps & {
@@ -18,7 +18,6 @@ export type BaseSceneProps = SceneProps & {
 const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
   ({ editMode, previewMode, classes, activeKey, onClick, parameters, values, onActiveElementClick }, ref) => {
     const scrollRef = useRef<HTMLDivElement>(null);
-    const { audios } = useAudios({ values });
     const { hiddenImageList, onImageError, onImageLoad } = useImage();
     const {
       visibleX,
@@ -40,18 +39,15 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
       [editMode]
     );
 
-    const getValue = useCallback(
-      (element: keyof BaseSceneElements, parameter: keyof Parameters) =>
-        values?.[element]?.[parameter]?.value ?? parameters?.[element]?.[parameter]?.default_value,
-      [values, parameters]
-    );
+    const getValue = useMemo(() => getElementValue(values, parameters), [values, parameters]);
+
+    const { renderAudios, handlePauseAll } = useAudios({ values });
 
     const { handleClick } = useActions({
       onClick,
-      getValue,
       disabled: editMode || previewMode,
-      audios,
       onActiveElementClick,
+      handlePauseAll,
     });
 
     const isActive = useCallback(
@@ -67,7 +63,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
     return (
       <animated.div
         id={getElementId('background', previewMode)}
-        onClick={handleClick('background', { background: getValue('background', 'background') as string })}
+        onClick={handleClick('background', { data: { background: getValue('background', 'background') as string } })}
         className={clsx(sceneStyles.root, isActive('background'), getEditClass('editRoot'), isPreview, classes?.root)}
         style={{
           backgroundColor: `${getValue('background', 'background')}`,
@@ -76,24 +72,13 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
         onMouseLeave={resetAnimatedProps}
         ref={ref}
       >
-        {audios && (
-          <Fragment>
-            {Object.keys(audios).map(audio => (
-              <audio
-                key={`${audio}_sound`}
-                id={`${audio}_sound`}
-                ref={audios?.[audio]}
-                src={getValue(audio, 'sound') as string}
-              />
-            ))}
-          </Fragment>
-        )}
+        {renderAudios()}
         <div ref={scrollRef} className={sceneStyles.scroll} />
         <animated.h1
           id={getElementId('title', previewMode)}
           onMouseEnter={handleHover('title')}
           onMouseLeave={clearHover}
-          onClick={handleClick('title', { text: getValue('title', 'text') as string })}
+          onClick={handleClick('title', { data: { text: getValue('title', 'text') as string } })}
           className={clsx(sceneStyles.title, isActive('title'), getEditClass('editText'), isPreview, classes?.title)}
           style={{
             x: visibleX,
@@ -108,7 +93,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
           id={getElementId('description', previewMode)}
           onMouseEnter={handleHover('description')}
           onMouseLeave={clearHover}
-          onClick={handleClick('description', { text: getValue('description', 'text') as string })}
+          onClick={handleClick('description', { data: { text: getValue('description', 'text') as string } })}
           className={clsx(
             sceneStyles.description,
             isActive('description'),
@@ -147,7 +132,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
           }}
           onLoad={() => onImageLoad('image')}
           onError={() => onImageError('image')}
-          onClick={handleClick('image', { imageUrl: getValue('image', 'url') as string })}
+          onClick={handleClick('image', { data: { imageUrl: getValue('image', 'url') as string } })}
         />
         {ANIMATIONS.map(({ name, mods }) => (
           <animated.div
@@ -167,7 +152,7 @@ const Base = forwardRef<HTMLDivElement, BaseSceneProps>(
               ...getScale(name),
               ...getAnimationsStyle(transition(mods)),
             }}
-            onClick={handleClick(name, { background: getValue(name, 'background') as string })}
+            onClick={handleClick(name, { data: { background: getValue(name, 'background') as string } })}
           />
         ))}
       </animated.div>
