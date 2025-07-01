@@ -4,15 +4,12 @@
     --colorWhite: #fff;
     --colorLightGray: #ccc;
     --colorSlateGray: #455a64;
-    --centerTransform: translate(-50%, -50%);
-    --mainBorderRadius: 16px;
-    --textHoverTranslateY: translateY(-70%)
 }
 
 .root {
     z-index: 1;
     width: 100%;
-    height: 60vh;
+    height: 600px;
     position: relative;
     border-radius: 16px;
     background: var(--colorWhite);
@@ -27,43 +24,32 @@
     transition: all 0.25s ease-in-out;
 }
 
-.root > * {
-    box-sizing: border-box;
-}
-
 .hidden {
     visibility: hidden;
 }
 
 .preview.root {
     width: 1200px;
-    height: 60vh;
+    height: 600px;
     position: fixed;
     top: 0;
     left: 0;
-    z-index: -1;
+    z-index: 0;
     border-radius: 0;
     opacity: 0;
 }
 
 .slideItem {
     padding: 6px 12px;
-    height: 50%!important;
+    height: 50%;
 }
 
 .tile {
-    position: absolute;
-    height: 86%;
-    width: 90%;
-    top: 7%;
-    left: 5%;
-    z-index: 2;
-    --background-hover-color: transparent;
-    --background-color: transparent;
+    position: relative;
+    height: 100%;
+    --custom_color: transparent;
     cursor: pointer;
     user-select: none;
-    background-color: var(--background-color);
-    border-radius: var(--mainBorderRadius);
 }
 
 .tile:before {
@@ -152,8 +138,9 @@
     display: none !important;
 }
 
-.slideItem:hover > .tile:before, .slideItem.preview:first-child > .tile:before {
-    background-color: var(--background-hover-color);
+.slideItem:hover > .tile:before,
+.preview.root .tile:before {
+    background-color: var(--custom_color);
     transform: scaleY(1.1) scaleX(1.05);
     border-radius: 24px;
 }
@@ -163,60 +150,44 @@
 }
 
 .tile.active:before {
-    background-color: var(--background-hover-color);
+    background-color: var(--custom_color);
     transform: scaleY(1.1) scaleX(1.05);
     border-radius: 24px;
 }
 
-.slideItem:hover > .tileImage, .slideItem.preview:first-child > .tileImage {
-    transform: var(--centerTransform) scale(var(--image-hover-scale)) rotate(360deg);
+.slideItem:hover > .tileImage, .preview.root .tileImage {
+    transform: scale(1.35) rotate(360deg);
 }
 
 .tileImage {
     position: absolute;
     top: 50%;
     left: 50%;
+    margin-left: -55px;
+    margin-top: -55px;
     z-index: 3;
-    width: 60%;
-    --image-height: 40%;
-    --image-hover-scale: 1.35;
-    height: var(--image-height);
-    object-fit: contain;
-    transform: var(--centerTransform);
+    width: 110px;
     transition: all 0.25s ease-in-out;
     cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.tileImage > img {
-    border-radius: var(--mainBorderRadius);
-    max-width: 100%;
-    max-height: 100%;
 }
 
 .tileText {
-    cursor: pointer;
     z-index: 3;
-    font-size: 32px;
-    line-height: 36px;
+    font-size: 28px;
     font-weight: 600;
     position: absolute;
-    top: 45%;
-    width: 100%;
-    left: 0;
-    /*transform: translate(-50%, -100%);*/
+    top: 50%;
+    margin-top: 70px;
+    width: 80%;
+    left: 50%;
+    margin-left: -40%;
     text-align: center;
-    --text-color: #000;
-    --text-hover-color: var(--colorWhite);
-    --text-hover-scale: var(--textHoverTranslateY);
-    color: var(--text-color);
+    color: var(--colorSlateGray);
     transition: all 0.25s ease-in-out;
-    word-break: break-word;
 }
 
-.slideItem:hover > .tileText, .slideItem.preview:first-child > .tileText {
+.slideItem:hover > .tileText,
+.preview.root .tileText {
     transform: scale(1.1);
     color: var(--colorWhite);
     top: 55%;
@@ -227,13 +198,55 @@
     padding: 24px 0;
 }
 
-.swiper > div {
-    box-sizing: border-box;
+@media screen and (max-width: 1280px) {
+    .tileText:not(.preview) {
+        font-size: 24px;
+        margin-top: 70px;
+    }
 }
 
+@media screen and (max-width: 1200px) {
+    .slideItem:hover > .tileImage {
+        transform: scale(1.20) rotate(360deg);
+    }
+
+    .tileImage:not(.preview) {
+        width: 90px;
+        margin-left: -45px;
+        margin-top: -45px;
+    }
+}
+
+@media screen and (max-width: 960px) {
+    .tileImage:not(.preview) {
+        width: 120px;
+        margin-left: -60px;
+        margin-top: -60px;
+    }
+
+    .tileText:not(.preview) {
+        font-size: 28px;
+        margin-top: 80px;
+    }
+
+    .slideItem:hover > .tileImage {
+        transform: scale(1.25) rotate(360deg);
+    }
+}
 
 @media screen and (max-width: 600px) {
     .root:not(.preview) {
         height: 500px;
+    }
+
+    .tileImage:not(.preview) {
+        width: 90px;
+        margin-left: -45px;
+        margin-top: -45px;
+    }
+
+    .tileText:not(.preview) {
+        font-size: 24px;
+        margin-top: 60px;
     }
 }
