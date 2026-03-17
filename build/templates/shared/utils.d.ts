@@ -1,0 +1,20 @@
+import { DefaultType, Elements, GetValue, Mods, Parameters, TemplateParameter } from './types';
+export declare const isInViewport: (el: HTMLElement | null) => boolean;
+export declare const calc: (x: number, y: number) => {
+    x: number;
+    y: number;
+};
+export declare const transition: ({ modY, modX }?: Mods) => (x: number, y: number) => string;
+export declare const clsx: (...args: unknown[]) => string;
+export declare const deleteElement: (values: Elements | undefined, elements: string[], key: string | string[]) => Elements<import("./types").SceneValue>;
+export declare const getElementId: (id: string, previewMode?: boolean) => string;
+export declare const getNumber: (value: unknown, defaultValue?: number) => number;
+export declare const getElement: <T>(values?: Elements<T> | undefined) => (element: string | number, parameter: string | number) => T | undefined;
+export declare const getElementValue: <T>(values?: Elements, parameters?: Elements<TemplateParameter>) => GetValue<T, DefaultType | DefaultType[] | undefined>;
+export declare function range(start: number, end: number): number[];
+export declare const randomizeString: (str: unknown) => string;
+export declare const randomizeArray: (arr: string[]) => string[];
+export declare const arrayIsEqual: (arr1?: unknown[], arr2?: unknown[]) => boolean;
+export declare function checkArray(answer_arr: DefaultType[]): boolean;
+export declare function checkCorrectWord(answerArr: DefaultType[], allArr: string[], word: string): boolean;
+export declare const getOperandResult: (number1?: number, number2?: number, operand?: '+' | '-' | '×' | string) => number;
