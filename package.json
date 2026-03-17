@@ -13,8 +13,7 @@
     "format": "prettier --write \"**/*.+(ts|tsx)\"",
     "prepublishOnly": "rm -rf /build && npm run build",
     "type-check": "tsc --pretty --noEmit --skipLibCheck",
-    "lint": "eslint . --ext ts --ext tsx",
-    "prepare": "husky install"
+    "lint": "eslint . --ext ts --ext tsx"
   },
   "peerDependencies": {
     "@react-spring/web": "^9.5.4",
